@@ -33,6 +33,15 @@ impl From<json::EncoderError> for FluentError {
 }
 
 impl<A: ToSocketAddrs> Fluent<A> {
+    /// Create Fluent type.
+    ///
+    /// ### Usage
+    ///
+    /// ```
+    /// use fruently::fluent::Fluent;
+    /// let fruently_with_str_tag = Fluent::new("0.0.0.0:24224", "test");
+    /// let fruently_with_string_tag = Fluent::new("0.0.0.0:24224", "test".to_string());
+    /// ```
     pub fn new<T>(addr: A, tag: T) -> Fluent<A>
         where T: AsRef<str>
     {
@@ -42,6 +51,7 @@ impl<A: ToSocketAddrs> Fluent<A> {
         }
     }
 
+    /// Post record into Fluentd. Without time version.
     pub fn post<T>(self, record: T) -> Result<(), FluentError>
         where T: Encodable
     {
@@ -49,6 +59,7 @@ impl<A: ToSocketAddrs> Fluent<A> {
         return self.post_with_time(record, time);
     }
 
+    /// Post record into Fluentd. With time version.
     pub fn post_with_time<T>(self, record: T, time: time::Tm) -> Result<(), FluentError>
         where T: Encodable
     {
