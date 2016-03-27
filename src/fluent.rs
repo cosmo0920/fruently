@@ -88,4 +88,20 @@ mod tests {
         };
         assert_eq!(expected, fruently);
     }
+
+    #[test]
+    #[cfg(feature="fluentd")]
+    fn post_to_fluentd() {
+        use std::collections::HashMap;
+
+        let fruently = Fluent::new("0.0.0.0:24224", "test");
+        let mut obj: HashMap<String, String> = HashMap::new();
+        obj.insert("hey".to_string(), "Rust!".to_string());
+        let result = fruently.post(obj);
+        let is_ok = match result {
+            Ok(()) => true,
+            _ => false,
+        };
+        assert_eq!(true, is_ok);
+    }
 }

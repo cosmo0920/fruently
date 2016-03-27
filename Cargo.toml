@@ -3,6 +3,9 @@ name = "fruently"
 version = "0.1.0"
 authors = ["Hiroshi Hatake <cosmo0920.wp@gmail.com>"]
 
+[features]
+fluentd = []
+
 [dependencies]
 rustc-serialize = "~0.3.18"
 time = "~0.1.34"
