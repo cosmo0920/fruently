@@ -1,11 +1,11 @@
 use std::net::ToSocketAddrs;
 use std::convert::AsRef;
-use std::io;
 use std::net;
-use time;
-use rustc_serialize::json;
-use rustc_serialize::Encodable;
 use std::io::Write;
+use rustc_serialize::Encodable;
+use time;
+use record::Record;
+use record::FluentError;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Fluent<A>
@@ -13,23 +13,6 @@ pub struct Fluent<A>
 {
     addr: A,
     tag: String,
-}
-
-pub enum FluentError {
-    EncodeError(json::EncoderError),
-    IOError(io::Error),
-}
-
-impl From<io::Error> for FluentError {
-    fn from(err: io::Error) -> FluentError {
-        FluentError::IOError(err)
-    }
-}
-
-impl From<json::EncoderError> for FluentError {
-    fn from(err: json::EncoderError) -> FluentError {
-        FluentError::EncodeError(err)
-    }
 }
 
 impl<A: ToSocketAddrs> Fluent<A> {
@@ -63,10 +46,8 @@ impl<A: ToSocketAddrs> Fluent<A> {
     pub fn post_with_time<T>(self, record: T, time: time::Tm) -> Result<(), FluentError>
         where T: Encodable
     {
-        let tag = try!(json::encode(&self.tag));
-        let record = try!(json::encode(&record));
-
-        let message = format!("[{},{},{},null]", tag, time.to_timespec().sec, record);
+        let record = Record::new(self.tag, time, record);
+        let message = try!(record.make_forwardable_json());
         let mut stream = try!(net::TcpStream::connect(self.addr));
         let _ = stream.write(&message.into_bytes());
         drop(stream);
