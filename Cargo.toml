@@ -4,7 +4,6 @@ version = "0.1.0"
 authors = ["Hiroshi Hatake <cosmo0920.wp@gmail.com>"]
 description = "A yet another Fluentd logger for Rust."
 license-file = "LICENSE"
-license = "MIT"
 repository = "https://github.com/cosmo0920/fruently"
 
 [features]
