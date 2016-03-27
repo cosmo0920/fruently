@@ -1,8 +1,6 @@
 extern crate fruently;
 use fruently::fluent::Fluent;
-
 use std::collections::HashMap;
-
 
 fn main() {
     let mut obj: HashMap<String, String> = HashMap::new();
