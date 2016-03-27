@@ -16,7 +16,7 @@ pub struct Fluent<A>
 }
 
 pub enum FluentError {
-    DecodeError(json::EncoderError),
+    EncodeError(json::EncoderError),
     IOError(io::Error),
 }
 
@@ -28,7 +28,7 @@ impl From<io::Error> for FluentError {
 
 impl From<json::EncoderError> for FluentError {
     fn from(err: json::EncoderError) -> FluentError {
-        FluentError::DecodeError(err)
+        FluentError::EncodeError(err)
     }
 }
 
