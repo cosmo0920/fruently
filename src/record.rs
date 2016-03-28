@@ -1,4 +1,5 @@
 use rustc_serialize::json;
+use rustc_serialize::json::Json;
 use rustc_serialize::Encodable;
 use time::Tm;
 use std::io;
@@ -39,7 +40,30 @@ impl<T: Encodable> Record<T> {
     pub fn make_forwardable_json(self) -> Result<String, FluentError> {
         let tag = try!(json::encode(&self.tag));
         let record = try!(json::encode(&self.record));
-        let message = format!("[{},{},{},null]", tag, self.time.to_timespec().sec, record);
+        let option = Json::Null;
+        let message = format!("[{},{},{},{}]", tag, self.time.to_timespec().sec, record, option);
         Ok(message)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use time;
+    use std::collections::HashMap;
+    use rustc_serialize::json;
+
+    #[test]
+    fn test_json_format() {
+        let tag = "fruently".to_string();
+        let time = time::now();
+        let mut obj: HashMap<String, String> = HashMap::new();
+        obj.insert("name".to_string(), "fruently".to_string());
+        let record = Record::new(tag.clone(), time, obj.clone());
+        let forwardable_json = record.make_forwardable_json().ok().unwrap();
+        let json_tag = json::encode(&tag.clone()).ok().unwrap();
+        let json_obj = json::encode(&obj.clone()).ok().unwrap();
+        let expected = format!("[{},{},{},null]", json_tag, time.to_timespec().sec, json_obj);
+        assert_eq!(expected, forwardable_json);
     }
 }
