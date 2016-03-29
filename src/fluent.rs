@@ -121,7 +121,7 @@ mod tests {
 
     #[test]
     #[cfg(feature="fluentd")]
-    fn post_to_fluentd() {
+    fn test_post() {
         use std::collections::HashMap;
 
         let fruently = Fluent::new("0.0.0.0:24224", "test");
