@@ -11,7 +11,7 @@ Add this to your Cargo.toml:
 
 ```toml
 [dependencies]
-fruently = "0.1.1"
+fruently = "0.2.0"
 ```
 
 and this to your crate root:
