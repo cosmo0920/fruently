@@ -7,6 +7,7 @@ use time;
 use retry::retry;
 use record::Record;
 use record::FluentError;
+use retry_conf::RetryConf;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Fluent<A>
@@ -14,6 +15,7 @@ pub struct Fluent<A>
 {
     addr: A,
     tag: String,
+    conf: RetryConf,
 }
 
 impl<A: ToSocketAddrs> Fluent<A> {
@@ -32,6 +34,17 @@ impl<A: ToSocketAddrs> Fluent<A> {
         Fluent {
             addr: addr,
             tag: format!("{}", tag.as_ref()),
+            conf: RetryConf::new(),
+        }
+    }
+
+    pub fn new_with_conf<T>(addr: A, tag: T, conf: RetryConf) -> Fluent<A>
+        where T: AsRef<str>
+    {
+        Fluent {
+            addr: addr,
+            tag: format!("{}", tag.as_ref()),
+            conf: conf,
         }
     }
 
@@ -59,7 +72,8 @@ impl<A: ToSocketAddrs> Fluent<A> {
         let record = Record::new(self.tag.clone(), time, record);
         let message = try!(record.make_forwardable_json());
         let addr = self.addr;
-        match retry(10, 500, || Fluent::closure_send_data(&addr, message.clone()), |response| response.is_ok()) {
+        let (max, timeout) = self.conf.build();
+        match retry(max, timeout, || Fluent::closure_send_data(&addr, message.clone()), |response| response.is_ok()) {
             Ok(_) => Ok(()),
             Err(v) => Err(From::from(v)),
         }
@@ -91,6 +105,7 @@ impl<A: ToSocketAddrs> Fluent<A> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use retry_conf::RetryConf;
 
     #[test]
     fn create_fruently() {
@@ -98,6 +113,7 @@ mod tests {
         let expected = Fluent {
             addr: "0.0.0.0:24224",
             tag: "test".to_string(),
+            conf: RetryConf::new(),
         };
         assert_eq!(expected, fruently);
     }
