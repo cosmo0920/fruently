@@ -85,6 +85,7 @@ impl<A: ToSocketAddrs> Fluent<A> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[cfg(feature="fluentd")]
     use time;
     use retry_conf::RetryConf;
 
