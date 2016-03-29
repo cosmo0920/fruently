@@ -62,29 +62,9 @@ impl<A: ToSocketAddrs> Fluent<A> {
     {
         let record = Record::new(self.tag.clone(), time, record);
         let message = try!(record.make_forwardable_json());
-        return self.send_data(message)
-    }
-
-    /// Post record into Fluentd. With retryable version.
-    pub fn post_with_retry<T>(self, record: T, time: time::Tm) -> Result<(), FluentError>
-        where T: Encodable
-    {
-        let record = Record::new(self.tag.clone(), time, record);
-        let message = try!(record.make_forwardable_json());
         let addr = self.addr;
         let (max, timeout) = self.conf.build();
         match retry(max, timeout, || Fluent::closure_send_data(&addr, message.clone()), |response| response.is_ok()) {
-            Ok(_) => Ok(()),
-            Err(v) => Err(From::from(v)),
-        }
-    }
-
-    fn send_data(self, message: String) -> Result<(), FluentError> {
-        let mut stream = try!(net::TcpStream::connect(self.addr));
-        let result = stream.write(&message.into_bytes());
-        drop(stream);
-
-        match result {
             Ok(_) => Ok(()),
             Err(v) => Err(From::from(v)),
         }
@@ -145,23 +125,6 @@ mod tests {
         obj.insert("hey".to_string(), "Rust!".to_string());
         let time = time::now();
         let result = fruently.post_with_time(obj, time);
-        let is_ok = match result {
-            Ok(()) => true,
-            _ => false,
-        };
-        assert_eq!(true, is_ok);
-    }
-
-    #[test]
-    #[cfg(feature="fluentd")]
-    fn test_post_with_retry() {
-        use std::collections::HashMap;
-
-        let fruently = Fluent::new("0.0.0.0:24224", "test");
-        let mut obj: HashMap<String, String> = HashMap::new();
-        obj.insert("hey".to_string(), "Rust!".to_string());
-        let time = time::now();
-        let result = fruently.post_with_retry(obj, time);
         let is_ok = match result {
             Ok(()) => true,
             _ => false,
