@@ -3,6 +3,7 @@ use rustc_serialize::json::Json;
 use rustc_serialize::Encodable;
 use time::Tm;
 use std::io;
+use retry;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Record<T: Encodable> {
@@ -14,6 +15,7 @@ pub struct Record<T: Encodable> {
 pub enum FluentError {
     EncodeError(json::EncoderError),
     IOError(io::Error),
+    RetryError(retry::RetryError),
 }
 
 impl From<io::Error> for FluentError {
@@ -25,6 +27,12 @@ impl From<io::Error> for FluentError {
 impl From<json::EncoderError> for FluentError {
     fn from(err: json::EncoderError) -> FluentError {
         FluentError::EncodeError(err)
+    }
+}
+
+impl From<retry::RetryError> for FluentError {
+    fn from(err: retry::RetryError) -> FluentError {
+        FluentError::RetryError(err)
     }
 }
 

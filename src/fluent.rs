@@ -4,6 +4,7 @@ use std::net;
 use std::io::Write;
 use rustc_serialize::Encodable;
 use time;
+use retry::retry;
 use record::Record;
 use record::FluentError;
 
@@ -51,8 +52,32 @@ impl<A: ToSocketAddrs> Fluent<A> {
         return self.send_data(message)
     }
 
+    /// Post record into Fluentd. With retryable version.
+    pub fn post_with_retry<T>(self, record: T, time: time::Tm) -> Result<(), FluentError>
+        where T: Encodable
+    {
+        let record = Record::new(self.tag.clone(), time, record);
+        let message = try!(record.make_forwardable_json());
+        let addr = self.addr;
+        match retry(10, 500, || Fluent::closure_send_data(&addr, message.clone()), |response| response.is_ok()) {
+            Ok(_) => Ok(()),
+            Err(v) => Err(From::from(v)),
+        }
+    }
+
     fn send_data(self, message: String) -> Result<(), FluentError> {
         let mut stream = try!(net::TcpStream::connect(self.addr));
+        let result = stream.write(&message.into_bytes());
+        drop(stream);
+
+        match result {
+            Ok(_) => Ok(()),
+            Err(v) => Err(From::from(v)),
+        }
+    }
+
+    fn closure_send_data(addr: &A, message: String) -> Result<(), FluentError> {
+        let mut stream = try!(net::TcpStream::connect(addr));
         let result = stream.write(&message.into_bytes());
         drop(stream);
 
