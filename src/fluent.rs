@@ -46,8 +46,12 @@ impl<A: ToSocketAddrs> Fluent<A> {
     pub fn post_with_time<T>(self, record: T, time: time::Tm) -> Result<(), FluentError>
         where T: Encodable
     {
-        let record = Record::new(self.tag, time, record);
+        let record = Record::new(self.tag.clone(), time, record);
         let message = try!(record.make_forwardable_json());
+        return self.send_data(message)
+    }
+
+    fn send_data(self, message: String) -> Result<(), FluentError> {
         let mut stream = try!(net::TcpStream::connect(self.addr));
         let result = stream.write(&message.into_bytes());
         drop(stream);
