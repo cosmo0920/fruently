@@ -49,10 +49,13 @@ impl<A: ToSocketAddrs> Fluent<A> {
         let record = Record::new(self.tag, time, record);
         let message = try!(record.make_forwardable_json());
         let mut stream = try!(net::TcpStream::connect(self.addr));
-        let _ = stream.write(&message.into_bytes());
+        let result = stream.write(&message.into_bytes());
         drop(stream);
 
-        Ok(())
+        match result {
+            Ok(_) => Ok(()),
+            Err(v) => Err(From::from(v)),
+        }
     }
 }
 
