@@ -108,12 +108,8 @@ mod tests {
         let fruently = Fluent::new("0.0.0.0:24224", "test");
         let mut obj: HashMap<String, String> = HashMap::new();
         obj.insert("hey".to_string(), "Rust!".to_string());
-        let result = fruently.post(obj);
-        let is_ok = match result {
-            Ok(()) => true,
-            _ => false,
-        };
-        assert_eq!(true, is_ok);
+        let result = fruently.post(obj).is_ok();
+        assert_eq!(true, result);
     }
 
     #[test]
@@ -125,11 +121,7 @@ mod tests {
         let mut obj: HashMap<String, String> = HashMap::new();
         obj.insert("hey".to_string(), "Rust!".to_string());
         let time = time::now();
-        let result = fruently.post_with_time(obj, time);
-        let is_ok = match result {
-            Ok(()) => true,
-            _ => false,
-        };
-        assert_eq!(true, is_ok);
+        let result = fruently.post_with_time(obj, time).is_ok();
+        assert_eq!(true, result);
     }
 }
