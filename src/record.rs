@@ -64,6 +64,7 @@ mod tests {
     use time;
     use std::collections::HashMap;
     use rustc_serialize::json;
+    use rustc_serialize::json::Json;
 
     #[test]
     fn test_json_format() {
@@ -75,10 +76,11 @@ mod tests {
         let forwardable_json = record.make_forwardable_json().ok().unwrap();
         let json_tag = json::encode(&tag.clone()).ok().unwrap();
         let json_obj = json::encode(&obj.clone()).ok().unwrap();
-        let expected = format!("[{},{},{},null]",
+        let expected = format!("[{},{},{},{}]",
                                json_tag,
                                time.to_timespec().sec,
-                               json_obj);
+                               json_obj,
+                               Json::Null);
         assert_eq!(expected, forwardable_json);
     }
 }
