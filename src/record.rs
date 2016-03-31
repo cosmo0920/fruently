@@ -49,7 +49,11 @@ impl<T: Encodable> Record<T> {
         let tag = try!(json::encode(&self.tag));
         let record = try!(json::encode(&self.record));
         let option = Json::Null;
-        let message = format!("[{},{},{},{}]", tag, self.time.to_timespec().sec, record, option);
+        let message = format!("[{},{},{},{}]",
+                              tag,
+                              self.time.to_timespec().sec,
+                              record,
+                              option);
         Ok(message)
     }
 }
@@ -71,7 +75,10 @@ mod tests {
         let forwardable_json = record.make_forwardable_json().ok().unwrap();
         let json_tag = json::encode(&tag.clone()).ok().unwrap();
         let json_obj = json::encode(&obj.clone()).ok().unwrap();
-        let expected = format!("[{},{},{},null]", json_tag, time.to_timespec().sec, json_obj);
+        let expected = format!("[{},{},{},null]",
+                               json_tag,
+                               time.to_timespec().sec,
+                               json_obj);
         assert_eq!(expected, forwardable_json);
     }
 }

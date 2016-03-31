@@ -64,7 +64,10 @@ impl<A: ToSocketAddrs> Fluent<A> {
         let message = try!(record.make_forwardable_json());
         let addr = self.addr;
         let (max, timeout) = self.conf.build();
-        match retry(max, timeout, || Fluent::closure_send_data(&addr, message.clone()), |response| response.is_ok()) {
+        match retry(max,
+                    timeout,
+                    || Fluent::closure_send_data(&addr, message.clone()),
+                    |response| response.is_ok()) {
             Ok(_) => Ok(()),
             Err(v) => Err(From::from(v)),
         }
