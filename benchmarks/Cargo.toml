@@ -1,0 +1,9 @@
+[package]
+name = "fruently_benchmarks"
+version = "0.1.0"
+authors = ["Hiroshi Hatake <cosmo0920.wp@gmail.com>"]
+publish = false
+
+[dependencies.fruently]
+version = "~0.2.0"
+path = "../../fruently"
