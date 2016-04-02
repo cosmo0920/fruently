@@ -8,6 +8,7 @@ mod tests {
     use test::Bencher;
     use fruently::fluent::Fluent;
     use std::collections::HashMap;
+    use fruently::forwardable::JsonForwardable;
 
     #[bench]
     fn benchmark_fruently(b: &mut Bencher) {
