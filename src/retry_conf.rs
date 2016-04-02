@@ -8,7 +8,7 @@
 ///
 /// You can estimate to caluculate concrete values like:
 ///
-/// * retry_counts: 10, e ^ (10 + 10)/1000.0/60.0/60.0 = 0.908060381242253, about 0.9 hour
+/// * retry_counts: 10, e ^ (5 + 10)/1000.0/60.0/60.0 = 0.908060381242253, about 0.9 hour
 ///
 /// * retry_counts: 11, e ^ (5 + 11)/1000.0/60.0/60.0 = 2.4683640334744092, about 2.5 hours
 ///
