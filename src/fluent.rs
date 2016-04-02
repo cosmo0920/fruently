@@ -4,13 +4,13 @@ use std::net;
 use std::io::Write;
 use rustc_serialize::Encodable;
 use time;
-use retry::retry;
+use retry::retry_exponentially;
 use record::Record;
 use record::FluentError;
 use retry_conf::RetryConf;
 use forwardable::JsonForwardable;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Fluent<A>
     where A: ToSocketAddrs
 {
@@ -78,9 +78,9 @@ impl<A: ToSocketAddrs> JsonForwardable for Fluent<A> {
         let record = Record::new(self.tag.clone(), time, record);
         let message = try!(record.make_forwardable_json());
         let addr = self.addr;
-        let (max, timeout) = self.conf.build();
-        match retry(max,
-                    timeout,
+        let (max, multiplier) = self.conf.build();
+        match retry_exponentially(max,
+                    multiplier,
                     || Fluent::closure_send_data(&addr, message.clone()),
                     |response| response.is_ok()) {
             Ok(_) => Ok(()),

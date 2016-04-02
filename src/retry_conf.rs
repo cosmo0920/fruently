@@ -1,14 +1,14 @@
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct RetryConf {
-    max: u32,
-    timeout: u32,
+    max: u64,
+    multiplier: f64,
 }
 
 impl Default for RetryConf {
     fn default() -> RetryConf {
         RetryConf {
             max: 10,
-            timeout: 500,
+            multiplier: 5_f64,
         }
     }
 }
@@ -18,17 +18,17 @@ impl RetryConf {
         Default::default()
     }
 
-    pub fn max(mut self, max: u32) -> RetryConf {
+    pub fn max(mut self, max: u64) -> RetryConf {
         self.max = max;
         self
     }
 
-    pub fn timeout(mut self, timeout: u32) -> RetryConf {
-        self.timeout = timeout;
+    pub fn multiplier(mut self, multiplier: f64) -> RetryConf {
+        self.multiplier = multiplier;
         self
     }
 
-    pub fn build(self) -> (u32, u32) {
-        (self.max, self.timeout)
+    pub fn build(self) -> (u64, f64) {
+        (self.max, self.multiplier)
     }
 }
