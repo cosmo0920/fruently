@@ -11,7 +11,7 @@ Add this to your Cargo.toml:
 
 ```toml
 [dependencies]
-fruently = "0.2.0"
+fruently = "0.3.0"
 ```
 
 and this to your crate root:
@@ -26,6 +26,7 @@ extern crate fruently;
 extern crate fruently;
 use fruently::fluent::Fluent;
 use std::collections::HashMap;
+use fruently::forwardable::JsonForwardable;
 
 fn main() {
     let mut obj: HashMap<String, String> = HashMap::new();

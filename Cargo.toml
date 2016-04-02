@@ -1,6 +1,6 @@
 [package]
 name = "fruently"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Hiroshi Hatake <cosmo0920.wp@gmail.com>"]
 description = "A yet another Fluentd logger for Rust."
 license-file = "LICENSE"
