@@ -6,7 +6,7 @@
 ///
 /// see: https://github.com/jimmycuadra/retry/blob/v0.4.0/src/lib.rs#L142-L143
 ///
-/// You can estimate to caluculate concrete values like:
+/// You can estimate to caluculate with concrete values like:
 ///
 /// * retry_counts: 10, e ^ (5 + 10)/1000.0/60.0/60.0 = 0.908060381242253, about 0.9 hour
 ///
