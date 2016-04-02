@@ -63,7 +63,7 @@ impl<A: ToSocketAddrs> Fluent<A> {
 }
 
 impl<A: ToSocketAddrs> JsonForwardable for Fluent<A> {
-        /// Post record into Fluentd. Without time version.
+    /// Post record into Fluentd. Without time version.
     fn post<T>(self, record: T) -> Result<(), FluentError>
         where T: Encodable
     {
@@ -80,9 +80,9 @@ impl<A: ToSocketAddrs> JsonForwardable for Fluent<A> {
         let addr = self.addr;
         let (max, multiplier) = self.conf.build();
         match retry_exponentially(max,
-                    multiplier,
-                    || Fluent::closure_send_data(&addr, message.clone()),
-                    |response| response.is_ok()) {
+                                  multiplier,
+                                  || Fluent::closure_send_data(&addr, message.clone()),
+                                  |response| response.is_ok()) {
             Ok(_) => Ok(()),
             Err(v) => Err(From::from(v)),
         }
