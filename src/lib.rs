@@ -5,4 +5,5 @@ extern crate time;
 extern crate retry;
 pub mod fluent;
 pub mod record;
+pub mod forwardable;
 pub mod retry_conf;

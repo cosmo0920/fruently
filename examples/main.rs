@@ -1,6 +1,7 @@
 extern crate fruently;
 use fruently::fluent::Fluent;
 use std::collections::HashMap;
+use fruently::forwardable::JsonForwardable;
 
 fn main() {
     let mut obj: HashMap<String, String> = HashMap::new();

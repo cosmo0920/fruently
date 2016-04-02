@@ -8,6 +8,7 @@ use retry::retry;
 use record::Record;
 use record::FluentError;
 use retry_conf::RetryConf;
+use forwardable::JsonForwardable;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Fluent<A>
@@ -48,8 +49,22 @@ impl<A: ToSocketAddrs> Fluent<A> {
         }
     }
 
-    /// Post record into Fluentd. Without time version.
-    pub fn post<T>(self, record: T) -> Result<(), FluentError>
+    /// For internal usage.
+    fn closure_send_data(addr: &A, message: String) -> Result<(), FluentError> {
+        let mut stream = try!(net::TcpStream::connect(addr));
+        let result = stream.write(&message.into_bytes());
+        drop(stream);
+
+        match result {
+            Ok(_) => Ok(()),
+            Err(v) => Err(From::from(v)),
+        }
+    }
+}
+
+impl<A: ToSocketAddrs> JsonForwardable for Fluent<A> {
+        /// Post record into Fluentd. Without time version.
+    fn post<T>(self, record: T) -> Result<(), FluentError>
         where T: Encodable
     {
         let time = time::now();
@@ -57,7 +72,7 @@ impl<A: ToSocketAddrs> Fluent<A> {
     }
 
     /// Post record into Fluentd. With time version.
-    pub fn post_with_time<T>(self, record: T, time: time::Tm) -> Result<(), FluentError>
+    fn post_with_time<T>(self, record: T, time: time::Tm) -> Result<(), FluentError>
         where T: Encodable
     {
         let record = Record::new(self.tag.clone(), time, record);
@@ -68,17 +83,6 @@ impl<A: ToSocketAddrs> Fluent<A> {
                     timeout,
                     || Fluent::closure_send_data(&addr, message.clone()),
                     |response| response.is_ok()) {
-            Ok(_) => Ok(()),
-            Err(v) => Err(From::from(v)),
-        }
-    }
-
-    fn closure_send_data(addr: &A, message: String) -> Result<(), FluentError> {
-        let mut stream = try!(net::TcpStream::connect(addr));
-        let result = stream.write(&message.into_bytes());
-        drop(stream);
-
-        match result {
             Ok(_) => Ok(()),
             Err(v) => Err(From::from(v)),
         }
@@ -107,6 +111,7 @@ mod tests {
     #[cfg(feature="fluentd")]
     fn test_post() {
         use std::collections::HashMap;
+        use forwardable::JsonForwardable;
 
         let fruently = Fluent::new("0.0.0.0:24224", "test");
         let mut obj: HashMap<String, String> = HashMap::new();
@@ -119,6 +124,7 @@ mod tests {
     #[cfg(feature="fluentd")]
     fn test_post_with_time() {
         use std::collections::HashMap;
+        use forwardable::JsonForwardable;
 
         let fruently = Fluent::new("0.0.0.0:24224", "test");
         let mut obj: HashMap<String, String> = HashMap::new();
