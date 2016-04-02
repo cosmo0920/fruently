@@ -2,13 +2,8 @@ use std::net::ToSocketAddrs;
 use std::convert::AsRef;
 use std::net;
 use std::io::Write;
-use rustc_serialize::Encodable;
-use time;
-use retry::retry_exponentially;
-use record::Record;
 use record::FluentError;
 use retry_conf::RetryConf;
-use forwardable::JsonForwardable;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Fluent<A>
@@ -49,8 +44,24 @@ impl<A: ToSocketAddrs> Fluent<A> {
         }
     }
 
+    #[doc(hidden)]
+    pub fn get_addr(&self) -> &A {
+        &self.addr
+    }
+
+    #[doc(hidden)]
+    pub fn get_tag(&self) -> String {
+        self.tag.clone()
+    }
+
+    #[doc(hidden)]
+    pub fn get_conf(&self) -> RetryConf {
+        self.conf.clone()
+    }
+
+    #[doc(hidden)]
     /// For internal usage.
-    fn closure_send_data(addr: &A, message: String) -> Result<(), FluentError> {
+    pub fn closure_send_data(addr: &A, message: String) -> Result<(), FluentError> {
         let mut stream = try!(net::TcpStream::connect(addr));
         let result = stream.write(&message.into_bytes());
         drop(stream);
@@ -62,38 +73,9 @@ impl<A: ToSocketAddrs> Fluent<A> {
     }
 }
 
-impl<A: ToSocketAddrs> JsonForwardable for Fluent<A> {
-    /// Post record into Fluentd. Without time version.
-    fn post<T>(self, record: T) -> Result<(), FluentError>
-        where T: Encodable
-    {
-        let time = time::now();
-        return self.post_with_time(record, time);
-    }
-
-    /// Post record into Fluentd. With time version.
-    fn post_with_time<T>(self, record: T, time: time::Tm) -> Result<(), FluentError>
-        where T: Encodable
-    {
-        let record = Record::new(self.tag.clone(), time, record);
-        let message = try!(record.make_forwardable_json());
-        let addr = self.addr;
-        let (max, multiplier) = self.conf.build();
-        match retry_exponentially(max,
-                                  multiplier,
-                                  || Fluent::closure_send_data(&addr, message.clone()),
-                                  |response| response.is_ok()) {
-            Ok(_) => Ok(()),
-            Err(v) => Err(From::from(v)),
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
-    #[cfg(feature="fluentd")]
-    use time;
     use retry_conf::RetryConf;
 
     #[test]
@@ -105,32 +87,5 @@ mod tests {
             conf: RetryConf::new(),
         };
         assert_eq!(expected, fruently);
-    }
-
-    #[test]
-    #[cfg(feature="fluentd")]
-    fn test_post() {
-        use std::collections::HashMap;
-        use forwardable::JsonForwardable;
-
-        let fruently = Fluent::new("0.0.0.0:24224", "test");
-        let mut obj: HashMap<String, String> = HashMap::new();
-        obj.insert("hey".to_string(), "Rust!".to_string());
-        let result = fruently.post(obj).is_ok();
-        assert_eq!(true, result);
-    }
-
-    #[test]
-    #[cfg(feature="fluentd")]
-    fn test_post_with_time() {
-        use std::collections::HashMap;
-        use forwardable::JsonForwardable;
-
-        let fruently = Fluent::new("0.0.0.0:24224", "test");
-        let mut obj: HashMap<String, String> = HashMap::new();
-        obj.insert("hey".to_string(), "Rust!".to_string());
-        let time = time::now();
-        let result = fruently.post_with_time(obj, time).is_ok();
-        assert_eq!(true, result);
     }
 }
