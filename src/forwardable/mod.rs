@@ -7,4 +7,10 @@ pub trait JsonForwardable {
     fn post_with_time<T: Encodable>(self, record: T, time: time::Tm) -> Result<(), FluentError>;
 }
 
+pub trait MsgpackForwardable {
+    fn post<T: Encodable>(self, record: T) -> Result<(), FluentError>;
+    fn post_with_time<T: Encodable>(self, record: T, time: time::Tm) -> Result<(), FluentError>;
+}
+
 pub mod json;
+pub mod msgpack;

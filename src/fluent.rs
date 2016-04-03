@@ -4,6 +4,9 @@ use std::net;
 use std::io::Write;
 use record::FluentError;
 use retry_conf::RetryConf;
+use forwardable::msgpack::Message;
+use rustc_serialize::Encodable;
+use rmp_serialize::Encoder;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Fluent<A>
@@ -65,6 +68,21 @@ impl<A: ToSocketAddrs> Fluent<A> {
         let mut stream = try!(net::TcpStream::connect(addr));
         let result = stream.write(&message.into_bytes());
         drop(stream);
+
+        match result {
+            Ok(_) => Ok(()),
+            Err(v) => Err(From::from(v)),
+        }
+    }
+
+    #[doc(hidden)]
+    /// For internal usage.
+    pub fn closure_send_as_msgpack<T: Encodable>(addr: &A,
+                                                 message: &Message<T>)
+                                                 -> Result<(), FluentError> {
+        let mut stream = try!(net::TcpStream::connect(addr));
+        let mut encoder = Encoder::new(&mut stream);
+        let result = message.encode(&mut encoder);
 
         match result {
             Ok(_) => Ok(()),

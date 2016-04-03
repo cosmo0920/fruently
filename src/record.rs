@@ -1,19 +1,22 @@
 use rustc_serialize::json;
 use rustc_serialize::json::Json;
 use rustc_serialize::Encodable;
+use rmp_serialize::encode;
 use time::Tm;
 use std::io;
 use retry;
+use forwardable::msgpack::Message;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Record<T: Encodable> {
-    tag: String,
-    time: Tm,
-    record: T,
+    pub tag: String,
+    pub time: Tm,
+    pub record: T,
 }
 
 pub enum FluentError {
     EncodeError(json::EncoderError),
+    MsgpackEncodeError(encode::Error),
     IOError(io::Error),
     RetryError(retry::RetryError),
 }
@@ -24,15 +27,21 @@ impl From<io::Error> for FluentError {
     }
 }
 
-impl From<json::EncoderError> for FluentError {
-    fn from(err: json::EncoderError) -> FluentError {
-        FluentError::EncodeError(err)
+impl From<encode::Error> for FluentError {
+    fn from(err: encode::Error) -> FluentError {
+        FluentError::MsgpackEncodeError(err)
     }
 }
 
 impl From<retry::RetryError> for FluentError {
     fn from(err: retry::RetryError) -> FluentError {
         FluentError::RetryError(err)
+    }
+}
+
+impl From<json::EncoderError> for FluentError {
+    fn from(err: json::EncoderError) -> FluentError {
+        FluentError::EncodeError(err)
     }
 }
 
@@ -55,6 +64,10 @@ impl<T: Encodable> Record<T> {
                               record,
                               option);
         Ok(message)
+    }
+
+    pub fn to_message(self) -> Message<T> {
+        Message::new(self)
     }
 }
 
