@@ -38,6 +38,7 @@ impl<A: ToSocketAddrs> JsonForwardable for Fluent<A> {
 mod tests {
     #[cfg(feature="fluentd")]
     use time;
+    #[cfg(feature="fluentd")]
     use fluent::Fluent;
 
     #[test]

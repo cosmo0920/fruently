@@ -55,6 +55,7 @@ impl<A: ToSocketAddrs> MsgpackForwardable for Fluent<A> {
 mod tests {
     #[cfg(feature="fluentd")]
     use time;
+    #[cfg(feature="fluentd")]
     use fluent::Fluent;
 
     #[test]
