@@ -15,7 +15,7 @@ pub struct Record<T: Encodable> {
 }
 
 pub enum FluentError {
-    EncodeError(json::EncoderError),
+    JsonEncodeError(json::EncoderError),
     MsgpackEncodeError(encode::Error),
     IOError(io::Error),
     RetryError(retry::RetryError),
@@ -41,7 +41,7 @@ impl From<retry::RetryError> for FluentError {
 
 impl From<json::EncoderError> for FluentError {
     fn from(err: json::EncoderError) -> FluentError {
-        FluentError::EncodeError(err)
+        FluentError::JsonEncodeError(err)
     }
 }
 
