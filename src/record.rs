@@ -9,9 +9,9 @@ use forwardable::msgpack::Message;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Record<T: Encodable> {
-    pub tag: String,
-    pub time: Tm,
-    pub record: T,
+    tag: String,
+    time: Tm,
+    record: T,
 }
 
 pub enum FluentError {
@@ -67,7 +67,7 @@ impl<T: Encodable> Record<T> {
     }
 
     pub fn to_message(self) -> Message<T> {
-        Message::new(self)
+        Message::new(self.tag, self.time.to_timespec().sec, self.record)
     }
 }
 

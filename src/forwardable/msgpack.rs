@@ -35,11 +35,11 @@ pub struct Message<T: Encodable> {
 }
 
 impl<T: Encodable> Message<T> {
-    pub fn new(chunk: Record<T>) -> Message<T> {
+    pub fn new(tag: String, timesec: i64, record: T) -> Message<T> {
         Message {
-            tag: chunk.tag,
-            timesec: chunk.time.to_timespec().sec,
-            record: chunk.record,
+            tag: tag,
+            timesec: timesec,
+            record: record,
         }
     }
 }
