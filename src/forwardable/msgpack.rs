@@ -4,7 +4,8 @@
 //!
 //! This trait is used as follows:
 //!
-//! ```ignore
+//! ```no_run
+//! extern crate fruently;
 //! use fruently::fluent::Fluent;
 //! use std::collections::HashMap;
 //! use fruently::forwardable::MsgpackForwardable;
