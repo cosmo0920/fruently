@@ -1,3 +1,22 @@
+//! Send record as forwardable json.
+//!
+//! ## Usage
+//!
+//! This trait is used as follows:
+//!
+//! ```ignore
+//! use fruently::fluent::Fluent;
+//! use std::collections::HashMap;
+//! use fruently::forwardable::JsonForwardable;
+//!
+//! fn main() {
+//!     let mut obj: HashMap<String, String> = HashMap::new();
+//!     obj.insert("name".to_string(), "fruently".to_string());
+//!     let fruently = Fluent::new("0.0.0.0:24224", "test");
+//!     let _ = fruently.post(&obj);
+//! }
+//! ```
+
 use std::net::ToSocketAddrs;
 use rustc_serialize::Encodable;
 use time;
