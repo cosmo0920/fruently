@@ -1,7 +1,14 @@
 \documentclass[12pt, unicode]{beamer}
 \usetheme{Warsaw}
 \usepackage{luatexja}
+\usepackage{color}
 \usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\bfseries,
+  commentstyle=\color{red}\itshape,
+  stringstyle=\color{black!30!green},
+  showstringspaces=false,
+  keywordstyle=\color{blue}\bfseries}
 %color
 \definecolor{battleshipgrey}{rgb}{0.52, 0.52, 0.51}
 
@@ -139,12 +146,12 @@ It carries a series of events as a msgpack array on a single request.
   morecomment = [s]{/*}{*/},
   morestring=[b]",
   sensitive = true,
-  morekeywords = {extern,  crate,  fn,  let, use}
+  morekeywords = {extern, crate, fn, let, use, mut}
 }
 % Set font size for lstlisting.
 \newcommand\Small{\fontsize{9}{9.2}\selectfont}
 \begin{frame}[fragile]
-Fruently example:
+fruently example:
 \begin{lstlisting}[language={Rust},basicstyle=\ttfamily\Small]
 extern crate fruently;
 use fruently::fluent::Fluent;
@@ -155,9 +162,10 @@ fn main() {
     // create record
     let mut obj: HashMap<String, String> = HashMap::new();
     obj.insert("name".to_string(), "fruently".to_string());
-    // establish connection with Fluentd.
+    // establish a TCP connection with Fluentd.
     let fruently = Fluent::new("0.0.0.0:24224", "test");
-    // send record to Fluentd and disconnecting automatically.
+    // send json-encoded record to Fluentd
+    // and disconnecting automatically.
     let _ = fruently.post(&obj);
 }
 \end{lstlisting}
