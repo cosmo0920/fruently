@@ -1,0 +1,136 @@
+\documentclass[12pt, unicode]{beamer}
+\usetheme{Warsaw}
+\usepackage{luatexja}
+%color
+\definecolor{battleshipgrey}{rgb}{0.52, 0.52, 0.51}
+
+\title{Fluentd forward protocol modes in v0}
+\author{Hiroshi Hatake}
+\date[2016/04/08]{情報共有の会}
+
+\begin{document}
+
+\frame{\maketitle}
+
+\begin{frame}{Fluentd forward protocol modes in v0}
+\end{frame}
+
+\begin{frame}{introduction}
+\begin{block}{Forward protocol}
+Fluentd has three modes in forward protocol.
+\end{block}
+\begin{itemize}
+\item<1-> Message Mode
+\item<2-> Forward Mode
+\item<3-> PackedForward Mode
+\end{itemize}
+\end{frame}
+
+\begin{frame}{introduction | Message Mode}
+\begin{block}{Message Mode}
+It carries just a event.
+\end{block}
+\begin{itemize}
+\item \uncover<1->{\textbf {tag} is a string separated with '.' (e.g. myapp.access) to categorize events.}
+\item \uncover<1->{\textbf {time} is a number of seconds since Unix epoch.}
+\item \uncover<1->{\textbf {record} is key-value pairs of the event record.}
+\item \uncover<2->{\color{battleshipgrey} \textbf {option} is optional key-value pairs, to bring data to control servers' behavior.}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{introduction | Message Mode}
+\begin{block}{Message Mode}
+It carries just a event.
+\end{block}
+\begin{table}[htb]
+\resizebox{\textwidth}{!}{%
+    %\caption{Message mode protocol}
+    \begin{tabular}{l | c | c | c } \hline
+      name & type & content & mandatory? \\ \hline \hline
+      tag & str & tag name & yes \\ \hline
+      time & Integer/EventTime(ext type) & Unix Time/Unix Time with nano seconds & yes \\ \hline
+      record & Object(like HashMap) & pairs of keys(String) and values(Object) & yes \\ \hline
+      option & Object(like HashMap) & pairs of keys(String) and values(Object) & no \\ \hline
+    \end{tabular}}
+\end{table}
+\end{frame}
+
+\begin{frame}{introduction | Forward Mode}
+\begin{block}{Forward Mode}
+It carries a series of events as a msgpack array on a single request.
+\end{block}
+\begin{itemize}
+\item \uncover<1->{\textbf {tag} is a string separated with '.' (e.g. myapp.access) to categorize events.}
+\item \uncover<1->{\textbf {entries} is an array of Entries which are pairs of Unix epoch and record.}
+\item \uncover<2->{\color{battleshipgrey} \textbf {option} is optional key-value pairs, to bring data to control servers' behavior.}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{introduction | Message Mode}
+\begin{block}{Forward Mode}
+It carries a series of events as a msgpack array on a single request.
+\end{block}
+\begin{table}[htb]
+\resizebox{\textwidth}{!}{%
+    %\caption{Message mode protocol}
+    \begin{tabular}{l | c | c | c } \hline
+      name & type & content & mandatory? \\ \hline \hline
+      tag & str & tag name & yes \\ \hline
+      entries & Array & an array of Entries which are pairs of Unix epoch and record. & yes \\ \hline
+      option & Object(like HashMap) & pairs of keys(String) and values(Object) & no \\ \hline
+    \end{tabular}}
+\end{table}
+\end{frame}
+
+\begin{frame}{introduction | PackedForward Mode}
+\begin{block}{PackedForward Mode}
+It carries a series of events as a msgpack array on a single request.
+\end{block}
+\begin{itemize}
+\item \uncover<1->{\textbf {tag} is a string separated with '.' (e.g. myapp.access) to categorize events.}
+\item \uncover<1->{\textbf {entries} is a msgpack stream of Entry which contains pairs of Unix epoch and record msgpack binary.}
+\item \uncover<2->{\color{battleshipgrey} \textbf {option} is optional key-value pairs, to bring data to control servers' behavior.}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{introduction | Message Mode}
+\begin{block}{PackedForward Mode}
+It carries a series of events as a msgpack array on a single request.
+\end{block}
+\begin{table}[htb]
+\resizebox{\textwidth}{!}{%
+    %\caption{Message mode protocol}
+    \begin{tabular}{l | c | c | c } \hline
+      name & type & content & mandatory? \\ \hline \hline
+      tag & str & tag name & yes \\ \hline
+      entries & str | bin & a msgpack stream of Entry which contains of Unix epoch and record. & yes \\ \hline
+      option & Object(like HashMap) & pairs of keys(String) and values(Object) & no \\ \hline
+    \end{tabular}}
+\end{table}
+\end{frame}
+
+\begin{frame}{How to implement minimal Fluentd logger?}
+\begin{block}{Minimal Fluentd logger implementation strategy}
+\begin{itemize}
+\item \uncover<1-> {{\textbf {Fluentd logger}} needs to send an event to Fluentd.}
+  \begin{itemize}
+  \item \uncover<2-> {{\textbf {Fluentd logger}} need {\textbf {not}} to add optional elements in sending events to Fluentd.}
+  \item \uncover<3-> {{\textbf {Fluentd logger}} {\textbf {should}} use message mode to send events to Fluentd.}
+  \end{itemize}
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{How to implement minimal Fluentd logger?}
+\begin{block}{Minimal Fluentd logger implementation}
+\begin{itemize}
+\item \uncover<1-> {{\textbf {Fluentd logger}} needs to connect to Fluentd with TCP.}
+\item \uncover<2-> {{\textbf {Fluentd logger}} send an event which conatins tag, timespec, and record, to Fluentd.}
+\item \uncover<3-> {{\textbf {Fluentd logger}} should disconnect against  Fluentd.}
+\end{itemize}
+\end{block}
+\end{frame}
+
+\frame{\centering \Large Thank you for your attention.}
+
+\end{document}
