@@ -1,6 +1,7 @@
 \documentclass[12pt, unicode]{beamer}
 \usetheme{Warsaw}
 \usepackage{luatexja}
+\usepackage{listings}
 %color
 \definecolor{battleshipgrey}{rgb}{0.52, 0.52, 0.51}
 
@@ -129,6 +130,37 @@ It carries a series of events as a msgpack array on a single request.
 \item \uncover<3-> {{\textbf {Fluentd logger}} should disconnect against  Fluentd.}
 \end{itemize}
 \end{block}
+\end{frame}
+
+%% Define highlighting for Rust.
+\lstdefinelanguage{Rust} {
+  morecomment = [l]{//},
+  morecomment = [l]{///},
+  morecomment = [s]{/*}{*/},
+  morestring=[b]",
+  sensitive = true,
+  morekeywords = {extern,  crate,  fn,  let, use}
+}
+% Set font size for lstlisting.
+\newcommand\Small{\fontsize{9}{9.2}\selectfont}
+\begin{frame}[fragile]
+Fruently example:
+\begin{lstlisting}[language={Rust},basicstyle=\ttfamily\Small]
+extern crate fruently;
+use fruently::fluent::Fluent;
+use std::collections::HashMap;
+use fruently::forwardable::JsonForwardable;
+
+fn main() {
+    // create record
+    let mut obj: HashMap<String, String> = HashMap::new();
+    obj.insert("name".to_string(), "fruently".to_string());
+    // establish connection with Fluentd.
+    let fruently = Fluent::new("0.0.0.0:24224", "test");
+    // send record to Fluentd and disconnecting automatically.
+    let _ = fruently.post(&obj);
+}
+\end{lstlisting}
 \end{frame}
 
 \frame{\centering \Large Thank you for your attention.}
