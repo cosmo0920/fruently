@@ -134,7 +134,7 @@ It carries a series of events as a msgpack array on a single request.
 \begin{itemize}
 \item \uncover<1-> {{\textbf {Fluentd logger}} needs to connect to Fluentd with TCP.}
 \item \uncover<2-> {{\textbf {Fluentd logger}} send an event which conatins tag, timespec, and record, to Fluentd.}
-\item \uncover<3-> {{\textbf {Fluentd logger}} should disconnect against  Fluentd.}
+\item \uncover<3-> {{\textbf {Fluentd logger}} should disconnect connection against Fluentd immediately when sending an event.}
 \end{itemize}
 \end{block}
 \end{frame}
