@@ -2,3 +2,10 @@ target
 Cargo.lock
 .DS_Store
 *.rs.bk
+*.toc
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.synctex.gz
