@@ -21,7 +21,7 @@
 
 \frame{\maketitle}
 
-\begin{frame}{Fluentd forward protocol modes in v0}
+\begin{frame}{Introduction}
 \begin{block}{What is Fluentd?}
 Fluentd is a fully free open-source log collector for unified logging layer.
 \end{block}
@@ -34,7 +34,7 @@ Fluentd is a fully free open-source log collector for unified logging layer.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{introduction}
+\begin{frame}{Forward protocol - Introduction}
 \begin{block}{Forward protocol\footnote[frame]{https://github.com/fluent/fluentd/wiki/Forward-Protocol-Specification-v0}}
 Fluentd has three modes in forward protocol.
 \end{block}
@@ -45,7 +45,7 @@ Fluentd has three modes in forward protocol.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{introduction | Message Mode}
+\begin{frame}{Message Mode protocol}
 \begin{block}{Message Mode\footnote[frame]{https://github.com/fluent/fluentd/wiki/Forward-Protocol-Specification-v0\#message-mode}}
 It carries just an event.
 \end{block}
@@ -57,7 +57,7 @@ It carries just an event.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{introduction | Message Mode}
+\begin{frame}{Message Mode protocol}
 \begin{block}{Message Mode\footnote[frame]{https://github.com/fluent/fluentd/wiki/Forward-Protocol-Specification-v0\#message-mode}}
 It carries just an event.
 \end{block}
@@ -73,7 +73,7 @@ It carries just an event.
 \end{table}
 \end{frame}
 
-\begin{frame}{introduction | Forward Mode}
+\begin{frame}{Forward Mode protocol}
 \begin{block}{Forward Mode\footnote[frame]{https://github.com/fluent/fluentd/wiki/Forward-Protocol-Specification-v0\#forward-mode}}
 It carries a series of events as a msgpack array on a single request.
 \end{block}
@@ -84,7 +84,7 @@ It carries a series of events as a msgpack array on a single request.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{introduction | Forward Mode}
+\begin{frame}{Forward Mode protocol}
 \begin{block}{Forward Mode\footnote[frame]{https://github.com/fluent/fluentd/wiki/Forward-Protocol-Specification-v0\#forward-mode}}
 It carries a series of events as a msgpack array on a single request.
 \end{block}
@@ -99,7 +99,7 @@ It carries a series of events as a msgpack array on a single request.
 \end{table}
 \end{frame}
 
-\begin{frame}{introduction | PackedForward Mode}
+\begin{frame}{PackedForward Mode protocol}
 \begin{block}{PackedForward Mode\footnote[frame]{https://github.com/fluent/fluentd/wiki/Forward-Protocol-Specification-v0\#packedforward-mode}}
 It carries a series of events as a msgpack binary on a single request.
 \end{block}
@@ -110,7 +110,7 @@ It carries a series of events as a msgpack binary on a single request.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{introduction | PackedForward Mode}
+\begin{frame}{PackedForward Mode protocol}
 \begin{block}{PackedForward Mode\footnote[frame]{https://github.com/fluent/fluentd/wiki/Forward-Protocol-Specification-v0\#packedforward-mode}}
 It carries a series of events as a msgpack binary on a single request.
 \end{block}
