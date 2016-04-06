@@ -3,6 +3,8 @@ Fruently
 
 [![Build Status](https://travis-ci.org/cosmo0920/fruently.svg?branch=master)](https://travis-ci.org/cosmo0920/fruently)
 
+[Documentation](http://cosmo0920.github.io/fruently/fruently/index.html)
+
 A yet another Fluentd logger for Rust.
 
 ### Usage
