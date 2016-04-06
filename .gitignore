@@ -8,4 +8,5 @@ Cargo.lock
 *.nav
 *.out
 *.snm
+*.vrb
 *.synctex.gz
