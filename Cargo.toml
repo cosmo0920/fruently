@@ -5,11 +5,22 @@ authors = ["Hiroshi Hatake <cosmo0920.wp@gmail.com>"]
 description = "A yet another Fluentd logger for Rust."
 license-file = "LICENSE"
 repository = "https://github.com/cosmo0920/fruently"
+build = "build.rs"
 
 [features]
 fluentd = []
+readme-testing = ["skeptic"]
+
+[build-dependencies.skeptic]
+version = "~0.4"
+default-features = false
+
+[dev-dependencies.skeptic]
+version = "~0.4"
+default-features = false
 
 [dependencies]
+skeptic = {version = "~0.4", optional = true}
 rustc-serialize = "~0.3.18"
 time = "~0.1.34"
 retry = "~0.4.0"
