@@ -18,13 +18,13 @@ fruently = "0.4.0"
 
 and this to your crate root:
 
-```rust
+```rust,ignore
 extern crate fruently;
 ```
 
 #### A complete example
 
-```rust
+```rust,no_run
 extern crate fruently;
 use fruently::fluent::Fluent;
 use std::collections::HashMap;
