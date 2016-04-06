@@ -22,6 +22,16 @@
 \frame{\maketitle}
 
 \begin{frame}{Fluentd forward protocol modes in v0}
+\begin{block}{What is Fluentd?}
+Fluentd is a fully free open-source log collector for unified logging layer.
+\end{block}
+\onslide<1->
+\begin{itemize}
+\item<2-> Unified logging with JSON and msgpack
+\item<3-> Pluggable architecture
+\item<4-> Minimum resources required
+\item<5-> Built-in reliability
+\end{itemize}
 \end{frame}
 
 \begin{frame}{introduction}
@@ -69,7 +79,7 @@ It carries a series of events as a msgpack array on a single request.
 \end{block}
 \begin{itemize}
 \item \uncover<1->{\textbf {tag} is a string separated with '.' (e.g. myapp.access) to categorize events.}
-\item \uncover<1->{\textbf {entries} is an array of Entries which are pairs of Unix epoch and record.}
+\item \uncover<1->{\textbf {entries}\footnote[frame]{https://github.com/fluent/fluentd/wiki/Forward-Protocol-Specification-v0\#entry} is an array of Entries which are pairs of Unix epoch and record.}
 \item \uncover<2->{\color{battleshipgrey} \textbf {option} is optional key-value pairs, to bring data to control servers' behavior.}
 \end{itemize}
 \end{frame}
