@@ -13,7 +13,7 @@
 \definecolor{battleshipgrey}{rgb}{0.52, 0.52, 0.51}
 
 \title{Fluentd forward protocol modes in v0}
-\subtitle{... and how to implement minimal Fluentd logger?}
+\subtitle{... and how to implement minimal Fluentd logger.}
 \author{Hiroshi Hatake}
 \date[2016/04/08]{情報共有の会}
 
@@ -134,7 +134,7 @@ It carries a series of events as a msgpack array on a single request.
 \begin{block}{Minimal Fluentd logger implementation}
 \begin{itemize}
 \item \uncover<1-> {{\textbf {Fluentd logger}} needs to connect to Fluentd with TCP.}
-\item \uncover<2-> {{\textbf {Fluentd logger}} send an event which conatins tag, timespec, and record, to Fluentd.}
+\item \uncover<2-> {{\textbf {Fluentd logger}} send an event which contains tag, timespec, and record, to Fluentd.}
 \item \uncover<3-> {{\textbf {Fluentd logger}} should disconnect connection against Fluentd immediately when sending an event.}
 \end{itemize}
 \end{block}
@@ -172,6 +172,6 @@ fn main() {
 \end{lstlisting}
 \end{frame}
 
-\frame{\centering \Large Thank you for your attention.}
+\frame{\centering \Large Any questions?}
 
 \end{document}
