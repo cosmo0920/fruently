@@ -5,5 +5,11 @@ rust:
   - beta
   - 1.7.0
 
+install: bundle install --path vendor/bundle
+
 script:
-  - cargo test
+  - bundle exec fluentd -c conf/in_forward.conf &
+  - cargo test --features "readme-testing fluentd"
+
+after_script:
+  - killall ruby
