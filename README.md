@@ -24,7 +24,7 @@ extern crate fruently;
 
 #### A complete example
 
-```rust,no_run
+```rust
 extern crate fruently;
 use fruently::fluent::Fluent;
 use std::collections::HashMap;
