@@ -4,6 +4,7 @@ rust:
   - nightly
   - beta
   - 1.7.0
+  - 1.8.0
 
 install: bundle install --path vendor/bundle
 
