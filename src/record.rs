@@ -1,6 +1,7 @@
 use rustc_serialize::json;
 use rustc_serialize::json::Json;
 use rustc_serialize::Encodable;
+use rustc_serialize::Encoder;
 use rmp_serialize::encode;
 use time::Tm;
 use std::io;
@@ -55,19 +56,38 @@ impl<T: Encodable> Record<T> {
     }
 
     pub fn make_forwardable_json(self) -> Result<String, FluentError> {
-        let tag = try!(json::encode(&self.tag));
-        let record = try!(json::encode(&self.record));
-        let option = Json::Null;
-        let message = format!("[{},{},{},{}]",
-                              tag,
-                              self.time.to_timespec().sec,
-                              record,
-                              option);
+        let message = try!(json::encode(&self));
         Ok(message)
     }
 
     pub fn to_message(self) -> Message<T> {
         Message::new(self.tag, self.time.to_timespec().sec, self.record)
+    }
+}
+
+/// Construct custom encoding json style.
+///
+/// Because `Record` struct should map following style json:
+///
+/// `[tag, unixtime/eventtime, record]`
+///
+/// ref: https://github.com/fluent/fluentd/wiki/Forward-Protocol-Specification-v0#message-mode
+impl<T: Encodable> Encodable for Record<T> {
+    fn encode<S: Encoder>(&self, encoder: &mut S) -> Result<(), S::Error> {
+        match *self {
+            Record { tag: ref p_tag, time: ref p_time, record: ref p_record } => {
+                encoder.emit_tuple(4, |encoder| {
+                    try!(encoder.emit_tuple_arg(0, |encoder| p_tag.encode(encoder)));
+                    try!(encoder.emit_tuple_arg(1, |encoder| {
+                        p_time.to_timespec().sec.encode(encoder)
+                    }));
+                    try!(encoder.emit_tuple_arg(2, |encoder| p_record.encode(encoder)));
+                    // Put `Json::Null` as-is for now.
+                    try!(encoder.emit_tuple_arg(3, |encoder| Json::Null.encode(encoder)));
+                    Ok(())
+                })
+            }
+        }
     }
 }
 
