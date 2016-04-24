@@ -55,14 +55,12 @@ impl<A: ToSocketAddrs> JsonForwardable for Fluent<A> {
 }
 
 #[cfg(test)]
+#[cfg(feature="fluentd")]
 mod tests {
-    #[cfg(feature="fluentd")]
     use time;
-    #[cfg(feature="fluentd")]
     use fluent::Fluent;
 
     #[test]
-    #[cfg(feature="fluentd")]
     fn test_post() {
         use std::collections::HashMap;
         use forwardable::JsonForwardable;
@@ -75,7 +73,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature="fluentd")]
     fn test_post_with_time() {
         use std::collections::HashMap;
         use forwardable::JsonForwardable;
