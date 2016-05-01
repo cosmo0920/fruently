@@ -5,6 +5,7 @@ use std::io::Write;
 use record::FluentError;
 use retry_conf::RetryConf;
 use forwardable::msgpack::Message;
+use forwardable::forward::Forward;
 use rustc_serialize::Encodable;
 use rmp_serialize::Encoder;
 
@@ -83,6 +84,21 @@ impl<A: ToSocketAddrs> Fluent<A> {
         let mut stream = try!(net::TcpStream::connect(addr));
         let mut encoder = Encoder::new(&mut stream);
         let result = message.encode(&mut encoder);
+
+        match result {
+            Ok(_) => Ok(()),
+            Err(v) => Err(From::from(v)),
+        }
+    }
+
+    #[doc(hidden)]
+    /// For internal usage.
+    pub fn closure_send_as_forward<T: Encodable>(addr: &A,
+                                                 forward: &Forward<T>)
+                                                 -> Result<(), FluentError> {
+        let mut stream = try!(net::TcpStream::connect(addr));
+        let mut encoder = Encoder::new(&mut stream);
+        let result = forward.encode(&mut encoder);
 
         match result {
             Ok(_) => Ok(()),
