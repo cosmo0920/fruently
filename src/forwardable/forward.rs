@@ -1,3 +1,29 @@
+//! Send records as forward mode.
+//!
+//! ## Usage
+//!
+//! This trait is used as follows:
+//!
+//! ```no_run
+//! extern crate fruently;
+//! use fruently::fluent::Fluent;
+//! use std::collections::HashMap;
+//! use fruently::forwardable::Forwardable;
+//!
+//! fn main() {
+//!     let fruently = Fluent::new("0.0.0.0:24224", "test");
+//!     let mut obj1: HashMap<String, String> = HashMap::new();
+//!     obj1.insert("hey".to_string(), "Rust with forward mode!".to_string());
+//!     let mut obj2: HashMap<String, String> = HashMap::new();
+//!     obj2.insert("yeah".to_string(), "Also sent together!".to_string());
+//!     // In practice, use time::now() or chrono crate's methods instead.
+//!     let time = 1462080486;
+//!     let entry = (time, obj1);
+//!     let entry2 = (time, obj2);
+//!     let _ = fruently.post(vec![(entry), (entry2)]);
+//! }
+//! ```
+
 use std::net::ToSocketAddrs;
 use rustc_serialize::Encodable;
 use retry::retry_exponentially;
