@@ -6,6 +6,7 @@
 //!
 //! ```no_run
 //! extern crate fruently;
+//! extern crate time;
 //! use fruently::fluent::Fluent;
 //! use std::collections::HashMap;
 //! use fruently::forwardable::Forwardable;
@@ -16,8 +17,7 @@
 //!     obj1.insert("hey".to_string(), "Rust with forward mode!".to_string());
 //!     let mut obj2: HashMap<String, String> = HashMap::new();
 //!     obj2.insert("yeah".to_string(), "Also sent together!".to_string());
-//!     // In practice, use time::now() or chrono crate's methods instead.
-//!     let time = 1462080486;
+//!     let time = time::now().to_timespec().sec;
 //!     let entry = (time, obj1);
 //!     let entry2 = (time, obj2);
 //!     let _ = fruently.post(vec![(entry), (entry2)]);
