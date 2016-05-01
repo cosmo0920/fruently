@@ -24,11 +24,29 @@ extern crate fruently;
 
 #### A complete example
 
+#### Forwarding with JSON
+
 ```rust
 extern crate fruently;
 use fruently::fluent::Fluent;
 use std::collections::HashMap;
 use fruently::forwardable::JsonForwardable;
+
+fn main() {
+    let mut obj: HashMap<String, String> = HashMap::new();
+    obj.insert("name".to_string(), "fruently".to_string());
+    let fruently = Fluent::new("0.0.0.0:24224", "test");
+    let _ = fruently.post(&obj);
+}
+```
+
+#### Forwarding with msgpack
+
+```rust
+extern crate fruently;
+use fruently::fluent::Fluent;
+use std::collections::HashMap;
+use fruently::forwardable::MsgpackForwardable;
 
 fn main() {
     let mut obj: HashMap<String, String> = HashMap::new();
