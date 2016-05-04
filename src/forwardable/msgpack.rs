@@ -22,8 +22,7 @@ use std::net::ToSocketAddrs;
 use rustc_serialize::Encodable;
 use time;
 use retry::retry_exponentially;
-use record::Record;
-use record::FluentError;
+use record::{Record, FluentError};
 use forwardable::MsgpackForwardable;
 use fluent::Fluent;
 

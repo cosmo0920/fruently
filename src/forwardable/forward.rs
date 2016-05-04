@@ -28,8 +28,7 @@ use std::net::ToSocketAddrs;
 use rustc_serialize::Encodable;
 use retry::retry_exponentially;
 use record::FluentError;
-use forwardable::Forwardable;
-use forwardable::Entry;
+use forwardable::{Entry, Forwardable};
 use fluent::Fluent;
 
 #[derive(Debug, Clone, PartialEq, Eq, RustcEncodable, RustcDecodable)]

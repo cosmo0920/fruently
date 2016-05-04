@@ -1,7 +1,6 @@
 use rustc_serialize::json;
 use rustc_serialize::json::Json;
-use rustc_serialize::Encodable;
-use rustc_serialize::Encoder;
+use rustc_serialize::{Encodable, Encoder};
 use rmp_serialize::encode;
 use time::Tm;
 use std::io;
