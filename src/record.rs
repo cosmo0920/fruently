@@ -1,3 +1,5 @@
+//! Implement record manupulation mechanisms.
+
 use rustc_serialize::json;
 use rustc_serialize::json::Json;
 use rustc_serialize::{Encodable, Encoder};

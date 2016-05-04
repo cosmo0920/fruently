@@ -1,3 +1,5 @@
+//! Implement concrete sending record(s) specifications.
+
 use rustc_serialize::Encodable;
 use time;
 use record::FluentError;

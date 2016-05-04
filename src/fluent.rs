@@ -1,3 +1,5 @@
+//! Send record(s) into Fluentd.
+
 use std::net::ToSocketAddrs;
 use std::convert::AsRef;
 use std::net;
