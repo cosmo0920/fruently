@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="API documentation for the Rust `retry_conf` mod in crate `fruently`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang, retry_conf">
+    <meta name="description" content="API documentation for the Rust `Entry` type in crate `fruently`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, Entry">
 
-    <title>fruently::retry_conf - Rust</title>
+    <title>fruently::forwardable::Entry - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
@@ -27,7 +27,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'><a href='../index.html'>fruently</a></p><script>window.sidebarCurrent = {name: 'retry_conf', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
+        <p class='location'><a href='../index.html'>fruently</a>::<wbr><a href='index.html'>forwardable</a></p><script>window.sidebarCurrent = {name: 'Entry', ty: 'type', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -41,23 +41,13 @@
         </form>
     </nav>
 
-    <section id='main' class="content mod">
-<h1 class='fqn'><span class='in-band'>Module <a href='../index.html'>fruently</a>::<wbr><a class='mod' href=''>retry_conf</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content type">
+<h1 class='fqn'><span class='in-band'><a href='../index.html'>fruently</a>::<wbr><a href='index.html'>forwardable</a>::<wbr><a class='type' href=''>Entry</a></span><span class='out-of-band'><span id='render-detail'>
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-412' class='srclink' href='../../src/fruently/src/retry_conf.rs.html#1-57' title='goto source code'>[src]</a></span></h1>
-<div class='docblock'><p>Retry sending records configuration.</p>
-</div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
-<table>
-                    <tr class=' module-item'>
-                        <td><a class='struct' href='struct.RetryConf.html'
-                               title='fruently::retry_conf::RetryConf'>RetryConf</a></td>
-                        <td class='docblock short'>
-                             <p>You can calculate retrying interval as the following equation:</p>
-                        </td>
-                    </tr>
-                </table></section>
+        </span><a id='src-230' class='srclink' href='../../src/fruently/src/forwardable/mod.rs.html#7' title='goto source code'>[src]</a></span></h1>
+<pre class='rust typedef'>type Entry&lt;T&gt; <span class='where'>where T: <a class='trait' href='https://doc.rust-lang.org/rustc-serialize/rustc_serialize/serialize/trait.Encodable.html' title='rustc_serialize::serialize::Encodable'>Encodable</a></span> = <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(</a><a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.i64.html'>i64</a>, T<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>)</a>;</pre></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>

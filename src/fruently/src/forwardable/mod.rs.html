@@ -9,8 +9,8 @@
 
     <title>mod.rs.html -- source</title>
 
-    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../../main.css">
+    <link rel="stylesheet" type="text/css" href="../../../../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../../../../main.css">
 
     
     
@@ -57,10 +57,23 @@
 <span id="14">14</span>
 <span id="15">15</span>
 <span id="16">16</span>
+<span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
 </pre><pre class='rust '>
+<span class='doccomment'>//! Implement concrete sending record(s) specifications.</span>
+
 <span class='kw'>use</span> <span class='ident'>rustc_serialize</span>::<span class='ident'>Encodable</span>;
 <span class='kw'>use</span> <span class='ident'>time</span>;
 <span class='kw'>use</span> <span class='ident'>record</span>::<span class='ident'>FluentError</span>;
+
+<span class='kw'>pub</span> <span class='kw'>type</span> <span class='ident'>Entry</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>T</span>: <span class='ident'>Encodable</span> <span class='op'>=</span> (<span class='ident'>i64</span>, <span class='ident'>T</span>);
 
 <span class='kw'>pub</span> <span class='kw'>trait</span> <span class='ident'>JsonForwardable</span> {
     <span class='kw'>fn</span> <span class='ident'>post</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>Encodable</span><span class='op'>&gt;</span>(<span class='self'>self</span>, <span class='ident'>record</span>: <span class='ident'>T</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>FluentError</span><span class='op'>&gt;</span>;
@@ -72,8 +85,13 @@
     <span class='kw'>fn</span> <span class='ident'>post_with_time</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>Encodable</span><span class='op'>&gt;</span>(<span class='self'>self</span>, <span class='ident'>record</span>: <span class='ident'>T</span>, <span class='ident'>time</span>: <span class='ident'>time</span>::<span class='ident'>Tm</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>FluentError</span><span class='op'>&gt;</span>;
 }
 
+<span class='kw'>pub</span> <span class='kw'>trait</span> <span class='ident'>Forwardable</span> {
+    <span class='kw'>fn</span> <span class='ident'>post</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>Encodable</span><span class='op'>&gt;</span>(<span class='self'>self</span>, <span class='ident'>entries</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>Entry</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>FluentError</span><span class='op'>&gt;</span>;
+}
+
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>json</span>;
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>msgpack</span>;
+<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>forward</span>;
 </pre>
 </section>
     <section id='search' class="content hidden"></section>
@@ -118,7 +136,7 @@
 
                 <p>
                     Search functions by type signature (e.g.
-                    <code>vec -> usize</code>)
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
                 </p>
             </div>
         </div>
@@ -127,13 +145,13 @@
     
 
     <script>
-        window.rootPath = "../../../";
+        window.rootPath = "../../../../";
         window.currentCrate = "fruently";
         window.playgroundUrl = "";
     </script>
-    <script src="../../../jquery.js"></script>
-    <script src="../../../main.js"></script>
+    <script src="../../../../jquery.js"></script>
+    <script src="../../../../main.js"></script>
     
-    <script defer src="../../../search-index.js"></script>
+    <script defer src="../../../../search-index.js"></script>
 </body>
 </html>

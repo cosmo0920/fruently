@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["json","Send record as forwardable json."],["msgpack","Send record as msgpack."]],"trait":[["JsonForwardable",""],["MsgpackForwardable",""]]});
+initSidebarItems({"mod":[["forward","Send records as forward mode."],["json","Send record as forwardable json."],["msgpack","Send record as msgpack."]],"trait":[["Forwardable",""],["JsonForwardable",""],["MsgpackForwardable",""]],"type":[["Entry",""]]});

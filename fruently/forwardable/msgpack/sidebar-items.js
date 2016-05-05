@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Message",""]]});
+initSidebarItems({});
