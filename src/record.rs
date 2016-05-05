@@ -7,7 +7,6 @@ use rmp_serialize::encode;
 use time::Tm;
 use std::io;
 use retry;
-use forwardable::msgpack::Message;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Record<T: Encodable> {
@@ -59,10 +58,6 @@ impl<T: Encodable> Record<T> {
     pub fn make_forwardable_json(self) -> Result<String, FluentError> {
         let message = try!(json::encode(&self));
         Ok(message)
-    }
-
-    pub fn to_message(self) -> Message<T> {
-        Message::new(self.tag, self.time.to_timespec().sec, self.record)
     }
 }
 

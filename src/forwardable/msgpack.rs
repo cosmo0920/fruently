@@ -26,23 +26,6 @@ use record::{Record, FluentError};
 use forwardable::MsgpackForwardable;
 use fluent::Fluent;
 
-#[derive(Debug, Clone, PartialEq, Eq, RustcEncodable, RustcDecodable)]
-pub struct Message<T: Encodable> {
-    tag: String,
-    timesec: i64,
-    record: T,
-}
-
-impl<T: Encodable> Message<T> {
-    pub fn new(tag: String, timesec: i64, record: T) -> Message<T> {
-        Message {
-            tag: tag,
-            timesec: timesec,
-            record: record,
-        }
-    }
-}
-
 impl<A: ToSocketAddrs> MsgpackForwardable for Fluent<A> {
     /// Post record into Fluentd. Without time version.
     fn post<T>(self, record: T) -> Result<(), FluentError>
@@ -57,12 +40,11 @@ impl<A: ToSocketAddrs> MsgpackForwardable for Fluent<A> {
         where T: Encodable
     {
         let record = Record::new(self.get_tag(), time, record);
-        let message = record.to_message();
         let addr = self.get_addr();
         let (max, multiplier) = self.get_conf().build();
         match retry_exponentially(max,
                                   multiplier,
-                                  || Fluent::closure_send_as_msgpack(addr, &message),
+                                  || Fluent::closure_send_as_msgpack(addr, &record),
                                   |response| response.is_ok()) {
             Ok(_) => Ok(()),
             Err(v) => Err(From::from(v)),
