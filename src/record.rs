@@ -60,9 +60,9 @@ impl<T: Encodable> Record<T> {
     }
 }
 
-/// Construct custom encoding json style.
+/// Construct custom encoding json/msgpack style.
 ///
-/// Because `Record` struct should map following style json:
+/// Because `Record` struct should map following style json/msgpack:
 ///
 /// `[tag, unixtime/eventtime, record]`
 ///
