@@ -1,7 +1,6 @@
 //! Implement record manupulation mechanisms.
 
 use rustc_serialize::json;
-use rustc_serialize::json::Json;
 use rustc_serialize::{Encodable, Encoder};
 use rmp_serialize::encode;
 use time::Tm;
@@ -78,8 +77,8 @@ impl<T: Encodable> Encodable for Record<T> {
                         p_time.to_timespec().sec.encode(encoder)
                     }));
                     try!(encoder.emit_tuple_arg(2, |encoder| p_record.encode(encoder)));
-                    // Put `Json::Null` as-is for now.
-                    try!(encoder.emit_tuple_arg(3, |encoder| Json::Null.encode(encoder)));
+                    // Put `None::<T>` as-is for now.
+                    try!(encoder.emit_tuple_arg(3, |encoder| None::<T>.encode(encoder)));
                     Ok(())
                 })
             }
