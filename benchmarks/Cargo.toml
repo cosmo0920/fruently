@@ -7,3 +7,6 @@ publish = false
 [dependencies.fruently]
 version = "~0.5.0"
 path = "../../fruently"
+
+[dependencies]
+time = "~0.1.34"
