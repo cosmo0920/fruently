@@ -41,18 +41,20 @@ mod tests {
         use fruently::forwardable::Forwardable;
 
         let mut obj = HashMap::new();
+        let mut hmap = HashMap::new();
         let time = time::now().to_timespec().sec;
         b.iter(|| {
             let n = test::black_box(1000);
-            let hmap = (0..n).fold(&mut obj, |mut acc, _| {
+            let thmap = (0..n).fold(&mut obj, |mut acc, _| {
                 {
                     acc.insert("fwd", "fruently".to_string());
                 }
                 acc
             });
-            let entry = (time, &*hmap);
-            let fruently = Fluent::new("0.0.0.0:24224", "test");
-            let _ = fruently.post(vec![(entry)]);
-        })
+            hmap = thmap.clone();
+        });
+        let entry = (time, hmap);
+        let fruently = Fluent::new("0.0.0.0:24224", "test");
+        let _ = fruently.post(vec![(entry)]);
     }
 }
