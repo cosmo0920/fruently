@@ -2,6 +2,7 @@ Fruently
 ===
 
 [![Build Status](https://travis-ci.org/cosmo0920/fruently.svg?branch=master)](https://travis-ci.org/cosmo0920/fruently)
+[![](http://meritbadge.herokuapp.com/fruently)](https://crates.io/crates/fruently)
 
 [Documentation](http://cosmo0920.github.io/fruently/fruently/index.html)
 
