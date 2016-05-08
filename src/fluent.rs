@@ -66,7 +66,7 @@ impl<A: ToSocketAddrs> Fluent<A> {
 
     #[doc(hidden)]
     /// For internal usage.
-    pub fn closure_send_data(addr: &A, message: String) -> Result<(), FluentError> {
+    pub fn closure_send_as_json(addr: &A, message: String) -> Result<(), FluentError> {
         let mut stream = try!(net::TcpStream::connect(addr));
         let result = stream.write(&message.into_bytes());
         drop(stream);

@@ -45,7 +45,7 @@ impl<A: ToSocketAddrs> JsonForwardable for Fluent<A> {
         let (max, multiplier) = self.get_conf().build();
         match retry_exponentially(max,
                                   multiplier,
-                                  || Fluent::closure_send_data(addr, message.clone()),
+                                  || Fluent::closure_send_as_json(addr, message.clone()),
                                   |response| response.is_ok()) {
             Ok(_) => Ok(()),
             Err(v) => Err(From::from(v)),
