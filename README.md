@@ -23,7 +23,7 @@ and this to your crate root:
 extern crate fruently;
 ```
 
-#### A complete example
+#### Complete examples
 
 #### Forwarding with JSON
 
