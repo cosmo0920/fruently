@@ -61,7 +61,7 @@ fn main() {
 
 Fruently does not have async API because Rust has `std::thread::spawn` function to make asynchronous API from synchronous one.
 
-If you want to send records into Fluentd asynchronously, please consider `std::thread::spawn` like: [asynchronous example](examples/thread.rs).
+If you want to send records into Fluentd asynchronously, please consider using `std::thread::spawn` like: [asynchronous example](examples/thread.rs).
 
 ### LICENSE
 
