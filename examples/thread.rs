@@ -9,8 +9,8 @@ fn main() {
     let mut obj: HashMap<String, String> = HashMap::new();
     obj.insert("threaded".to_string(), "fruently".to_string());
     let threads: Vec<_> = (0..10).map(|_| {
-        let obj = obj.clone();
-        let fruently = fruently.clone();
+        let obj = obj.to_owned();
+        let fruently = fruently.to_owned();
         thread::spawn(move || {
             let _ = fruently.post(&obj);
         })
