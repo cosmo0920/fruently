@@ -1,5 +1,6 @@
 //! Send record(s) into Fluentd.
 
+use std::borrow::Borrow;
 use std::net::ToSocketAddrs;
 use std::convert::AsRef;
 use std::net;
@@ -51,7 +52,7 @@ impl<A: ToSocketAddrs> Fluent<A> {
 
     #[doc(hidden)]
     pub fn get_addr(&self) -> &A {
-        &self.addr
+        self.addr.borrow()
     }
 
     #[doc(hidden)]
