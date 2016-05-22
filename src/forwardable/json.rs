@@ -32,7 +32,7 @@ impl<A: ToSocketAddrs> JsonForwardable for Fluent<A> {
         where T: Encodable
     {
         let time = time::now();
-        return self.post_with_time(record, time);
+        self.post_with_time(record, time)
     }
 
     /// Post record into Fluentd. With time version.
