@@ -34,7 +34,7 @@ impl<A: ToSocketAddrs> Fluent<A> {
     {
         Fluent {
             addr: addr,
-            tag: format!("{}", tag.as_ref()),
+            tag: tag.as_ref().to_owned(),
             conf: RetryConf::new(),
         }
     }
@@ -44,7 +44,7 @@ impl<A: ToSocketAddrs> Fluent<A> {
     {
         Fluent {
             addr: addr,
-            tag: format!("{}", tag.as_ref()),
+            tag: tag.as_ref().to_owned(),
             conf: conf,
         }
     }
