@@ -1,3 +1,5 @@
+#![cfg_attr(feature = "dev", feature(plugin))]
+#![cfg_attr(feature = "dev", plugin(clippy))]
 #![feature(test)]
 
 extern crate test;
