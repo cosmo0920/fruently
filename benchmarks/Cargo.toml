@@ -13,4 +13,5 @@ path = "../../fruently"
 
 [dependencies]
 time = "~0.1.34"
+rust_fluent = "~0.3.0"
 clippy = {version = '0.0.67', optional = true}

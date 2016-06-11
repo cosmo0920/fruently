@@ -5,6 +5,7 @@
 extern crate test;
 extern crate time;
 extern crate fruently;
+extern crate rust_fluent;
 
 #[cfg(test)]
 mod tests {
@@ -13,6 +14,18 @@ mod tests {
     use time;
     use fruently::fluent::Fluent;
     use std::collections::HashMap;
+
+    #[bench]
+    fn benchmark_rust_fluent_tcp(b: &mut Bencher) {
+        use rust_fluent::tcp;
+        let mut obj: HashMap<String, String> = HashMap::new();
+        obj.insert("json".to_string(), "value".to_string());
+
+        b.iter(|| {
+            let fluentd = tcp::Fluentd::new("0.0.0.0:24224", "test");
+            let _ = fluentd.write(&obj);
+        });
+    }
 
     #[bench]
     fn benchmark_json_forwardable(b: &mut Bencher) {
