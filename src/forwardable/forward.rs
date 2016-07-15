@@ -47,7 +47,7 @@ impl<T: Encodable> Forward<T> {
 }
 
 impl<A: ToSocketAddrs> Forwardable for Fluent<A> {
-    /// Post record into Fluentd. With time version.
+    /// Post `Vec<Entry<T>>` into Fluentd.
     fn post<T>(self, entries: Vec<Entry<T>>) -> Result<(), FluentError>
         where T: Encodable
     {
