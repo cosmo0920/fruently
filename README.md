@@ -3,6 +3,7 @@ Fruently
 
 [![Build Status](https://travis-ci.org/cosmo0920/fruently.svg?branch=master)](https://travis-ci.org/cosmo0920/fruently)
 [![](http://meritbadge.herokuapp.com/fruently)](https://crates.io/crates/fruently)
+[![Build status](https://ci.appveyor.com/api/projects/status/4qybnaegbiqs0738/branch/master?svg=true)](https://ci.appveyor.com/project/cosmo0920/fruently/branch/master)
 
 [Documentation](http://cosmo0920.github.io/fruently/fruently/index.html)
 
