@@ -9,6 +9,11 @@ Fruently
 
 A yet another Fluentd logger for Rust.
 
+##### Note
+
+If you use this library in Windows, please install Visual Studio 2015 and rust compiler which is targeted for MSVC API and its package manager, which is called cargo via [rustup.rs](https://www.rustup.rs/)
+And then, follow the below usage instructions.
+
 ### Usage
 
 Add this to your Cargo.toml:
