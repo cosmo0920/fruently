@@ -11,6 +11,7 @@
 
     <link rel="stylesheet" type="text/css" href="../../../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../../../main.css">
+    
 
     
     
@@ -162,7 +163,7 @@
         <span class='kw'>where</span> <span class='ident'>T</span>: <span class='ident'>Encodable</span>
     {
         <span class='kw'>let</span> <span class='ident'>time</span> <span class='op'>=</span> <span class='ident'>time</span>::<span class='ident'>now</span>();
-        <span class='kw'>return</span> <span class='self'>self</span>.<span class='ident'>post_with_time</span>(<span class='ident'>record</span>, <span class='ident'>time</span>);
+        <span class='self'>self</span>.<span class='ident'>post_with_time</span>(<span class='ident'>record</span>, <span class='ident'>time</span>)
     }
 
     <span class='doccomment'>/// Post record into Fluentd. With time version.</span>
@@ -175,7 +176,7 @@
         <span class='kw'>let</span> (<span class='ident'>max</span>, <span class='ident'>multiplier</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>get_conf</span>().<span class='ident'>build</span>();
         <span class='kw'>match</span> <span class='ident'>retry_exponentially</span>(<span class='ident'>max</span>,
                                   <span class='ident'>multiplier</span>,
-                                  <span class='op'>||</span> <span class='ident'>Fluent</span>::<span class='ident'>closure_send_data</span>(<span class='ident'>addr</span>, <span class='ident'>message</span>.<span class='ident'>clone</span>()),
+                                  <span class='op'>||</span> <span class='ident'>Fluent</span>::<span class='ident'>closure_send_as_json</span>(<span class='ident'>addr</span>, <span class='ident'>message</span>.<span class='ident'>clone</span>()),
                                   <span class='op'>|</span><span class='ident'>response</span><span class='op'>|</span> <span class='ident'>response</span>.<span class='ident'>is_ok</span>()) {
             <span class='prelude-val'>Ok</span>(_) <span class='op'>=&gt;</span> <span class='prelude-val'>Ok</span>(()),
             <span class='prelude-val'>Err</span>(<span class='ident'>v</span>) <span class='op'>=&gt;</span> <span class='prelude-val'>Err</span>(<span class='ident'>From</span>::<span class='ident'>from</span>(<span class='ident'>v</span>)),
@@ -198,7 +199,7 @@
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>obj</span>: <span class='ident'>HashMap</span><span class='op'>&lt;</span><span class='ident'>String</span>, <span class='ident'>String</span><span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>HashMap</span>::<span class='ident'>new</span>();
         <span class='ident'>obj</span>.<span class='ident'>insert</span>(<span class='string'>&quot;hey&quot;</span>.<span class='ident'>to_string</span>(), <span class='string'>&quot;Rust!&quot;</span>.<span class='ident'>to_string</span>());
         <span class='kw'>let</span> <span class='ident'>result</span> <span class='op'>=</span> <span class='ident'>fruently</span>.<span class='ident'>post</span>(<span class='ident'>obj</span>).<span class='ident'>is_ok</span>();
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='boolval'>true</span>, <span class='ident'>result</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='boolvalue'>true</span>, <span class='ident'>result</span>);
     }
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
@@ -211,7 +212,7 @@
         <span class='ident'>obj</span>.<span class='ident'>insert</span>(<span class='string'>&quot;hey&quot;</span>.<span class='ident'>to_string</span>(), <span class='string'>&quot;Rust!&quot;</span>.<span class='ident'>to_string</span>());
         <span class='kw'>let</span> <span class='ident'>time</span> <span class='op'>=</span> <span class='ident'>time</span>::<span class='ident'>now</span>();
         <span class='kw'>let</span> <span class='ident'>result</span> <span class='op'>=</span> <span class='ident'>fruently</span>.<span class='ident'>post_with_time</span>(<span class='ident'>obj</span>, <span class='ident'>time</span>).<span class='ident'>is_ok</span>();
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='boolval'>true</span>, <span class='ident'>result</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='boolvalue'>true</span>, <span class='ident'>result</span>);
     }
 }
 </pre>
@@ -238,6 +239,8 @@
                     <dd>Move down in search results</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>
 

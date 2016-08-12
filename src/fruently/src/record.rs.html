@@ -11,6 +11,7 @@
 
     <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../../main.css">
+    
 
     
     
@@ -155,12 +156,10 @@
 <span id="112">112</span>
 <span id="113">113</span>
 <span id="114">114</span>
-<span id="115">115</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! Implement record manupulation mechanisms.</span>
 
 <span class='kw'>use</span> <span class='ident'>rustc_serialize</span>::<span class='ident'>json</span>;
-<span class='kw'>use</span> <span class='ident'>rustc_serialize</span>::<span class='ident'>json</span>::<span class='ident'>Json</span>;
 <span class='kw'>use</span> <span class='ident'>rustc_serialize</span>::{<span class='ident'>Encodable</span>, <span class='ident'>Encoder</span>};
 <span class='kw'>use</span> <span class='ident'>rmp_serialize</span>::<span class='ident'>encode</span>;
 <span class='kw'>use</span> <span class='ident'>time</span>::<span class='ident'>Tm</span>;
@@ -175,33 +174,33 @@
 }
 
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>FluentError</span> {
-    <span class='ident'>JsonEncodeError</span>(<span class='ident'>json</span>::<span class='ident'>EncoderError</span>),
-    <span class='ident'>MsgpackEncodeError</span>(<span class='ident'>encode</span>::<span class='ident'>Error</span>),
-    <span class='ident'>IOError</span>(<span class='ident'>io</span>::<span class='ident'>Error</span>),
-    <span class='ident'>RetryError</span>(<span class='ident'>retry</span>::<span class='ident'>RetryError</span>),
+    <span class='ident'>JsonEncode</span>(<span class='ident'>json</span>::<span class='ident'>EncoderError</span>),
+    <span class='ident'>MsgpackEncode</span>(<span class='ident'>encode</span>::<span class='ident'>Error</span>),
+    <span class='ident'>IO</span>(<span class='ident'>io</span>::<span class='ident'>Error</span>),
+    <span class='ident'>Retry</span>(<span class='ident'>retry</span>::<span class='ident'>RetryError</span>),
 }
 
 <span class='kw'>impl</span> <span class='ident'>From</span><span class='op'>&lt;</span><span class='ident'>io</span>::<span class='ident'>Error</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>FluentError</span> {
     <span class='kw'>fn</span> <span class='ident'>from</span>(<span class='ident'>err</span>: <span class='ident'>io</span>::<span class='ident'>Error</span>) <span class='op'>-&gt;</span> <span class='ident'>FluentError</span> {
-        <span class='ident'>FluentError</span>::<span class='ident'>IOError</span>(<span class='ident'>err</span>)
+        <span class='ident'>FluentError</span>::<span class='ident'>IO</span>(<span class='ident'>err</span>)
     }
 }
 
 <span class='kw'>impl</span> <span class='ident'>From</span><span class='op'>&lt;</span><span class='ident'>encode</span>::<span class='ident'>Error</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>FluentError</span> {
     <span class='kw'>fn</span> <span class='ident'>from</span>(<span class='ident'>err</span>: <span class='ident'>encode</span>::<span class='ident'>Error</span>) <span class='op'>-&gt;</span> <span class='ident'>FluentError</span> {
-        <span class='ident'>FluentError</span>::<span class='ident'>MsgpackEncodeError</span>(<span class='ident'>err</span>)
+        <span class='ident'>FluentError</span>::<span class='ident'>MsgpackEncode</span>(<span class='ident'>err</span>)
     }
 }
 
 <span class='kw'>impl</span> <span class='ident'>From</span><span class='op'>&lt;</span><span class='ident'>retry</span>::<span class='ident'>RetryError</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>FluentError</span> {
     <span class='kw'>fn</span> <span class='ident'>from</span>(<span class='ident'>err</span>: <span class='ident'>retry</span>::<span class='ident'>RetryError</span>) <span class='op'>-&gt;</span> <span class='ident'>FluentError</span> {
-        <span class='ident'>FluentError</span>::<span class='ident'>RetryError</span>(<span class='ident'>err</span>)
+        <span class='ident'>FluentError</span>::<span class='ident'>Retry</span>(<span class='ident'>err</span>)
     }
 }
 
 <span class='kw'>impl</span> <span class='ident'>From</span><span class='op'>&lt;</span><span class='ident'>json</span>::<span class='ident'>EncoderError</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>FluentError</span> {
     <span class='kw'>fn</span> <span class='ident'>from</span>(<span class='ident'>err</span>: <span class='ident'>json</span>::<span class='ident'>EncoderError</span>) <span class='op'>-&gt;</span> <span class='ident'>FluentError</span> {
-        <span class='ident'>FluentError</span>::<span class='ident'>JsonEncodeError</span>(<span class='ident'>err</span>)
+        <span class='ident'>FluentError</span>::<span class='ident'>JsonEncode</span>(<span class='ident'>err</span>)
     }
 }
 
@@ -220,9 +219,9 @@
     }
 }
 
-<span class='doccomment'>/// Construct custom encoding json style.</span>
+<span class='doccomment'>/// Construct custom encoding json/msgpack style.</span>
 <span class='doccomment'>///</span>
-<span class='doccomment'>/// Because `Record` struct should map following style json:</span>
+<span class='doccomment'>/// Because `Record` struct should map following style json/msgpack:</span>
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// `[tag, unixtime/eventtime, record]`</span>
 <span class='doccomment'>///</span>
@@ -237,8 +236,8 @@
                         <span class='ident'>p_time</span>.<span class='ident'>to_timespec</span>().<span class='ident'>sec</span>.<span class='ident'>encode</span>(<span class='ident'>encoder</span>)
                     }));
                     <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>encoder</span>.<span class='ident'>emit_tuple_arg</span>(<span class='number'>2</span>, <span class='op'>|</span><span class='ident'>encoder</span><span class='op'>|</span> <span class='ident'>p_record</span>.<span class='ident'>encode</span>(<span class='ident'>encoder</span>)));
-                    <span class='comment'>// Put `Json::Null` as-is for now.</span>
-                    <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>encoder</span>.<span class='ident'>emit_tuple_arg</span>(<span class='number'>3</span>, <span class='op'>|</span><span class='ident'>encoder</span><span class='op'>|</span> <span class='ident'>Json</span>::<span class='ident'>Null</span>.<span class='ident'>encode</span>(<span class='ident'>encoder</span>)));
+                    <span class='comment'>// Put `None::&lt;T&gt;` as-is for now.</span>
+                    <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>encoder</span>.<span class='ident'>emit_tuple_arg</span>(<span class='number'>3</span>, <span class='op'>|</span><span class='ident'>encoder</span><span class='op'>|</span> <span class='prelude-val'>None</span>::<span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>.<span class='ident'>encode</span>(<span class='ident'>encoder</span>)));
                     <span class='prelude-val'>Ok</span>(())
                 })
             }
@@ -248,7 +247,7 @@
 
 <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>test</span>)]</span>
 <span class='kw'>mod</span> <span class='ident'>tests</span> {
-    <span class='kw'>use</span> <span class='ident'>super</span>::<span class='op'>*</span>;
+    <span class='kw'>use</span> <span class='kw'>super</span>::<span class='op'>*</span>;
     <span class='kw'>use</span> <span class='ident'>time</span>;
     <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>collections</span>::<span class='ident'>HashMap</span>;
     <span class='kw'>use</span> <span class='ident'>rustc_serialize</span>::<span class='ident'>json</span>;
@@ -296,6 +295,8 @@
                     <dd>Move down in search results</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>
 
