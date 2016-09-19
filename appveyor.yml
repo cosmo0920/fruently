@@ -28,9 +28,14 @@ install:
 
 build: false
 
+before_test:
+  ps: |
+    $job = Start-Process bundle -ArgumentList "exec", "fluentd","-c", ".\conf\in_forward.conf" -NoNewWindow -PassThru
+    $Env:FLUENTD_JOB_ID = $job.Id
+
+
 test_script:
-  - cmd: start /b bundle exec fluentd -c .\conf\in_forward.conf
   - cargo test --features "readme-testing fluentd"
 
 after_test:
-  - taskkill /F /IM ruby.exe
+  - ps: Stop-Process -Id $Env:FLUENTD_JOB_ID
