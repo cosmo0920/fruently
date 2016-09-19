@@ -1,8 +1,7 @@
 //! Send record(s) into Fluentd.
 
-use std::borrow::Borrow;
+use std::borrow::{Borrow, Cow};
 use std::net::ToSocketAddrs;
-use std::convert::AsRef;
 use std::net;
 use std::io::Write;
 use record::{FluentError, Record};
@@ -12,15 +11,15 @@ use rustc_serialize::Encodable;
 use rmp_serialize::Encoder;
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Fluent<A>
+pub struct Fluent<'a, A>
     where A: ToSocketAddrs
 {
     addr: A,
-    tag: String,
+    tag: Cow<'a, str>,
     conf: RetryConf,
 }
 
-impl<A: ToSocketAddrs> Fluent<A> {
+impl<'a, A: ToSocketAddrs> Fluent<'a, A> {
     /// Create Fluent type.
     ///
     /// ### Usage
@@ -30,22 +29,22 @@ impl<A: ToSocketAddrs> Fluent<A> {
     /// let fruently_with_str_tag = Fluent::new("0.0.0.0:24224", "test");
     /// let fruently_with_string_tag = Fluent::new("0.0.0.0:24224", "test".to_string());
     /// ```
-    pub fn new<T>(addr: A, tag: T) -> Fluent<A>
-        where T: AsRef<str>
+    pub fn new<T>(addr: A, tag: T) -> Fluent<'a, A>
+        where T: Into<Cow<'a, str>>
     {
         Fluent {
             addr: addr,
-            tag: tag.as_ref().to_owned(),
+            tag: tag.into(),
             conf: RetryConf::new(),
         }
     }
 
-    pub fn new_with_conf<T>(addr: A, tag: T, conf: RetryConf) -> Fluent<A>
-        where T: AsRef<str>
+    pub fn new_with_conf<T>(addr: A, tag: T, conf: RetryConf) -> Fluent<'a, A>
+        where T: Into<Cow<'a, str>>
     {
         Fluent {
             addr: addr,
-            tag: tag.as_ref().to_owned(),
+            tag: tag.into(),
             conf: conf,
         }
     }
@@ -56,8 +55,8 @@ impl<A: ToSocketAddrs> Fluent<A> {
     }
 
     #[doc(hidden)]
-    pub fn get_tag(&self) -> String {
-        self.tag.clone()
+    pub fn get_tag(&'a self) -> Cow<'a, str> {
+        Cow::Borrowed(&self.tag)
     }
 
     #[doc(hidden)]
@@ -113,13 +112,14 @@ impl<A: ToSocketAddrs> Fluent<A> {
 mod tests {
     use super::*;
     use retry_conf::RetryConf;
+    use std::borrow::Cow;
 
     #[test]
     fn create_fruently() {
         let fruently = Fluent::new("0.0.0.0:24224", "test");
         let expected = Fluent {
             addr: "0.0.0.0:24224",
-            tag: "test".to_string(),
+            tag: Cow::Borrowed("test"),
             conf: RetryConf::new(),
         };
         assert_eq!(expected, fruently);

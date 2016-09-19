@@ -26,7 +26,7 @@ use record::{Record, FluentError};
 use forwardable::MsgpackForwardable;
 use fluent::Fluent;
 
-impl<A: ToSocketAddrs> MsgpackForwardable for Fluent<A> {
+impl<'a, A: ToSocketAddrs> MsgpackForwardable for Fluent<'a, A> {
     /// Post record into Fluentd. Without time version.
     fn post<T>(self, record: T) -> Result<(), FluentError>
         where T: Encodable
@@ -39,7 +39,7 @@ impl<A: ToSocketAddrs> MsgpackForwardable for Fluent<A> {
     fn post_with_time<T>(self, record: T, time: time::Tm) -> Result<(), FluentError>
         where T: Encodable
     {
-        let record = Record::new(self.get_tag(), time, record);
+        let record = Record::new(self.get_tag().into_owned(), time, record);
         let addr = self.get_addr();
         let (max, multiplier) = self.get_conf().build();
         match retry_exponentially(max,

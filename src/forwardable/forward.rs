@@ -46,12 +46,12 @@ impl<T: Encodable> Forward<T> {
     }
 }
 
-impl<A: ToSocketAddrs> Forwardable for Fluent<A> {
+impl<'a, A: ToSocketAddrs> Forwardable for Fluent<'a, A> {
     /// Post `Vec<Entry<T>>` into Fluentd.
     fn post<T>(self, entries: Vec<Entry<T>>) -> Result<(), FluentError>
         where T: Encodable
     {
-        let forward = Forward::new(self.get_tag(), entries);
+        let forward = Forward::new(self.get_tag().into_owned(), entries);
         let addr = self.get_addr();
         let (max, multiplier) = self.get_conf().build();
         match retry_exponentially(max,
