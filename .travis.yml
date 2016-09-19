@@ -14,4 +14,4 @@ script:
   - cargo test --features "readme-testing fluentd"
 
 after_script:
-  - killall ruby
+  - killall -SIGTERM ruby
