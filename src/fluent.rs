@@ -60,8 +60,8 @@ impl<'a, A: ToSocketAddrs> Fluent<'a, A> {
     }
 
     #[doc(hidden)]
-    pub fn get_conf(&self) -> RetryConf {
-        self.conf.clone()
+    pub fn get_conf(&self) -> Cow<RetryConf> {
+        Cow::Borrowed(&self.conf)
     }
 
     #[doc(hidden)]

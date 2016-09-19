@@ -53,7 +53,7 @@ impl<'a, A: ToSocketAddrs> Forwardable for Fluent<'a, A> {
     {
         let forward = Forward::new(self.get_tag().into_owned(), entries);
         let addr = self.get_addr();
-        let (max, multiplier) = self.get_conf().build();
+        let (max, multiplier) = self.get_conf().into_owned().build();
         match retry_exponentially(max,
                                   multiplier,
                                   || Fluent::closure_send_as_forward(addr, &forward),

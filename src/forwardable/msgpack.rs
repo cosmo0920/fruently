@@ -41,7 +41,7 @@ impl<'a, A: ToSocketAddrs> MsgpackForwardable for Fluent<'a, A> {
     {
         let record = Record::new(self.get_tag().into_owned(), time, record);
         let addr = self.get_addr();
-        let (max, multiplier) = self.get_conf().build();
+        let (max, multiplier) = self.get_conf().into_owned().build();
         match retry_exponentially(max,
                                   multiplier,
                                   || Fluent::closure_send_as_msgpack(addr, &record),
