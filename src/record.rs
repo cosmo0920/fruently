@@ -14,6 +14,7 @@ pub struct Record<T: Encodable> {
     record: T,
 }
 
+#[derive(Debug)]
 pub enum FluentError {
     JsonEncode(json::EncoderError),
     MsgpackEncode(encode::Error),
