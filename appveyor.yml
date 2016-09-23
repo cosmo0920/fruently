@@ -33,7 +33,6 @@ before_test:
     $job = Start-Process bundle -ArgumentList "exec", "fluentd","-c", ".\conf\in_forward.conf" -NoNewWindow -PassThru
     $Env:FLUENTD_JOB_ID = $job.Id
 
-
 test_script:
   - cargo test --features "readme-testing fluentd"
 
