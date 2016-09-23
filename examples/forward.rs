@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use fruently::forwardable::Forwardable;
 
 fn main() {
-    let fruently = Fluent::new("0.0.0.0:24224", "test");
+    let fruently = Fluent::new("127.0.0.1:24224", "test");
     let mut obj = HashMap::new();
     let time = time::now().to_timespec().sec;
     let thmap = (0..10).fold(&mut obj, |mut acc, i| {
