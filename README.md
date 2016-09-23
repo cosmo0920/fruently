@@ -43,7 +43,7 @@ use fruently::forwardable::JsonForwardable;
 fn main() {
     let mut obj: HashMap<String, String> = HashMap::new();
     obj.insert("name".to_string(), "fruently".to_string());
-    let fruently = Fluent::new("0.0.0.0:24224", "test");
+    let fruently = Fluent::new("127.0.0.1:24224", "test");
     let _ = fruently.post(&obj);
 }
 ```
@@ -59,7 +59,7 @@ use fruently::forwardable::MsgpackForwardable;
 fn main() {
     let mut obj: HashMap<String, String> = HashMap::new();
     obj.insert("name".to_string(), "fruently".to_string());
-    let fruently = Fluent::new("0.0.0.0:24224", "test");
+    let fruently = Fluent::new("localhost:24224", "test");
     let _ = fruently.post(&obj);
 }
 ```

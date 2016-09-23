@@ -75,7 +75,8 @@ mod tests {
         use std::collections::HashMap;
         use forwardable::Forwardable;
 
-        let fruently = Fluent::new("0.0.0.0:24224", "test");
+        // 0.0.0.0 does not work in Windows....
+        let fruently = Fluent::new("127.0.0.1:24224", "test");
         let mut obj1: HashMap<String, String> = HashMap::new();
         obj1.insert("hey".to_string(), "Rust with forward mode!".to_string());
         let mut obj2: HashMap<String, String> = HashMap::new();
