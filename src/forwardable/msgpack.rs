@@ -63,7 +63,8 @@ mod tests {
         use std::collections::HashMap;
         use forwardable::MsgpackForwardable;
 
-        let fruently = Fluent::new("0.0.0.0:24224", "test");
+        // 0.0.0.0 does not work in Windows.
+        let fruently = Fluent::new("127.0.0.1:24224", "test");
         let mut obj: HashMap<String, String> = HashMap::new();
         obj.insert("hey".to_string(), "Rust with msgpack!".to_string());
         let result = fruently.post(obj).is_ok();
@@ -75,7 +76,8 @@ mod tests {
         use std::collections::HashMap;
         use forwardable::MsgpackForwardable;
 
-        let fruently = Fluent::new("0.0.0.0:24224", "test");
+        // 0.0.0.0 does not work in Windows.
+        let fruently = Fluent::new("127.0.0.1:24224", "test");
         let mut obj: HashMap<String, String> = HashMap::new();
         obj.insert("hey".to_string(), "Rust with msgpack!".to_string());
         let time = time::now();
