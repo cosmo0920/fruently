@@ -16,5 +16,5 @@ fn main() {
     });
     let hmap = thmap.clone();
     let entry = (time, hmap);
-    let _ = fruently.post(vec![(entry.clone()),(entry.clone())]);
+    let _ = fruently.post(vec![(entry.clone()), (entry.clone())]);
 }
