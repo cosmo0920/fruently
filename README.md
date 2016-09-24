@@ -21,7 +21,7 @@ Add this to your Cargo.toml:
 
 ```toml
 [dependencies]
-fruently = "~0.5.0"
+fruently = "~0.6.0"
 ```
 
 and this to your crate root:
