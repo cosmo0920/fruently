@@ -26,8 +26,8 @@ impl<'a, A: ToSocketAddrs> Fluent<'a, A> {
     ///
     /// ```
     /// use fruently::fluent::Fluent;
-    /// let fruently_with_str_tag = Fluent::new("0.0.0.0:24224", "test");
-    /// let fruently_with_string_tag = Fluent::new("0.0.0.0:24224", "test".to_string());
+    /// let fruently_with_str_tag = Fluent::new("127.0.0.1:24224", "test");
+    /// let fruently_with_string_tag = Fluent::new("127.0.0.1:24224", "test".to_string());
     /// ```
     pub fn new<T>(addr: A, tag: T) -> Fluent<'a, A>
         where T: Into<Cow<'a, str>>
@@ -116,9 +116,9 @@ mod tests {
 
     #[test]
     fn create_fruently() {
-        let fruently = Fluent::new("0.0.0.0:24224", "test");
+        let fruently = Fluent::new("127.0.0.1:24224", "test");
         let expected = Fluent {
-            addr: "0.0.0.0:24224",
+            addr: "127.0.0.1:24224",
             tag: Cow::Borrowed("test"),
             conf: RetryConf::new(),
         };
