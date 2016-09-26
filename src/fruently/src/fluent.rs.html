@@ -172,9 +172,8 @@
 </pre><pre class='rust '>
 <span class='doccomment'>//! Send record(s) into Fluentd.</span>
 
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>borrow</span>::<span class='ident'>Borrow</span>;
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>borrow</span>::{<span class='ident'>Borrow</span>, <span class='ident'>Cow</span>};
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>net</span>::<span class='ident'>ToSocketAddrs</span>;
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>convert</span>::<span class='ident'>AsRef</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>net</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>io</span>::<span class='ident'>Write</span>;
 <span class='kw'>use</span> <span class='ident'>record</span>::{<span class='ident'>FluentError</span>, <span class='ident'>Record</span>};
@@ -184,40 +183,40 @@
 <span class='kw'>use</span> <span class='ident'>rmp_serialize</span>::<span class='ident'>Encoder</span>;
 
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>Clone</span>, <span class='ident'>PartialEq</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Fluent</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;</span>
+<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Fluent</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>A</span><span class='op'>&gt;</span>
     <span class='kw'>where</span> <span class='ident'>A</span>: <span class='ident'>ToSocketAddrs</span>
 {
     <span class='ident'>addr</span>: <span class='ident'>A</span>,
-    <span class='ident'>tag</span>: <span class='ident'>String</span>,
+    <span class='ident'>tag</span>: <span class='ident'>Cow</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>str</span><span class='op'>&gt;</span>,
     <span class='ident'>conf</span>: <span class='ident'>RetryConf</span>,
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>A</span>: <span class='ident'>ToSocketAddrs</span><span class='op'>&gt;</span> <span class='ident'>Fluent</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;</span> {
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>A</span>: <span class='ident'>ToSocketAddrs</span><span class='op'>&gt;</span> <span class='ident'>Fluent</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>A</span><span class='op'>&gt;</span> {
     <span class='doccomment'>/// Create Fluent type.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// ### Usage</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// ```</span>
     <span class='doccomment'>/// use fruently::fluent::Fluent;</span>
-    <span class='doccomment'>/// let fruently_with_str_tag = Fluent::new(&quot;0.0.0.0:24224&quot;, &quot;test&quot;);</span>
-    <span class='doccomment'>/// let fruently_with_string_tag = Fluent::new(&quot;0.0.0.0:24224&quot;, &quot;test&quot;.to_string());</span>
+    <span class='doccomment'>/// let fruently_with_str_tag = Fluent::new(&quot;127.0.0.1:24224&quot;, &quot;test&quot;);</span>
+    <span class='doccomment'>/// let fruently_with_string_tag = Fluent::new(&quot;127.0.0.1:24224&quot;, &quot;test&quot;.to_string());</span>
     <span class='doccomment'>/// ```</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>(<span class='ident'>addr</span>: <span class='ident'>A</span>, <span class='ident'>tag</span>: <span class='ident'>T</span>) <span class='op'>-&gt;</span> <span class='ident'>Fluent</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;</span>
-        <span class='kw'>where</span> <span class='ident'>T</span>: <span class='ident'>AsRef</span><span class='op'>&lt;</span><span class='ident'>str</span><span class='op'>&gt;</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>(<span class='ident'>addr</span>: <span class='ident'>A</span>, <span class='ident'>tag</span>: <span class='ident'>T</span>) <span class='op'>-&gt;</span> <span class='ident'>Fluent</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>A</span><span class='op'>&gt;</span>
+        <span class='kw'>where</span> <span class='ident'>T</span>: <span class='ident'>Into</span><span class='op'>&lt;</span><span class='ident'>Cow</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>str</span><span class='op'>&gt;&gt;</span>
     {
         <span class='ident'>Fluent</span> {
             <span class='ident'>addr</span>: <span class='ident'>addr</span>,
-            <span class='ident'>tag</span>: <span class='ident'>tag</span>.<span class='ident'>as_ref</span>().<span class='ident'>to_owned</span>(),
+            <span class='ident'>tag</span>: <span class='ident'>tag</span>.<span class='ident'>into</span>(),
             <span class='ident'>conf</span>: <span class='ident'>RetryConf</span>::<span class='ident'>new</span>(),
         }
     }
 
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new_with_conf</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>(<span class='ident'>addr</span>: <span class='ident'>A</span>, <span class='ident'>tag</span>: <span class='ident'>T</span>, <span class='ident'>conf</span>: <span class='ident'>RetryConf</span>) <span class='op'>-&gt;</span> <span class='ident'>Fluent</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;</span>
-        <span class='kw'>where</span> <span class='ident'>T</span>: <span class='ident'>AsRef</span><span class='op'>&lt;</span><span class='ident'>str</span><span class='op'>&gt;</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new_with_conf</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>(<span class='ident'>addr</span>: <span class='ident'>A</span>, <span class='ident'>tag</span>: <span class='ident'>T</span>, <span class='ident'>conf</span>: <span class='ident'>RetryConf</span>) <span class='op'>-&gt;</span> <span class='ident'>Fluent</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>A</span><span class='op'>&gt;</span>
+        <span class='kw'>where</span> <span class='ident'>T</span>: <span class='ident'>Into</span><span class='op'>&lt;</span><span class='ident'>Cow</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>str</span><span class='op'>&gt;&gt;</span>
     {
         <span class='ident'>Fluent</span> {
             <span class='ident'>addr</span>: <span class='ident'>addr</span>,
-            <span class='ident'>tag</span>: <span class='ident'>tag</span>.<span class='ident'>as_ref</span>().<span class='ident'>to_owned</span>(),
+            <span class='ident'>tag</span>: <span class='ident'>tag</span>.<span class='ident'>into</span>(),
             <span class='ident'>conf</span>: <span class='ident'>conf</span>,
         }
     }
@@ -228,13 +227,13 @@
     }
 
     <span class='attribute'>#[<span class='ident'>doc</span>(<span class='ident'>hidden</span>)]</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_tag</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>String</span> {
-        <span class='self'>self</span>.<span class='ident'>tag</span>.<span class='ident'>clone</span>()
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_tag</span>(<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Cow</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>str</span><span class='op'>&gt;</span> {
+        <span class='ident'>Cow</span>::<span class='ident'>Borrowed</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>tag</span>)
     }
 
     <span class='attribute'>#[<span class='ident'>doc</span>(<span class='ident'>hidden</span>)]</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_conf</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>RetryConf</span> {
-        <span class='self'>self</span>.<span class='ident'>conf</span>.<span class='ident'>clone</span>()
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_conf</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Cow</span><span class='op'>&lt;</span><span class='ident'>RetryConf</span><span class='op'>&gt;</span> {
+        <span class='ident'>Cow</span>::<span class='ident'>Borrowed</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>conf</span>)
     }
 
     <span class='attribute'>#[<span class='ident'>doc</span>(<span class='ident'>hidden</span>)]</span>
@@ -285,13 +284,14 @@
 <span class='kw'>mod</span> <span class='ident'>tests</span> {
     <span class='kw'>use</span> <span class='kw'>super</span>::<span class='op'>*</span>;
     <span class='kw'>use</span> <span class='ident'>retry_conf</span>::<span class='ident'>RetryConf</span>;
+    <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>borrow</span>::<span class='ident'>Cow</span>;
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>create_fruently</span>() {
-        <span class='kw'>let</span> <span class='ident'>fruently</span> <span class='op'>=</span> <span class='ident'>Fluent</span>::<span class='ident'>new</span>(<span class='string'>&quot;0.0.0.0:24224&quot;</span>, <span class='string'>&quot;test&quot;</span>);
+        <span class='kw'>let</span> <span class='ident'>fruently</span> <span class='op'>=</span> <span class='ident'>Fluent</span>::<span class='ident'>new</span>(<span class='string'>&quot;127.0.0.1:24224&quot;</span>, <span class='string'>&quot;test&quot;</span>);
         <span class='kw'>let</span> <span class='ident'>expected</span> <span class='op'>=</span> <span class='ident'>Fluent</span> {
-            <span class='ident'>addr</span>: <span class='string'>&quot;0.0.0.0:24224&quot;</span>,
-            <span class='ident'>tag</span>: <span class='string'>&quot;test&quot;</span>.<span class='ident'>to_string</span>(),
+            <span class='ident'>addr</span>: <span class='string'>&quot;127.0.0.1:24224&quot;</span>,
+            <span class='ident'>tag</span>: <span class='ident'>Cow</span>::<span class='ident'>Borrowed</span>(<span class='string'>&quot;test&quot;</span>),
             <span class='ident'>conf</span>: <span class='ident'>RetryConf</span>::<span class='ident'>new</span>(),
         };
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>expected</span>, <span class='ident'>fruently</span>);

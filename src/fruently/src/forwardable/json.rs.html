@@ -128,6 +128,8 @@
 <span id="84">84</span>
 <span id="85">85</span>
 <span id="86">86</span>
+<span id="87">87</span>
+<span id="88">88</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! Send record as forwardable json.</span>
 <span class='doccomment'>//!</span>
@@ -144,7 +146,7 @@
 <span class='doccomment'>//! fn main() {</span>
 <span class='doccomment'>//!     let mut obj: HashMap&lt;String, String&gt; = HashMap::new();</span>
 <span class='doccomment'>//!     obj.insert(&quot;name&quot;.to_string(), &quot;fruently&quot;.to_string());</span>
-<span class='doccomment'>//!     let fruently = Fluent::new(&quot;0.0.0.0:24224&quot;, &quot;test&quot;);</span>
+<span class='doccomment'>//!     let fruently = Fluent::new(&quot;127.0.0.1:24224&quot;, &quot;test&quot;);</span>
 <span class='doccomment'>//!     let _ = fruently.post(&amp;obj);</span>
 <span class='doccomment'>//! }</span>
 <span class='doccomment'>//! ```</span>
@@ -157,7 +159,7 @@
 <span class='kw'>use</span> <span class='ident'>forwardable</span>::<span class='ident'>JsonForwardable</span>;
 <span class='kw'>use</span> <span class='ident'>fluent</span>::<span class='ident'>Fluent</span>;
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>A</span>: <span class='ident'>ToSocketAddrs</span><span class='op'>&gt;</span> <span class='ident'>JsonForwardable</span> <span class='kw'>for</span> <span class='ident'>Fluent</span><span class='op'>&lt;</span><span class='ident'>A</span><span class='op'>&gt;</span> {
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>A</span>: <span class='ident'>ToSocketAddrs</span><span class='op'>&gt;</span> <span class='ident'>JsonForwardable</span> <span class='kw'>for</span> <span class='ident'>Fluent</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>A</span><span class='op'>&gt;</span> {
     <span class='doccomment'>/// Post record into Fluentd. Without time version.</span>
     <span class='kw'>fn</span> <span class='ident'>post</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>(<span class='self'>self</span>, <span class='ident'>record</span>: <span class='ident'>T</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>FluentError</span><span class='op'>&gt;</span>
         <span class='kw'>where</span> <span class='ident'>T</span>: <span class='ident'>Encodable</span>
@@ -170,10 +172,10 @@
     <span class='kw'>fn</span> <span class='ident'>post_with_time</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>(<span class='self'>self</span>, <span class='ident'>record</span>: <span class='ident'>T</span>, <span class='ident'>time</span>: <span class='ident'>time</span>::<span class='ident'>Tm</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>FluentError</span><span class='op'>&gt;</span>
         <span class='kw'>where</span> <span class='ident'>T</span>: <span class='ident'>Encodable</span>
     {
-        <span class='kw'>let</span> <span class='ident'>record</span> <span class='op'>=</span> <span class='ident'>Record</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>get_tag</span>(), <span class='ident'>time</span>, <span class='ident'>record</span>);
+        <span class='kw'>let</span> <span class='ident'>record</span> <span class='op'>=</span> <span class='ident'>Record</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>get_tag</span>().<span class='ident'>into_owned</span>(), <span class='ident'>time</span>, <span class='ident'>record</span>);
         <span class='kw'>let</span> <span class='ident'>message</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>record</span>.<span class='ident'>make_forwardable_json</span>());
         <span class='kw'>let</span> <span class='ident'>addr</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>get_addr</span>();
-        <span class='kw'>let</span> (<span class='ident'>max</span>, <span class='ident'>multiplier</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>get_conf</span>().<span class='ident'>build</span>();
+        <span class='kw'>let</span> (<span class='ident'>max</span>, <span class='ident'>multiplier</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>get_conf</span>().<span class='ident'>into_owned</span>().<span class='ident'>build</span>();
         <span class='kw'>match</span> <span class='ident'>retry_exponentially</span>(<span class='ident'>max</span>,
                                   <span class='ident'>multiplier</span>,
                                   <span class='op'>||</span> <span class='ident'>Fluent</span>::<span class='ident'>closure_send_as_json</span>(<span class='ident'>addr</span>, <span class='ident'>message</span>.<span class='ident'>clone</span>()),
@@ -195,11 +197,12 @@
         <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>collections</span>::<span class='ident'>HashMap</span>;
         <span class='kw'>use</span> <span class='ident'>forwardable</span>::<span class='ident'>JsonForwardable</span>;
 
-        <span class='kw'>let</span> <span class='ident'>fruently</span> <span class='op'>=</span> <span class='ident'>Fluent</span>::<span class='ident'>new</span>(<span class='string'>&quot;0.0.0.0:24224&quot;</span>, <span class='string'>&quot;test&quot;</span>);
+        <span class='comment'>// 0.0.0.0 does not work in Windows.</span>
+        <span class='kw'>let</span> <span class='ident'>fruently</span> <span class='op'>=</span> <span class='ident'>Fluent</span>::<span class='ident'>new</span>(<span class='string'>&quot;127.0.0.1:24224&quot;</span>, <span class='string'>&quot;test&quot;</span>);
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>obj</span>: <span class='ident'>HashMap</span><span class='op'>&lt;</span><span class='ident'>String</span>, <span class='ident'>String</span><span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>HashMap</span>::<span class='ident'>new</span>();
         <span class='ident'>obj</span>.<span class='ident'>insert</span>(<span class='string'>&quot;hey&quot;</span>.<span class='ident'>to_string</span>(), <span class='string'>&quot;Rust!&quot;</span>.<span class='ident'>to_string</span>());
         <span class='kw'>let</span> <span class='ident'>result</span> <span class='op'>=</span> <span class='ident'>fruently</span>.<span class='ident'>post</span>(<span class='ident'>obj</span>).<span class='ident'>is_ok</span>();
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='boolvalue'>true</span>, <span class='ident'>result</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='bool-val'>true</span>, <span class='ident'>result</span>);
     }
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
@@ -207,12 +210,13 @@
         <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>collections</span>::<span class='ident'>HashMap</span>;
         <span class='kw'>use</span> <span class='ident'>forwardable</span>::<span class='ident'>JsonForwardable</span>;
 
-        <span class='kw'>let</span> <span class='ident'>fruently</span> <span class='op'>=</span> <span class='ident'>Fluent</span>::<span class='ident'>new</span>(<span class='string'>&quot;0.0.0.0:24224&quot;</span>, <span class='string'>&quot;test&quot;</span>);
+        <span class='comment'>// 0.0.0.0 does not work in Windows.</span>
+        <span class='kw'>let</span> <span class='ident'>fruently</span> <span class='op'>=</span> <span class='ident'>Fluent</span>::<span class='ident'>new</span>(<span class='string'>&quot;127.0.0.1:24224&quot;</span>, <span class='string'>&quot;test&quot;</span>);
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>obj</span>: <span class='ident'>HashMap</span><span class='op'>&lt;</span><span class='ident'>String</span>, <span class='ident'>String</span><span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>HashMap</span>::<span class='ident'>new</span>();
         <span class='ident'>obj</span>.<span class='ident'>insert</span>(<span class='string'>&quot;hey&quot;</span>.<span class='ident'>to_string</span>(), <span class='string'>&quot;Rust!&quot;</span>.<span class='ident'>to_string</span>());
         <span class='kw'>let</span> <span class='ident'>time</span> <span class='op'>=</span> <span class='ident'>time</span>::<span class='ident'>now</span>();
         <span class='kw'>let</span> <span class='ident'>result</span> <span class='op'>=</span> <span class='ident'>fruently</span>.<span class='ident'>post_with_time</span>(<span class='ident'>obj</span>, <span class='ident'>time</span>).<span class='ident'>is_ok</span>();
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='boolvalue'>true</span>, <span class='ident'>result</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='bool-val'>true</span>, <span class='ident'>result</span>);
     }
 }
 </pre>

@@ -47,7 +47,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-314' class='srclink' href='../../../src/fruently/src/forwardable/forward.rs.html#1-89' title='goto source code'>[src]</a></span></h1>
+               </span><a id='src-327' class='srclink' href='../../../src/fruently/src/forwardable/forward.rs.html#1-90' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>Send records as forward mode.</p>
 
 <h2 id='usage' class='section-header'><a href='#usage'>Usage</a></h2>
@@ -61,7 +61,7 @@
 <span class='kw'>use</span> <span class='ident'>fruently</span>::<span class='ident'>forwardable</span>::<span class='ident'>Forwardable</span>;
 
 <span class='kw'>fn</span> <span class='ident'>main</span>() {
-    <span class='kw'>let</span> <span class='ident'>fruently</span> <span class='op'>=</span> <span class='ident'>Fluent</span>::<span class='ident'>new</span>(<span class='string'>&quot;0.0.0.0:24224&quot;</span>, <span class='string'>&quot;test&quot;</span>);
+    <span class='kw'>let</span> <span class='ident'>fruently</span> <span class='op'>=</span> <span class='ident'>Fluent</span>::<span class='ident'>new</span>(<span class='string'>&quot;127.0.0.1:24224&quot;</span>, <span class='string'>&quot;test&quot;</span>);
     <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>obj1</span>: <span class='ident'>HashMap</span><span class='op'>&lt;</span><span class='ident'>String</span>, <span class='ident'>String</span><span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>HashMap</span>::<span class='ident'>new</span>();
     <span class='ident'>obj1</span>.<span class='ident'>insert</span>(<span class='string'>&quot;hey&quot;</span>.<span class='ident'>to_string</span>(), <span class='string'>&quot;Rust with forward mode!&quot;</span>.<span class='ident'>to_string</span>());
     <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>obj2</span>: <span class='ident'>HashMap</span><span class='op'>&lt;</span><span class='ident'>String</span>, <span class='ident'>String</span><span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>HashMap</span>::<span class='ident'>new</span>();

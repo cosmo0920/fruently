@@ -156,6 +156,7 @@
 <span id="112">112</span>
 <span id="113">113</span>
 <span id="114">114</span>
+<span id="115">115</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! Implement record manupulation mechanisms.</span>
 
@@ -173,6 +174,7 @@
     <span class='ident'>record</span>: <span class='ident'>T</span>,
 }
 
+<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>FluentError</span> {
     <span class='ident'>JsonEncode</span>(<span class='ident'>json</span>::<span class='ident'>EncoderError</span>),
     <span class='ident'>MsgpackEncode</span>(<span class='ident'>encode</span>::<span class='ident'>Error</span>),
