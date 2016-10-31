@@ -1,5 +1,7 @@
 //! Retry sending records configuration.
 
+use std::path::PathBuf;
+
 /// You can calculate retrying interval as the following equation:
 ///
 /// `retry_interval = exp ** (multiplier + retry_counts)`
@@ -25,6 +27,7 @@
 pub struct RetryConf {
     max: u64,
     multiplier: f64,
+    store_file_path: Option<PathBuf>
 }
 
 impl Default for RetryConf {
@@ -32,6 +35,7 @@ impl Default for RetryConf {
         RetryConf {
             max: 10,
             multiplier: 5_f64,
+            store_file_path: None
         }
     }
 }
@@ -49,6 +53,19 @@ impl RetryConf {
     pub fn multiplier(mut self, multiplier: f64) -> RetryConf {
         self.multiplier = multiplier;
         self
+    }
+
+    pub fn store_file(mut self, path: PathBuf) -> RetryConf {
+        self.store_file_path = Some(path);
+        self
+    }
+
+    pub fn need_to_store(self) -> bool {
+        self.store_file_path.is_some()
+    }
+
+    pub fn store_path(self) -> Option<PathBuf> {
+        self.store_file_path
     }
 
     pub fn build(self) -> (u64, f64) {
