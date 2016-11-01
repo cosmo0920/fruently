@@ -24,12 +24,14 @@
 //! }
 //! ```
 
+use std::fmt::Debug;
 use std::net::ToSocketAddrs;
 use rustc_serialize::Encodable;
 use retry::retry_exponentially;
 use record::FluentError;
 use forwardable::{Entry, Forwardable};
 use fluent::Fluent;
+use store_buffer;
 
 #[derive(Debug, Clone, PartialEq, Eq, RustcEncodable, RustcDecodable)]
 pub struct Forward<T: Encodable> {
@@ -49,7 +51,7 @@ impl<T: Encodable> Forward<T> {
 impl<'a, A: ToSocketAddrs> Forwardable for Fluent<'a, A> {
     /// Post `Vec<Entry<T>>` into Fluentd.
     fn post<T>(self, entries: Vec<Entry<T>>) -> Result<(), FluentError>
-        where T: Encodable
+        where T: Encodable + Debug
     {
         let forward = Forward::new(self.get_tag().into_owned(), entries);
         let addr = self.get_addr();
@@ -59,7 +61,9 @@ impl<'a, A: ToSocketAddrs> Forwardable for Fluent<'a, A> {
                                   || Fluent::closure_send_as_forward(addr, &forward),
                                   |response| response.is_ok()) {
             Ok(_) => Ok(()),
-            Err(v) => Err(From::from(v)),
+            Err(err) => {
+                store_buffer::maybe_write_records(&self.get_conf(), forward, err)
+            },
         }
     }
 }

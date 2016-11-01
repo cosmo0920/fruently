@@ -18,7 +18,7 @@ pub trait MsgpackForwardable {
 }
 
 pub trait Forwardable {
-    fn post<T: Encodable>(self, entries: Vec<Entry<T>>) -> Result<(), FluentError>;
+    fn post<T: Encodable + Debug>(self, entries: Vec<Entry<T>>) -> Result<(), FluentError>;
 }
 
 pub mod json;
