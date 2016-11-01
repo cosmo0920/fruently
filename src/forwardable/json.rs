@@ -50,9 +50,7 @@ impl<'a, A: ToSocketAddrs> JsonForwardable for Fluent<'a, A> {
                                   || Fluent::closure_send_as_json(addr, message.clone()),
                                   |response| response.is_ok()) {
             Ok(_) => Ok(()),
-            Err(err) => {
-                store_buffer::maybe_write_record(&self.get_conf(), record, From::from(err))
-            },
+            Err(err) => store_buffer::maybe_write_record(&self.get_conf(), record, From::from(err)),
         }
     }
 }

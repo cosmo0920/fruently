@@ -63,7 +63,7 @@ impl<'a, A: ToSocketAddrs> Forwardable for Fluent<'a, A> {
             Ok(_) => Ok(()),
             Err(err) => {
                 store_buffer::maybe_write_records(&self.get_conf(), forward, From::from(err))
-            },
+            }
         }
     }
 }

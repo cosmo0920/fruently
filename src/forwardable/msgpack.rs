@@ -49,9 +49,7 @@ impl<'a, A: ToSocketAddrs> MsgpackForwardable for Fluent<'a, A> {
                                   || Fluent::closure_send_as_msgpack(addr, &record),
                                   |response| response.is_ok()) {
             Ok(_) => Ok(()),
-            Err(err) => {
-                store_buffer::maybe_write_record(&self.get_conf(), record, From::from(err))
-            },
+            Err(err) => store_buffer::maybe_write_record(&self.get_conf(), record, From::from(err)),
         }
     }
 }

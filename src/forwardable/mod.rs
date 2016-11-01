@@ -9,12 +9,18 @@ pub type Entry<T> where T: Encodable = (i64, T);
 
 pub trait JsonForwardable {
     fn post<T: Encodable + Debug + Clone>(self, record: T) -> Result<(), FluentError>;
-    fn post_with_time<T: Encodable + Debug + Clone>(self, record: T, time: time::Tm) -> Result<(), FluentError>;
+    fn post_with_time<T: Encodable + Debug + Clone>(self,
+                                                    record: T,
+                                                    time: time::Tm)
+                                                    -> Result<(), FluentError>;
 }
 
 pub trait MsgpackForwardable {
     fn post<T: Encodable + Debug>(self, record: T) -> Result<(), FluentError>;
-    fn post_with_time<T: Encodable + Debug>(self, record: T, time: time::Tm) -> Result<(), FluentError>;
+    fn post_with_time<T: Encodable + Debug>(self,
+                                            record: T,
+                                            time: time::Tm)
+                                            -> Result<(), FluentError>;
 }
 
 pub trait Forwardable {

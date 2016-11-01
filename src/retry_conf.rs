@@ -27,7 +27,7 @@ use std::path::PathBuf;
 pub struct RetryConf {
     max: u64,
     multiplier: f64,
-    store_file_path: Option<PathBuf>
+    store_file_path: Option<PathBuf>,
 }
 
 impl Default for RetryConf {
@@ -35,7 +35,7 @@ impl Default for RetryConf {
         RetryConf {
             max: 10,
             multiplier: 5_f64,
-            store_file_path: None
+            store_file_path: None,
         }
     }
 }

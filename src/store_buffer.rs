@@ -6,7 +6,10 @@ use rustc_serialize::Encodable;
 use record::FluentError;
 use forwardable::forward::Forward;
 
-pub fn maybe_write_record<T>(conf: &RetryConf, record: T, err: FluentError) -> Result<(), FluentError>
+pub fn maybe_write_record<T>(conf: &RetryConf,
+                             record: T,
+                             err: FluentError)
+                             -> Result<(), FluentError>
     where T: Encodable + Debug
 {
     let store_needed = conf.clone().need_to_store();
@@ -17,17 +20,19 @@ pub fn maybe_write_record<T>(conf: &RetryConf, record: T, err: FluentError) -> R
                 let mut w = Vec::new();
                 write!(&mut w, "{:?}", record).unwrap();
                 try!(f.write(&w));
-            },
+            }
             Err(e) => return Err(From::from(e)),
         }
         Ok(())
-    }
-    else {
+    } else {
         Err(err)
     }
 }
 
-pub fn maybe_write_records<T>(conf: &RetryConf, forward: Forward<T>, err: FluentError) -> Result<(), FluentError>
+pub fn maybe_write_records<T>(conf: &RetryConf,
+                              forward: Forward<T>,
+                              err: FluentError)
+                              -> Result<(), FluentError>
     where T: Encodable + Debug
 {
     let store_needed = conf.clone().need_to_store();
@@ -38,12 +43,11 @@ pub fn maybe_write_records<T>(conf: &RetryConf, forward: Forward<T>, err: Fluent
                 let mut w = Vec::new();
                 write!(&mut w, "{:?}", forward).unwrap();
                 try!(f.write(&w));
-            },
+            }
             Err(e) => return Err(From::from(e)),
         }
         Ok(())
-    }
-    else {
+    } else {
         Err(err)
     }
 }
@@ -87,7 +91,8 @@ mod tests {
         let forward = Forward::new(tag, entries);
         let tmp = TempDir::new("fruently").unwrap().into_path().join("buffer");
         let conf = RetryConf::new().store_file(tmp.clone());
-        assert!(maybe_write_records(&conf, forward, FluentError::Dummy("dummy".to_string())).is_ok());
+        assert!(maybe_write_records(&conf, forward, FluentError::Dummy("dummy".to_string()))
+            .is_ok());
         assert!(tmp.exists())
     }
 }
