@@ -11,3 +11,4 @@ pub mod fluent;
 pub mod record;
 pub mod forwardable;
 pub mod retry_conf;
+pub mod store_buffer;
