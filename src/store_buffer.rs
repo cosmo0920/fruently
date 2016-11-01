@@ -6,7 +6,7 @@ use retry::RetryError;
 use rustc_serialize::Encodable;
 use record::FluentError;
 
-pub fn maybe_write_file<T>(conf: &RetryConf, record: T, err: RetryError) -> Result<(), FluentError>
+pub fn maybe_write_record<T>(conf: &RetryConf, record: T, err: RetryError) -> Result<(), FluentError>
     where T: Encodable + Debug
 {
     let store_needed = conf.clone().need_to_store();

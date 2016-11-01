@@ -50,7 +50,7 @@ impl<'a, A: ToSocketAddrs> MsgpackForwardable for Fluent<'a, A> {
                                   |response| response.is_ok()) {
             Ok(_) => Ok(()),
             Err(err) => {
-                store_buffer::maybe_write_file(&self.get_conf(), record, err)
+                store_buffer::maybe_write_record(&self.get_conf(), record, err)
             },
         }
     }
