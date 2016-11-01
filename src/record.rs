@@ -22,6 +22,8 @@ pub enum FluentError {
     MsgpackEncode(encode::Error),
     IO(io::Error),
     Retry(retry::RetryError),
+    #[doc(hidden)]
+    Dummy(String),
 }
 
 impl From<io::Error> for FluentError {
@@ -50,7 +52,7 @@ impl From<json::EncoderError> for FluentError {
 
 impl<T: Encodable + Debug> fmt::Display for Record<T> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{} {:?} {:?}", self.tag, self.time, self.record)
+        write!(f, "{} {:?} {:?}", self.tag, self.time.to_timespec().sec, self.record)
     }
 }
 

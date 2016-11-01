@@ -51,7 +51,7 @@ impl<'a, A: ToSocketAddrs> JsonForwardable for Fluent<'a, A> {
                                   |response| response.is_ok()) {
             Ok(_) => Ok(()),
             Err(err) => {
-                store_buffer::maybe_write_record(&self.get_conf(), record, err)
+                store_buffer::maybe_write_record(&self.get_conf(), record, From::from(err))
             },
         }
     }
