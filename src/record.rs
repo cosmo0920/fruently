@@ -5,8 +5,6 @@ use rustc_serialize::{Encodable, Encoder};
 use rmp_serialize::encode;
 use time::Tm;
 use std::io;
-use std::fmt;
-use std::fmt::Debug;
 use retry;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -47,12 +45,6 @@ impl From<retry::RetryError> for FluentError {
 impl From<json::EncoderError> for FluentError {
     fn from(err: json::EncoderError) -> FluentError {
         FluentError::JsonEncode(err)
-    }
-}
-
-impl<T: Encodable + Debug> fmt::Display for Record<T> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{} {:?} {:?}", self.tag, self.time.to_timespec().sec, self.record)
     }
 }
 
