@@ -67,7 +67,8 @@ impl<T: Encodable> Record<T> {
     pub fn dump(self) -> String {
         format!("{} {}: {}\n",
                 time::strftime("%Y-%m-%d %H:%M:%d %z", &self.time).unwrap(),
-                self.tag, json::encode(&self.record).unwrap())
+                self.tag,
+                json::encode(&self.record).unwrap())
     }
 }
 
