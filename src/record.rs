@@ -3,6 +3,7 @@
 use rustc_serialize::json;
 use rustc_serialize::{Encodable, Encoder};
 use rmp_serialize::encode;
+use time;
 use time::Tm;
 use std::io;
 use retry;
@@ -20,6 +21,8 @@ pub enum FluentError {
     MsgpackEncode(encode::Error),
     IO(io::Error),
     Retry(retry::RetryError),
+    #[doc(hidden)]
+    Dummy(String),
 }
 
 impl From<io::Error> for FluentError {
@@ -58,6 +61,13 @@ impl<T: Encodable> Record<T> {
     pub fn make_forwardable_json(self) -> Result<String, FluentError> {
         let message = try!(json::encode(&self));
         Ok(message)
+    }
+
+    #[doc(hidden)]
+    pub fn dump(self) -> String {
+        format!("{} {}: {}\n",
+                time::strftime("%Y-%m-%d %H:%M:%d %z", &self.time).unwrap(),
+                self.tag, json::encode(&self.record).unwrap())
     }
 }
 

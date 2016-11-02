@@ -18,6 +18,7 @@
 //! }
 //! ```
 
+use std::fmt::Debug;
 use std::net::ToSocketAddrs;
 use rustc_serialize::Encodable;
 use time;
@@ -25,11 +26,12 @@ use retry::retry_exponentially;
 use record::{Record, FluentError};
 use forwardable::MsgpackForwardable;
 use fluent::Fluent;
+use store_buffer;
 
 impl<'a, A: ToSocketAddrs> MsgpackForwardable for Fluent<'a, A> {
     /// Post record into Fluentd. Without time version.
     fn post<T>(self, record: T) -> Result<(), FluentError>
-        where T: Encodable
+        where T: Encodable + Debug
     {
         let time = time::now();
         self.post_with_time(record, time)
@@ -37,17 +39,17 @@ impl<'a, A: ToSocketAddrs> MsgpackForwardable for Fluent<'a, A> {
 
     /// Post record into Fluentd. With time version.
     fn post_with_time<T>(self, record: T, time: time::Tm) -> Result<(), FluentError>
-        where T: Encodable
+        where T: Encodable + Debug
     {
         let record = Record::new(self.get_tag().into_owned(), time, record);
         let addr = self.get_addr();
-        let (max, multiplier) = self.get_conf().into_owned().build();
+        let (max, multiplier) = self.get_conf().into_owned().clone().build();
         match retry_exponentially(max,
                                   multiplier,
                                   || Fluent::closure_send_as_msgpack(addr, &record),
                                   |response| response.is_ok()) {
             Ok(_) => Ok(()),
-            Err(v) => Err(From::from(v)),
+            Err(err) => store_buffer::maybe_write_record(&self.get_conf(), record, From::from(err)),
         }
     }
 }
