@@ -28,6 +28,9 @@ use std::fmt::Debug;
 use std::net::ToSocketAddrs;
 use rustc_serialize::Encodable;
 use retry::retry_exponentially;
+use rustc_serialize::json;
+use time;
+use time::Timespec;
 use record::FluentError;
 use forwardable::{Entry, Forwardable};
 use fluent::Fluent;
@@ -45,6 +48,19 @@ impl<T: Encodable> Forward<T> {
             tag: tag,
             entries: entries,
         }
+    }
+
+    #[doc(hidden)]
+    pub fn dump(self) -> String {
+        let mut buf = String::new();
+        for &(ref time, ref record) in &self.entries {
+            let timespec = Timespec::new(time.to_owned(), 0);
+            buf.push_str(&*format!("{} {}: {}\n",
+                                   time::strftime("%Y-%m-%d %H:%M:%d %z",
+                                                  &time::at(timespec)).unwrap(),
+                                   self.tag, json::encode(&record).unwrap()));
+        }
+        buf
     }
 }
 

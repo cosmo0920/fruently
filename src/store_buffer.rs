@@ -8,6 +8,7 @@ use rustc_serialize::Encodable;
 use record::FluentError;
 use forwardable::forward::Forward;
 use std::fs::OpenOptions;
+use record::Record;
 
 fn ensure_file_with_wca(path: PathBuf) -> Result<File, io::Error> {
     let file = try!(OpenOptions::new().write(true).create(true).append(true).open(path));
@@ -15,7 +16,7 @@ fn ensure_file_with_wca(path: PathBuf) -> Result<File, io::Error> {
 }
 
 pub fn maybe_write_record<T>(conf: &RetryConf,
-                             record: T,
+                             record: Record<T>,
                              err: FluentError)
                              -> Result<(), FluentError>
     where T: Encodable + Debug
@@ -26,7 +27,7 @@ pub fn maybe_write_record<T>(conf: &RetryConf,
         match ensure_file_with_wca(store_path.unwrap()) {
             Ok(mut f) => {
                 let mut w = Vec::new();
-                write!(&mut w, "{:?}", record).unwrap();
+                write!(&mut w, "{}", record.dump()).unwrap();
                 try!(f.write(&w));
                 try!(f.sync_data());
             }
@@ -50,7 +51,7 @@ pub fn maybe_write_records<T>(conf: &RetryConf,
         match ensure_file_with_wca(store_path.unwrap()) {
             Ok(mut f) => {
                 let mut w = Vec::new();
-                write!(&mut w, "{:?}", forward).unwrap();
+                write!(&mut w, "{}", forward.dump()).unwrap();
                 try!(f.write(&w));
                 try!(f.sync_data());
             }
