@@ -65,8 +65,8 @@ impl<T: Encodable> Record<T> {
 
     #[doc(hidden)]
     pub fn dump(self) -> String {
-        format!("{} {}: {}\n",
-                time::strftime("%Y-%m-%d %H:%M:%d %z", &self.time).unwrap(),
+        format!("{}\t{}\t{}\n",
+                time::strftime("%Y-%m-%dT%H:%M:%d%z", &self.time).unwrap(),
                 self.tag,
                 json::encode(&self.record).unwrap())
     }
