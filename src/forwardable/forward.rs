@@ -56,7 +56,7 @@ impl<T: Encodable> Forward<T> {
         for &(ref time, ref record) in &self.entries {
             let timespec = Timespec::new(time.to_owned(), 0);
             buf.push_str(&*format!("{}\t{}\t{}\n",
-                                   time::strftime("%Y-%m-%dT%H:%M:%d%z", &time::at(timespec))
+                                   time::strftime("%FT%T%z", &time::at(timespec))
                                        .unwrap(),
                                    self.tag,
                                    json::encode(&record).unwrap()));
