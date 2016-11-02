@@ -44,7 +44,10 @@ fn main() {
     let mut obj: HashMap<String, String> = HashMap::new();
     obj.insert("name".to_string(), "fruently".to_string());
     let fruently = Fluent::new("127.0.0.1:24224", "test");
-    let _ = fruently.post(&obj);
+    match fruently.post(&obj) {
+        Err(e) => println!("{:?}", e),
+        Ok(_) => return,
+    }
 }
 ```
 
@@ -59,8 +62,11 @@ use fruently::forwardable::MsgpackForwardable;
 fn main() {
     let mut obj: HashMap<String, String> = HashMap::new();
     obj.insert("name".to_string(), "fruently".to_string());
-    let fruently = Fluent::new("localhost:24224", "test");
-    let _ = fruently.post(&obj);
+    let fruently = Fluent::new("127.0.0.1:24224", "test");
+    match fruently.post(&obj) {
+        Err(e) => println!("{:?}", e),
+        Ok(_) => return,
+    }
 }
 ```
 
