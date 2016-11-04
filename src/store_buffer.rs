@@ -23,7 +23,7 @@ pub fn maybe_write_record<T>(conf: &RetryConf,
 {
     let store_needed = conf.clone().need_to_store();
     let store_path = conf.clone().store_path();
-    if store_needed && store_path.is_some() {
+    if store_needed {
         match ensure_file_with_wca(store_path.unwrap()) {
             Ok(mut f) => {
                 let mut w = Vec::new();
@@ -47,7 +47,7 @@ pub fn maybe_write_records<T>(conf: &RetryConf,
 {
     let store_needed = conf.clone().need_to_store();
     let store_path = conf.clone().store_path();
-    if store_needed && store_path.is_some() {
+    if store_needed {
         match ensure_file_with_wca(store_path.unwrap()) {
             Ok(mut f) => {
                 let mut w = Vec::new();
