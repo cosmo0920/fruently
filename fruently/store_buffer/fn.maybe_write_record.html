@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="API documentation for the Rust `retry_conf` mod in crate `fruently`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang, retry_conf">
+    <meta name="description" content="API documentation for the Rust `maybe_write_record` fn in crate `fruently`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, maybe_write_record">
 
-    <title>fruently::retry_conf - Rust</title>
+    <title>fruently::store_buffer::maybe_write_record - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
@@ -28,7 +28,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'><a href='../index.html'>fruently</a></p><script>window.sidebarCurrent = {name: 'retry_conf', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
+        <p class='location'><a href='../index.html'>fruently</a>::<wbr><a href='index.html'>store_buffer</a></p><script>window.sidebarCurrent = {name: 'maybe_write_record', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -42,22 +42,13 @@
         </form>
     </nav>
 
-    <section id='main' class="content mod">
-<h1 class='fqn'><span class='in-band'>Module <a href='../index.html'>fruently</a>::<wbr><a class='mod' href=''>retry_conf</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content fn">
+<h1 class='fqn'><span class='in-band'>Function <a href='../index.html'>fruently</a>::<wbr><a href='index.html'>store_buffer</a>::<wbr><a class='fn' href=''>maybe_write_record</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-452' class='srclink' href='../../src/fruently/src/retry_conf.rs.html#1-78' title='goto source code'>[src]</a></span></h1>
-<div class='docblock'><p>Retry sending records configuration.</p>
-</div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class='struct' href='struct.RetryConf.html'
-                                  title='fruently::retry_conf::RetryConf'>RetryConf</a></td>
-                           <td class='docblock short'>
-                                <p>You can calculate retrying interval as the following equation:</p>
-                           </td>
-                       </tr></table></section>
+               </span><a id='src-527' class='srclink' href='../../src/fruently/src/store_buffer.rs.html#18-40' title='goto source code'>[src]</a></span></h1>
+<pre class='rust fn'>pub fn maybe_write_record&lt;T&gt;(conf: &amp;<a class='struct' href='../../fruently/retry_conf/struct.RetryConf.html' title='fruently::retry_conf::RetryConf'>RetryConf</a>, record: <a class='struct' href='../../fruently/record/struct.Record.html' title='fruently::record::Record'>Record</a>&lt;T&gt;, err: <a class='enum' href='../../fruently/record/enum.FluentError.html' title='fruently::record::FluentError'>FluentError</a>) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>,&nbsp;<a class='enum' href='../../fruently/record/enum.FluentError.html' title='fruently::record::FluentError'>FluentError</a>&gt; <span class='where'>where T: <a class='trait' href='https://doc.rust-lang.org/rustc-serialize/rustc_serialize/serialize/trait.Encodable.html' title='rustc_serialize::serialize::Encodable'>Encodable</a> + <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a></span></pre></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>

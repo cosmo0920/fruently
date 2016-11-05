@@ -157,12 +157,24 @@
 <span id="113">113</span>
 <span id="114">114</span>
 <span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! Implement record manupulation mechanisms.</span>
 
 <span class='kw'>use</span> <span class='ident'>rustc_serialize</span>::<span class='ident'>json</span>;
 <span class='kw'>use</span> <span class='ident'>rustc_serialize</span>::{<span class='ident'>Encodable</span>, <span class='ident'>Encoder</span>};
 <span class='kw'>use</span> <span class='ident'>rmp_serialize</span>::<span class='ident'>encode</span>;
+<span class='kw'>use</span> <span class='ident'>time</span>;
 <span class='kw'>use</span> <span class='ident'>time</span>::<span class='ident'>Tm</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>io</span>;
 <span class='kw'>use</span> <span class='ident'>retry</span>;
@@ -180,6 +192,8 @@
     <span class='ident'>MsgpackEncode</span>(<span class='ident'>encode</span>::<span class='ident'>Error</span>),
     <span class='ident'>IO</span>(<span class='ident'>io</span>::<span class='ident'>Error</span>),
     <span class='ident'>Retry</span>(<span class='ident'>retry</span>::<span class='ident'>RetryError</span>),
+    <span class='attribute'>#[<span class='ident'>doc</span>(<span class='ident'>hidden</span>)]</span>
+    <span class='ident'>Dummy</span>(<span class='ident'>String</span>),
 }
 
 <span class='kw'>impl</span> <span class='ident'>From</span><span class='op'>&lt;</span><span class='ident'>io</span>::<span class='ident'>Error</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>FluentError</span> {
@@ -218,6 +232,14 @@
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>make_forwardable_json</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>String</span>, <span class='ident'>FluentError</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> <span class='ident'>message</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>json</span>::<span class='ident'>encode</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>));
         <span class='prelude-val'>Ok</span>(<span class='ident'>message</span>)
+    }
+
+    <span class='attribute'>#[<span class='ident'>doc</span>(<span class='ident'>hidden</span>)]</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>dump</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>String</span> {
+        <span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;{}\t{}\t{}\n&quot;</span>,
+                <span class='ident'>time</span>::<span class='ident'>strftime</span>(<span class='string'>&quot;%FT%T%z&quot;</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>time</span>).<span class='ident'>unwrap</span>(),
+                <span class='self'>self</span>.<span class='ident'>tag</span>,
+                <span class='ident'>json</span>::<span class='ident'>encode</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>record</span>).<span class='ident'>unwrap</span>())
     }
 }
 

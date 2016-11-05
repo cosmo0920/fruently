@@ -129,6 +129,8 @@
 <span id="85">85</span>
 <span id="86">86</span>
 <span id="87">87</span>
+<span id="88">88</span>
+<span id="89">89</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! Send record as msgpack.</span>
 <span class='doccomment'>//!</span>
@@ -150,6 +152,7 @@
 <span class='doccomment'>//! }</span>
 <span class='doccomment'>//! ```</span>
 
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>::<span class='ident'>Debug</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>net</span>::<span class='ident'>ToSocketAddrs</span>;
 <span class='kw'>use</span> <span class='ident'>rustc_serialize</span>::<span class='ident'>Encodable</span>;
 <span class='kw'>use</span> <span class='ident'>time</span>;
@@ -157,11 +160,12 @@
 <span class='kw'>use</span> <span class='ident'>record</span>::{<span class='ident'>Record</span>, <span class='ident'>FluentError</span>};
 <span class='kw'>use</span> <span class='ident'>forwardable</span>::<span class='ident'>MsgpackForwardable</span>;
 <span class='kw'>use</span> <span class='ident'>fluent</span>::<span class='ident'>Fluent</span>;
+<span class='kw'>use</span> <span class='ident'>store_buffer</span>;
 
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>A</span>: <span class='ident'>ToSocketAddrs</span><span class='op'>&gt;</span> <span class='ident'>MsgpackForwardable</span> <span class='kw'>for</span> <span class='ident'>Fluent</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>A</span><span class='op'>&gt;</span> {
     <span class='doccomment'>/// Post record into Fluentd. Without time version.</span>
     <span class='kw'>fn</span> <span class='ident'>post</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>(<span class='self'>self</span>, <span class='ident'>record</span>: <span class='ident'>T</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>FluentError</span><span class='op'>&gt;</span>
-        <span class='kw'>where</span> <span class='ident'>T</span>: <span class='ident'>Encodable</span>
+        <span class='kw'>where</span> <span class='ident'>T</span>: <span class='ident'>Encodable</span> <span class='op'>+</span> <span class='ident'>Debug</span>
     {
         <span class='kw'>let</span> <span class='ident'>time</span> <span class='op'>=</span> <span class='ident'>time</span>::<span class='ident'>now</span>();
         <span class='self'>self</span>.<span class='ident'>post_with_time</span>(<span class='ident'>record</span>, <span class='ident'>time</span>)
@@ -169,17 +173,17 @@
 
     <span class='doccomment'>/// Post record into Fluentd. With time version.</span>
     <span class='kw'>fn</span> <span class='ident'>post_with_time</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>(<span class='self'>self</span>, <span class='ident'>record</span>: <span class='ident'>T</span>, <span class='ident'>time</span>: <span class='ident'>time</span>::<span class='ident'>Tm</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>FluentError</span><span class='op'>&gt;</span>
-        <span class='kw'>where</span> <span class='ident'>T</span>: <span class='ident'>Encodable</span>
+        <span class='kw'>where</span> <span class='ident'>T</span>: <span class='ident'>Encodable</span> <span class='op'>+</span> <span class='ident'>Debug</span>
     {
         <span class='kw'>let</span> <span class='ident'>record</span> <span class='op'>=</span> <span class='ident'>Record</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>get_tag</span>().<span class='ident'>into_owned</span>(), <span class='ident'>time</span>, <span class='ident'>record</span>);
         <span class='kw'>let</span> <span class='ident'>addr</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>get_addr</span>();
-        <span class='kw'>let</span> (<span class='ident'>max</span>, <span class='ident'>multiplier</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>get_conf</span>().<span class='ident'>into_owned</span>().<span class='ident'>build</span>();
+        <span class='kw'>let</span> (<span class='ident'>max</span>, <span class='ident'>multiplier</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>get_conf</span>().<span class='ident'>into_owned</span>().<span class='ident'>clone</span>().<span class='ident'>build</span>();
         <span class='kw'>match</span> <span class='ident'>retry_exponentially</span>(<span class='ident'>max</span>,
                                   <span class='ident'>multiplier</span>,
                                   <span class='op'>||</span> <span class='ident'>Fluent</span>::<span class='ident'>closure_send_as_msgpack</span>(<span class='ident'>addr</span>, <span class='kw-2'>&amp;</span><span class='ident'>record</span>),
                                   <span class='op'>|</span><span class='ident'>response</span><span class='op'>|</span> <span class='ident'>response</span>.<span class='ident'>is_ok</span>()) {
             <span class='prelude-val'>Ok</span>(_) <span class='op'>=&gt;</span> <span class='prelude-val'>Ok</span>(()),
-            <span class='prelude-val'>Err</span>(<span class='ident'>v</span>) <span class='op'>=&gt;</span> <span class='prelude-val'>Err</span>(<span class='ident'>From</span>::<span class='ident'>from</span>(<span class='ident'>v</span>)),
+            <span class='prelude-val'>Err</span>(<span class='ident'>err</span>) <span class='op'>=&gt;</span> <span class='ident'>store_buffer</span>::<span class='ident'>maybe_write_record</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>get_conf</span>(), <span class='ident'>record</span>, <span class='ident'>From</span>::<span class='ident'>from</span>(<span class='ident'>err</span>)),
         }
     }
 }
