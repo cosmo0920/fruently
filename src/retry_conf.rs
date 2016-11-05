@@ -19,10 +19,14 @@ use std::path::PathBuf;
 /// where multiplier = 5,
 /// e is [exponential function](https://doc.rust-lang.org/std/primitive.f64.html#method.exp).
 ///
+/// If you specify `store_file_path`, `fruently` tries to store record(s)
+/// when failing to send into Fluent protocol implemented server.
+///
 /// ## Default values
 ///
 /// * multiplier: `5_f64`
 /// * max: 10
+/// * store_file_path: None
 #[derive(Debug, Clone, PartialEq)]
 pub struct RetryConf {
     max: u64,
