@@ -3,7 +3,7 @@ language: rust
 rust:
   - nightly
   - beta
-  - 1.11.0
+  - 1.13.0
 
 install:
   - rvm use 2.2
