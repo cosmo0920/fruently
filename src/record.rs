@@ -21,6 +21,7 @@ pub enum FluentError {
     MsgpackEncode(encode::Error),
     IO(io::Error),
     Retry(retry::RetryError),
+    FileStored(String),
     #[doc(hidden)]
     Dummy(String),
 }

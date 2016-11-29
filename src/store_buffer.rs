@@ -24,12 +24,13 @@ pub fn maybe_write_record<T>(conf: &RetryConf,
     let store_needed = conf.clone().need_to_store();
     let store_path = conf.clone().store_path();
     if store_needed {
-        match ensure_file_with_wca(store_path.unwrap()) {
+        match ensure_file_with_wca(store_path.clone().unwrap()) {
             Ok(mut f) => {
                 let mut w = Vec::new();
                 write!(&mut w, "{}", record.dump()).unwrap();
                 try!(f.write(&w));
                 try!(f.sync_data());
+                return Err(FluentError::FileStored(format!("stored buffer in specified file: {:?}", store_path.unwrap())))
             }
             Err(e) => return Err(From::from(e)),
         }
@@ -48,12 +49,13 @@ pub fn maybe_write_records<T>(conf: &RetryConf,
     let store_needed = conf.clone().need_to_store();
     let store_path = conf.clone().store_path();
     if store_needed {
-        match ensure_file_with_wca(store_path.unwrap()) {
+        match ensure_file_with_wca(store_path.clone().unwrap()) {
             Ok(mut f) => {
                 let mut w = Vec::new();
                 write!(&mut w, "{}", forward.dump()).unwrap();
                 try!(f.write(&w));
                 try!(f.sync_data());
+                return Err(FluentError::FileStored(format!("stored buffer in specified file: {:?}", store_path.unwrap())))
             }
             Err(e) => return Err(From::from(e)),
         }
@@ -84,7 +86,7 @@ mod tests {
         let record = Record::new(tag.clone(), time, obj.clone());
         let tmp = TempDir::new("fruently").unwrap().into_path().join("buffer");
         let conf = RetryConf::new().store_file(tmp.clone());
-        assert!(maybe_write_record(&conf, record, FluentError::Dummy("dummy".to_string())).is_ok());
+        assert!(maybe_write_record(&conf, record, FluentError::Dummy("dummy".to_string())).is_err());
         assert!(tmp.exists())
     }
 
@@ -97,14 +99,14 @@ mod tests {
         let record = Record::new(tag.clone(), time, obj.clone());
         let tmp = TempDir::new("fruently").unwrap().into_path().join("buffer");
         let conf = RetryConf::new().store_file(tmp.clone());
-        assert!(maybe_write_record(&conf, record, FluentError::Dummy("dummy".to_string())).is_ok());
+        assert!(maybe_write_record(&conf, record, FluentError::Dummy("dummy".to_string())).is_err());
         assert!(tmp.exists());
         let mut obj2: HashMap<String, String> = HashMap::new();
         obj2.insert("name2".to_string(), "fruently2".to_string());
         let record2 = Record::new(tag.clone(), time, obj2.clone());
         let conf2 = RetryConf::new().store_file(tmp.clone());
         assert!(maybe_write_record(&conf2, record2, FluentError::Dummy("dummy".to_string()))
-            .is_ok());
+            .is_err());
         assert!(tmp.exists())
     }
 
@@ -123,7 +125,7 @@ mod tests {
         let tmp = TempDir::new("fruently").unwrap().into_path().join("buffer");
         let conf = RetryConf::new().store_file(tmp.clone());
         assert!(maybe_write_records(&conf, forward, FluentError::Dummy("dummy".to_string()))
-            .is_ok());
+            .is_err());
         assert!(tmp.exists())
     }
 }
