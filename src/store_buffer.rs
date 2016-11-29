@@ -36,7 +36,6 @@ pub fn maybe_write_record<T>(conf: &RetryConf,
             }
             Err(e) => return Err(From::from(e)),
         }
-        Ok(())
     } else {
         Err(err)
     }
@@ -63,7 +62,6 @@ pub fn maybe_write_records<T>(conf: &RetryConf,
             }
             Err(e) => return Err(From::from(e)),
         }
-        Ok(())
     } else {
         Err(err)
     }
