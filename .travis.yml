@@ -4,6 +4,7 @@ matrix:
   include:
     - rust: nightly
       env:
+        # will have to be commented out the following line
         - SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
     - rust: beta
     - rust: 1.13.0
