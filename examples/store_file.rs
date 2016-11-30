@@ -16,7 +16,7 @@ fn main() {
         Err(e) => println!("{:?}", e),
         Ok(_) => {
             assert!(file.exists());
-            return
-        },
+            return;
+        }
     }
 }
