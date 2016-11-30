@@ -1,9 +1,12 @@
 sudo: false
 language: rust
-rust:
-  - nightly
-  - beta
-  - 1.13.0
+matrix:
+  include:
+    - rust: nightly
+      env:
+        - SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+    - rust: beta
+    - rust: 1.13.0
 
 install:
   - rvm use 2.2
