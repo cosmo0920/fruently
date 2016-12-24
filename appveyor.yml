@@ -5,14 +5,19 @@ environment:
   matrix:
     - TARGET: x86_64-pc-windows-msvc
       BITS: 64
-      RUSTVER: 1.13.0
+      RUSTVER: 1.14.0
       ruby_version: "23-x64"
       devkit: C:\Ruby23-x64\DevKit
     - TARGET: x86_64-pc-windows-msvc
       BITS: 64
-      RUSTVER: 1.13.0
+      RUSTVER: 1.14.0
       ruby_version: "23"
       devkit: C:\Ruby23\DevKit
+    - TARGET: x86_64-pc-windows-msvc
+      BITS: 64
+      RUSTVER: 1.13.0
+      ruby_version: "23-x64"
+      devkit: C:\Ruby23-x64\DevKit
 
 install:
   - ps: Start-FileDownload "https://static.rust-lang.org/dist/rust-${env:RUSTVER}-${env:TARGET}.exe"
