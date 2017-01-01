@@ -1,3 +1,5 @@
+//! Store buffer when failing to send events.
+
 use std::fs::File;
 use std::path::PathBuf;
 use std::io;
