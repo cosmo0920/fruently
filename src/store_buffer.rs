@@ -12,11 +12,13 @@ use forwardable::forward::Forward;
 use std::fs::OpenOptions;
 use record::Record;
 
+/// Create file with write, create, append, and open option.
 fn ensure_file_with_wca(path: PathBuf) -> Result<File, io::Error> {
     let file = try!(OpenOptions::new().write(true).create(true).append(true).open(path));
     Ok(file)
 }
 
+/// Write event buffer into file with TSV format.
 pub fn maybe_write_record<T>(conf: &RetryConf,
                              record: Record<T>,
                              err: FluentError)
@@ -43,6 +45,7 @@ pub fn maybe_write_record<T>(conf: &RetryConf,
     }
 }
 
+/// Write events buffer into file with TSV format.
 pub fn maybe_write_records<T>(conf: &RetryConf,
                               forward: Forward<T>,
                               err: FluentError)
