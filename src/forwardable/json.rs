@@ -42,7 +42,7 @@ impl<'a, A: ToSocketAddrs> JsonForwardable for Fluent<'a, A> {
         where T: Encodable + Debug + Clone
     {
         let record = Record::new(self.get_tag().into_owned(), time, record);
-        let message = try!(record.clone().make_forwardable_json());
+        let message = record.clone().make_forwardable_json()?;
         let addr = self.get_addr();
         let (max, multiplier) = self.get_conf().into_owned().build();
         match retry_exponentially(max,

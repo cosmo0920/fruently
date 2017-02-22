@@ -67,7 +67,7 @@ impl<'a, A: ToSocketAddrs> Fluent<'a, A> {
     #[doc(hidden)]
     /// For internal usage.
     pub fn closure_send_as_json(addr: &A, message: String) -> Result<(), FluentError> {
-        let mut stream = try!(net::TcpStream::connect(addr));
+        let mut stream = net::TcpStream::connect(addr)?;
         let result = stream.write(&message.into_bytes());
         drop(stream);
 
@@ -82,7 +82,7 @@ impl<'a, A: ToSocketAddrs> Fluent<'a, A> {
     pub fn closure_send_as_msgpack<T: Encodable>(addr: &A,
                                                  record: &Record<T>)
                                                  -> Result<(), FluentError> {
-        let mut stream = try!(net::TcpStream::connect(addr));
+        let mut stream = net::TcpStream::connect(addr)?;
         let mut encoder = Encoder::new(&mut stream);
         let result = record.encode(&mut encoder);
 
@@ -97,7 +97,7 @@ impl<'a, A: ToSocketAddrs> Fluent<'a, A> {
     pub fn closure_send_as_forward<T: Encodable>(addr: &A,
                                                  forward: &Forward<T>)
                                                  -> Result<(), FluentError> {
-        let mut stream = try!(net::TcpStream::connect(addr));
+        let mut stream = net::TcpStream::connect(addr)?;
         let mut encoder = Encoder::new(&mut stream);
         let result = forward.encode(&mut encoder);
 
