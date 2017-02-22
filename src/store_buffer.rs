@@ -14,7 +14,7 @@ use record::Record;
 
 /// Create file with write, create, append, and open option.
 fn ensure_file_with_wca(path: PathBuf) -> Result<File, io::Error> {
-    let file = try!(OpenOptions::new().write(true).create(true).append(true).open(path));
+    let file = OpenOptions::new().write(true).create(true).append(true).open(path)?;
     Ok(file)
 }
 
@@ -32,8 +32,8 @@ pub fn maybe_write_record<T>(conf: &RetryConf,
             Ok(mut f) => {
                 let mut w = Vec::new();
                 write!(&mut w, "{}", record.dump()).unwrap();
-                try!(f.write(&w));
-                try!(f.sync_data());
+                f.write(&w)?;
+                f.sync_data()?;
                 return Err(FluentError::FileStored(format!("stored buffer in specified file: \
                                                             {:?}",
                                                            store_path.unwrap())));
@@ -59,8 +59,8 @@ pub fn maybe_write_records<T>(conf: &RetryConf,
             Ok(mut f) => {
                 let mut w = Vec::new();
                 write!(&mut w, "{}", forward.dump()).unwrap();
-                try!(f.write(&w));
-                try!(f.sync_data());
+                f.write(&w)?;
+                f.sync_data()?;
                 return Err(FluentError::FileStored(format!("stored buffer in specified file: \
                                                             {:?}",
                                                            store_path.unwrap())));

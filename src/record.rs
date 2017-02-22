@@ -60,7 +60,7 @@ impl<T: Encodable> Record<T> {
     }
 
     pub fn make_forwardable_json(self) -> Result<String, FluentError> {
-        let message = try!(json::encode(&self));
+        let message = json::encode(&self)?;
         Ok(message)
     }
 
@@ -85,13 +85,13 @@ impl<T: Encodable> Encodable for Record<T> {
         match *self {
             Record { tag: ref p_tag, time: ref p_time, record: ref p_record } => {
                 encoder.emit_tuple(4, |encoder| {
-                    try!(encoder.emit_tuple_arg(0, |encoder| p_tag.encode(encoder)));
-                    try!(encoder.emit_tuple_arg(1, |encoder| {
+                    encoder.emit_tuple_arg(0, |encoder| p_tag.encode(encoder))?;
+                    encoder.emit_tuple_arg(1, |encoder| {
                         p_time.to_timespec().sec.encode(encoder)
-                    }));
-                    try!(encoder.emit_tuple_arg(2, |encoder| p_record.encode(encoder)));
+                    })?;
+                    encoder.emit_tuple_arg(2, |encoder| p_record.encode(encoder))?;
                     // Put `None::<T>` as-is for now.
-                    try!(encoder.emit_tuple_arg(3, |encoder| None::<T>.encode(encoder)));
+                    encoder.emit_tuple_arg(3, |encoder| None::<T>.encode(encoder))?;
                     Ok(())
                 })
             }
