@@ -6,11 +6,11 @@ use std::io;
 use std::io::Write;
 use std::fmt::Debug;
 use retry_conf::RetryConf;
-use rustc_serialize::Encodable;
 use record::FluentError;
 use forwardable::forward::Forward;
 use std::fs::OpenOptions;
 use record::Record;
+use serde::ser::Serialize;
 
 /// Create file with write, create, append, and open option.
 fn ensure_file_with_wca(path: PathBuf) -> Result<File, io::Error> {
@@ -23,7 +23,7 @@ pub fn maybe_write_record<T>(conf: &RetryConf,
                              record: Record<T>,
                              err: FluentError)
                              -> Result<(), FluentError>
-    where T: Encodable + Debug
+    where T: Serialize + Debug
 {
     let store_needed = conf.clone().need_to_store();
     let store_path = conf.clone().store_path();
@@ -50,7 +50,7 @@ pub fn maybe_write_records<T>(conf: &RetryConf,
                               forward: Forward<T>,
                               err: FluentError)
                               -> Result<(), FluentError>
-    where T: Encodable + Debug
+    where T: Serialize + Debug
 {
     let store_needed = conf.clone().need_to_store();
     let store_path = conf.clone().store_path();

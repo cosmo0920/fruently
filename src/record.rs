@@ -1,15 +1,16 @@
 //! Implement record manupulation mechanisms.
 
-use rustc_serialize::json;
-use rustc_serialize::{Encodable, Encoder};
-use rmp_serialize::encode;
 use time;
 use time::Tm;
 use std::io;
 use retry;
+use serde_json;
+use serde::ser::{Serialize, Serializer};
+use rmp_serde;
+use serde::ser::SerializeTuple;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Record<T: Encodable> {
+pub struct Record<T: Serialize> {
     tag: String,
     time: Tm,
     record: T,
@@ -17,8 +18,8 @@ pub struct Record<T: Encodable> {
 
 #[derive(Debug)]
 pub enum FluentError {
-    JsonEncode(json::EncoderError),
-    MsgpackEncode(encode::Error),
+    JsonEncode(serde_json::Error),
+    MsgpackEncode(rmp_serde::encode::Error),
     IO(io::Error),
     Retry(retry::RetryError),
     FileStored(String),
@@ -32,8 +33,8 @@ impl From<io::Error> for FluentError {
     }
 }
 
-impl From<encode::Error> for FluentError {
-    fn from(err: encode::Error) -> FluentError {
+impl From<rmp_serde::encode::Error> for FluentError {
+    fn from(err: rmp_serde::encode::Error) -> FluentError {
         FluentError::MsgpackEncode(err)
     }
 }
@@ -44,13 +45,13 @@ impl From<retry::RetryError> for FluentError {
     }
 }
 
-impl From<json::EncoderError> for FluentError {
-    fn from(err: json::EncoderError) -> FluentError {
+impl From<serde_json::Error> for FluentError {
+    fn from(err: serde_json::Error) -> FluentError {
         FluentError::JsonEncode(err)
     }
 }
 
-impl<T: Encodable> Record<T> {
+impl<T: Serialize> Record<T> {
     pub fn new(tag: String, time: Tm, record: T) -> Record<T> {
         Record {
             tag: tag,
@@ -60,7 +61,7 @@ impl<T: Encodable> Record<T> {
     }
 
     pub fn make_forwardable_json(self) -> Result<String, FluentError> {
-        let message = json::encode(&self)?;
+        let message = serde_json::to_string(&self)?;
         Ok(message)
     }
 
@@ -69,7 +70,7 @@ impl<T: Encodable> Record<T> {
         format!("{}\t{}\t{}\n",
                 time::strftime("%FT%T%z", &self.time).unwrap(),
                 self.tag,
-                json::encode(&self.record).unwrap())
+                serde_json::to_string(&self.record).unwrap())
     }
 }
 
@@ -80,22 +81,14 @@ impl<T: Encodable> Record<T> {
 /// `[tag, unixtime/eventtime, record]`
 ///
 /// ref: https://github.com/fluent/fluentd/wiki/Forward-Protocol-Specification-v0#message-mode
-impl<T: Encodable> Encodable for Record<T> {
-    fn encode<S: Encoder>(&self, encoder: &mut S) -> Result<(), S::Error> {
-        match *self {
-            Record { tag: ref p_tag, time: ref p_time, record: ref p_record } => {
-                encoder.emit_tuple(4, |encoder| {
-                    encoder.emit_tuple_arg(0, |encoder| p_tag.encode(encoder))?;
-                    encoder.emit_tuple_arg(1, |encoder| {
-                        p_time.to_timespec().sec.encode(encoder)
-                    })?;
-                    encoder.emit_tuple_arg(2, |encoder| p_record.encode(encoder))?;
-                    // Put `None::<T>` as-is for now.
-                    encoder.emit_tuple_arg(3, |encoder| None::<T>.encode(encoder))?;
-                    Ok(())
-                })
-            }
-        }
+impl<T: Serialize> Serialize for Record<T> {
+    fn serialize<S: Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
+        let mut seq = s.serialize_tuple(4)?;
+        seq.serialize_element(&self.tag)?;
+        seq.serialize_element(&self.time.to_timespec().sec)?;
+        seq.serialize_element(&self.record)?;
+        seq.serialize_element(&None::<T>)?;
+        seq.end()
     }
 }
 
@@ -104,8 +97,7 @@ mod tests {
     use super::*;
     use time;
     use std::collections::HashMap;
-    use rustc_serialize::json;
-    use rustc_serialize::json::Json;
+    use serde_json;
 
     #[test]
     fn test_json_format() {
@@ -115,13 +107,13 @@ mod tests {
         obj.insert("name".to_string(), "fruently".to_string());
         let record = Record::new(tag.clone(), time, obj.clone());
         let forwardable_json = record.make_forwardable_json().ok().unwrap();
-        let json_tag = json::encode(&tag.clone()).ok().unwrap();
-        let json_obj = json::encode(&obj.clone()).ok().unwrap();
+        let json_tag = serde_json::to_string(&tag.clone()).ok().unwrap();
+        let json_obj = serde_json::to_string(&obj.clone()).ok().unwrap();
         let expected = format!("[{},{},{},{}]",
                                json_tag,
                                time.to_timespec().sec,
                                json_obj,
-                               Json::Null);
+                               serde_json::Value::Null);
         assert_eq!(expected, forwardable_json);
     }
 }

@@ -20,18 +20,18 @@
 
 use std::fmt::Debug;
 use std::net::ToSocketAddrs;
-use rustc_serialize::Encodable;
 use time;
 use retry::retry_exponentially;
 use record::{Record, FluentError};
 use forwardable::JsonForwardable;
 use fluent::Fluent;
 use store_buffer;
+use serde::ser::Serialize;
 
 impl<'a, A: ToSocketAddrs> JsonForwardable for Fluent<'a, A> {
     /// Post record into Fluentd. Without time version.
     fn post<T>(self, record: T) -> Result<(), FluentError>
-        where T: Encodable + Debug + Clone
+        where T: Serialize + Debug + Clone
     {
         let time = time::now();
         self.post_with_time(record, time)
@@ -39,7 +39,7 @@ impl<'a, A: ToSocketAddrs> JsonForwardable for Fluent<'a, A> {
 
     /// Post record into Fluentd. With time version.
     fn post_with_time<T>(self, record: T, time: time::Tm) -> Result<(), FluentError>
-        where T: Encodable + Debug + Clone
+        where T: Serialize + Debug + Clone
     {
         let record = Record::new(self.get_tag().into_owned(), time, record);
         let message = record.clone().make_forwardable_json()?;
