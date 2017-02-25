@@ -26,23 +26,23 @@
 
 use std::fmt::Debug;
 use std::net::ToSocketAddrs;
-use rustc_serialize::Encodable;
 use retry::retry_exponentially;
-use rustc_serialize::json;
 use time;
 use time::Timespec;
 use record::FluentError;
 use forwardable::{Entry, Forwardable};
 use fluent::Fluent;
 use store_buffer;
+use serde_json;
+use serde::ser::Serialize;
 
-#[derive(Debug, Clone, PartialEq, Eq, RustcEncodable, RustcDecodable)]
-pub struct Forward<T: Encodable> {
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Forward<T: Serialize> {
     tag: String,
     entries: Vec<Entry<T>>,
 }
 
-impl<T: Encodable> Forward<T> {
+impl<T: Serialize> Forward<T> {
     pub fn new(tag: String, entries: Vec<Entry<T>>) -> Forward<T> {
         Forward {
             tag: tag,
@@ -58,7 +58,7 @@ impl<T: Encodable> Forward<T> {
             buf.push_str(&*format!("{}\t{}\t{}\n",
                                    time::strftime("%FT%T%z", &time::at(timespec)).unwrap(),
                                    self.tag,
-                                   json::encode(&record).unwrap()));
+                                   serde_json::to_string(&record).unwrap()));
         }
         buf
     }
@@ -67,7 +67,7 @@ impl<T: Encodable> Forward<T> {
 impl<'a, A: ToSocketAddrs> Forwardable for Fluent<'a, A> {
     /// Post `Vec<Entry<T>>` into Fluentd.
     fn post<T>(self, entries: Vec<Entry<T>>) -> Result<(), FluentError>
-        where T: Encodable + Debug
+        where T: Serialize + Debug
     {
         let forward = Forward::new(self.get_tag().into_owned(), entries);
         let addr = self.get_addr();

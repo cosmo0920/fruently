@@ -7,8 +7,8 @@ use std::io::Write;
 use record::{FluentError, Record};
 use retry_conf::RetryConf;
 use forwardable::forward::Forward;
-use rustc_serialize::Encodable;
-use rmp_serialize::Encoder;
+use serde::ser::Serialize;
+use rmp_serde::encode::Serializer;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Fluent<'a, A>
@@ -79,12 +79,11 @@ impl<'a, A: ToSocketAddrs> Fluent<'a, A> {
 
     #[doc(hidden)]
     /// For internal usage.
-    pub fn closure_send_as_msgpack<T: Encodable>(addr: &A,
+    pub fn closure_send_as_msgpack<T: Serialize>(addr: &A,
                                                  record: &Record<T>)
                                                  -> Result<(), FluentError> {
         let mut stream = net::TcpStream::connect(addr)?;
-        let mut encoder = Encoder::new(&mut stream);
-        let result = record.encode(&mut encoder);
+        let result = record.serialize(&mut Serializer::new(&mut stream));
 
         match result {
             Ok(_) => Ok(()),
@@ -94,12 +93,11 @@ impl<'a, A: ToSocketAddrs> Fluent<'a, A> {
 
     #[doc(hidden)]
     /// For internal usage.
-    pub fn closure_send_as_forward<T: Encodable>(addr: &A,
+    pub fn closure_send_as_forward<T: Serialize>(addr: &A,
                                                  forward: &Forward<T>)
                                                  -> Result<(), FluentError> {
         let mut stream = net::TcpStream::connect(addr)?;
-        let mut encoder = Encoder::new(&mut stream);
-        let result = forward.encode(&mut encoder);
+        let result = forward.serialize(&mut Serializer::new(&mut stream));
 
         match result {
             Ok(_) => Ok(()),

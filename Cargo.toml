@@ -22,10 +22,13 @@ default-features = false
 
 [dependencies]
 skeptic = {version = "~0.4", optional = true}
-rustc-serialize = "~0.3.18"
 time = "~0.1.34"
 retry = "~0.4.0"
-rmp-serialize = "~0.8.0"
+serde = "~0.9.0"
+serde_json = "~0.9.0"
+serde_derive = "~0.9.0"
+rmp = "~0.8.0"
+rmp-serde = "~0.12.0"
 clippy = {version = '0.0.67', optional = true}
 
 [dev-dependencies]

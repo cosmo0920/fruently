@@ -3,10 +3,15 @@
 
 //! `fruently` is a yet another Fluentd logger for Rust.
 
-extern crate rustc_serialize;
-extern crate rmp_serialize;
 extern crate time;
 extern crate retry;
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
+extern crate serde_json;
+extern crate rmp;
+extern crate rmp_serde;
+
 pub mod fluent;
 pub mod record;
 pub mod forwardable;
