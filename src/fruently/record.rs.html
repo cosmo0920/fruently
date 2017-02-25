@@ -9,8 +9,8 @@
 
     <title>record.rs.html -- source</title>
 
-    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../../main.css">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css">
     
 
     
@@ -161,27 +161,20 @@
 <span id="117">117</span>
 <span id="118">118</span>
 <span id="119">119</span>
-<span id="120">120</span>
-<span id="121">121</span>
-<span id="122">122</span>
-<span id="123">123</span>
-<span id="124">124</span>
-<span id="125">125</span>
-<span id="126">126</span>
-<span id="127">127</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! Implement record manupulation mechanisms.</span>
 
-<span class='kw'>use</span> <span class='ident'>rustc_serialize</span>::<span class='ident'>json</span>;
-<span class='kw'>use</span> <span class='ident'>rustc_serialize</span>::{<span class='ident'>Encodable</span>, <span class='ident'>Encoder</span>};
-<span class='kw'>use</span> <span class='ident'>rmp_serialize</span>::<span class='ident'>encode</span>;
 <span class='kw'>use</span> <span class='ident'>time</span>;
 <span class='kw'>use</span> <span class='ident'>time</span>::<span class='ident'>Tm</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>io</span>;
 <span class='kw'>use</span> <span class='ident'>retry</span>;
+<span class='kw'>use</span> <span class='ident'>serde_json</span>;
+<span class='kw'>use</span> <span class='ident'>serde</span>::<span class='ident'>ser</span>::{<span class='ident'>Serialize</span>, <span class='ident'>Serializer</span>};
+<span class='kw'>use</span> <span class='ident'>rmp_serde</span>;
+<span class='kw'>use</span> <span class='ident'>serde</span>::<span class='ident'>ser</span>::<span class='ident'>SerializeTuple</span>;
 
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>Clone</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Eq</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Record</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>Encodable</span><span class='op'>&gt;</span> {
+<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Record</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>Serialize</span><span class='op'>&gt;</span> {
     <span class='ident'>tag</span>: <span class='ident'>String</span>,
     <span class='ident'>time</span>: <span class='ident'>Tm</span>,
     <span class='ident'>record</span>: <span class='ident'>T</span>,
@@ -189,8 +182,8 @@
 
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>FluentError</span> {
-    <span class='ident'>JsonEncode</span>(<span class='ident'>json</span>::<span class='ident'>EncoderError</span>),
-    <span class='ident'>MsgpackEncode</span>(<span class='ident'>encode</span>::<span class='ident'>Error</span>),
+    <span class='ident'>JsonEncode</span>(<span class='ident'>serde_json</span>::<span class='ident'>Error</span>),
+    <span class='ident'>MsgpackEncode</span>(<span class='ident'>rmp_serde</span>::<span class='ident'>encode</span>::<span class='ident'>Error</span>),
     <span class='ident'>IO</span>(<span class='ident'>io</span>::<span class='ident'>Error</span>),
     <span class='ident'>Retry</span>(<span class='ident'>retry</span>::<span class='ident'>RetryError</span>),
     <span class='ident'>FileStored</span>(<span class='ident'>String</span>),
@@ -204,8 +197,8 @@
     }
 }
 
-<span class='kw'>impl</span> <span class='ident'>From</span><span class='op'>&lt;</span><span class='ident'>encode</span>::<span class='ident'>Error</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>FluentError</span> {
-    <span class='kw'>fn</span> <span class='ident'>from</span>(<span class='ident'>err</span>: <span class='ident'>encode</span>::<span class='ident'>Error</span>) <span class='op'>-&gt;</span> <span class='ident'>FluentError</span> {
+<span class='kw'>impl</span> <span class='ident'>From</span><span class='op'>&lt;</span><span class='ident'>rmp_serde</span>::<span class='ident'>encode</span>::<span class='ident'>Error</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>FluentError</span> {
+    <span class='kw'>fn</span> <span class='ident'>from</span>(<span class='ident'>err</span>: <span class='ident'>rmp_serde</span>::<span class='ident'>encode</span>::<span class='ident'>Error</span>) <span class='op'>-&gt;</span> <span class='ident'>FluentError</span> {
         <span class='ident'>FluentError</span>::<span class='ident'>MsgpackEncode</span>(<span class='ident'>err</span>)
     }
 }
@@ -216,13 +209,13 @@
     }
 }
 
-<span class='kw'>impl</span> <span class='ident'>From</span><span class='op'>&lt;</span><span class='ident'>json</span>::<span class='ident'>EncoderError</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>FluentError</span> {
-    <span class='kw'>fn</span> <span class='ident'>from</span>(<span class='ident'>err</span>: <span class='ident'>json</span>::<span class='ident'>EncoderError</span>) <span class='op'>-&gt;</span> <span class='ident'>FluentError</span> {
+<span class='kw'>impl</span> <span class='ident'>From</span><span class='op'>&lt;</span><span class='ident'>serde_json</span>::<span class='ident'>Error</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>FluentError</span> {
+    <span class='kw'>fn</span> <span class='ident'>from</span>(<span class='ident'>err</span>: <span class='ident'>serde_json</span>::<span class='ident'>Error</span>) <span class='op'>-&gt;</span> <span class='ident'>FluentError</span> {
         <span class='ident'>FluentError</span>::<span class='ident'>JsonEncode</span>(<span class='ident'>err</span>)
     }
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>Encodable</span><span class='op'>&gt;</span> <span class='ident'>Record</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>Serialize</span><span class='op'>&gt;</span> <span class='ident'>Record</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>tag</span>: <span class='ident'>String</span>, <span class='ident'>time</span>: <span class='ident'>Tm</span>, <span class='ident'>record</span>: <span class='ident'>T</span>) <span class='op'>-&gt;</span> <span class='ident'>Record</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
         <span class='ident'>Record</span> {
             <span class='ident'>tag</span>: <span class='ident'>tag</span>,
@@ -232,7 +225,7 @@
     }
 
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>make_forwardable_json</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>String</span>, <span class='ident'>FluentError</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='ident'>message</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>json</span>::<span class='ident'>encode</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>));
+        <span class='kw'>let</span> <span class='ident'>message</span> <span class='op'>=</span> <span class='ident'>serde_json</span>::<span class='ident'>to_string</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>)<span class='question-mark'>?</span>;
         <span class='prelude-val'>Ok</span>(<span class='ident'>message</span>)
     }
 
@@ -241,7 +234,7 @@
         <span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;{}\t{}\t{}\n&quot;</span>,
                 <span class='ident'>time</span>::<span class='ident'>strftime</span>(<span class='string'>&quot;%FT%T%z&quot;</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>time</span>).<span class='ident'>unwrap</span>(),
                 <span class='self'>self</span>.<span class='ident'>tag</span>,
-                <span class='ident'>json</span>::<span class='ident'>encode</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>record</span>).<span class='ident'>unwrap</span>())
+                <span class='ident'>serde_json</span>::<span class='ident'>to_string</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>record</span>).<span class='ident'>unwrap</span>())
     }
 }
 
@@ -252,22 +245,14 @@
 <span class='doccomment'>/// `[tag, unixtime/eventtime, record]`</span>
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// ref: https://github.com/fluent/fluentd/wiki/Forward-Protocol-Specification-v0#message-mode</span>
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>Encodable</span><span class='op'>&gt;</span> <span class='ident'>Encodable</span> <span class='kw'>for</span> <span class='ident'>Record</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
-    <span class='kw'>fn</span> <span class='ident'>encode</span><span class='op'>&lt;</span><span class='ident'>S</span>: <span class='ident'>Encoder</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>encoder</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>S</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>S</span>::<span class='ident'>Error</span><span class='op'>&gt;</span> {
-        <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
-            <span class='ident'>Record</span> { <span class='ident'>tag</span>: <span class='kw-2'>ref</span> <span class='ident'>p_tag</span>, <span class='ident'>time</span>: <span class='kw-2'>ref</span> <span class='ident'>p_time</span>, <span class='ident'>record</span>: <span class='kw-2'>ref</span> <span class='ident'>p_record</span> } <span class='op'>=&gt;</span> {
-                <span class='ident'>encoder</span>.<span class='ident'>emit_tuple</span>(<span class='number'>4</span>, <span class='op'>|</span><span class='ident'>encoder</span><span class='op'>|</span> {
-                    <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>encoder</span>.<span class='ident'>emit_tuple_arg</span>(<span class='number'>0</span>, <span class='op'>|</span><span class='ident'>encoder</span><span class='op'>|</span> <span class='ident'>p_tag</span>.<span class='ident'>encode</span>(<span class='ident'>encoder</span>)));
-                    <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>encoder</span>.<span class='ident'>emit_tuple_arg</span>(<span class='number'>1</span>, <span class='op'>|</span><span class='ident'>encoder</span><span class='op'>|</span> {
-                        <span class='ident'>p_time</span>.<span class='ident'>to_timespec</span>().<span class='ident'>sec</span>.<span class='ident'>encode</span>(<span class='ident'>encoder</span>)
-                    }));
-                    <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>encoder</span>.<span class='ident'>emit_tuple_arg</span>(<span class='number'>2</span>, <span class='op'>|</span><span class='ident'>encoder</span><span class='op'>|</span> <span class='ident'>p_record</span>.<span class='ident'>encode</span>(<span class='ident'>encoder</span>)));
-                    <span class='comment'>// Put `None::&lt;T&gt;` as-is for now.</span>
-                    <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>encoder</span>.<span class='ident'>emit_tuple_arg</span>(<span class='number'>3</span>, <span class='op'>|</span><span class='ident'>encoder</span><span class='op'>|</span> <span class='prelude-val'>None</span>::<span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>.<span class='ident'>encode</span>(<span class='ident'>encoder</span>)));
-                    <span class='prelude-val'>Ok</span>(())
-                })
-            }
-        }
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>Serialize</span><span class='op'>&gt;</span> <span class='ident'>Serialize</span> <span class='kw'>for</span> <span class='ident'>Record</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
+    <span class='kw'>fn</span> <span class='ident'>serialize</span><span class='op'>&lt;</span><span class='ident'>S</span>: <span class='ident'>Serializer</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>s</span>: <span class='ident'>S</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>S</span>::<span class='prelude-val'>Ok</span>, <span class='ident'>S</span>::<span class='ident'>Error</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>seq</span> <span class='op'>=</span> <span class='ident'>s</span>.<span class='ident'>serialize_tuple</span>(<span class='number'>4</span>)<span class='question-mark'>?</span>;
+        <span class='ident'>seq</span>.<span class='ident'>serialize_element</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>tag</span>)<span class='question-mark'>?</span>;
+        <span class='ident'>seq</span>.<span class='ident'>serialize_element</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>time</span>.<span class='ident'>to_timespec</span>().<span class='ident'>sec</span>)<span class='question-mark'>?</span>;
+        <span class='ident'>seq</span>.<span class='ident'>serialize_element</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>record</span>)<span class='question-mark'>?</span>;
+        <span class='ident'>seq</span>.<span class='ident'>serialize_element</span>(<span class='kw-2'>&amp;</span><span class='prelude-val'>None</span>::<span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>)<span class='question-mark'>?</span>;
+        <span class='ident'>seq</span>.<span class='ident'>end</span>()
     }
 }
 
@@ -276,8 +261,7 @@
     <span class='kw'>use</span> <span class='kw'>super</span>::<span class='op'>*</span>;
     <span class='kw'>use</span> <span class='ident'>time</span>;
     <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>collections</span>::<span class='ident'>HashMap</span>;
-    <span class='kw'>use</span> <span class='ident'>rustc_serialize</span>::<span class='ident'>json</span>;
-    <span class='kw'>use</span> <span class='ident'>rustc_serialize</span>::<span class='ident'>json</span>::<span class='ident'>Json</span>;
+    <span class='kw'>use</span> <span class='ident'>serde_json</span>;
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>test_json_format</span>() {
@@ -287,13 +271,13 @@
         <span class='ident'>obj</span>.<span class='ident'>insert</span>(<span class='string'>&quot;name&quot;</span>.<span class='ident'>to_string</span>(), <span class='string'>&quot;fruently&quot;</span>.<span class='ident'>to_string</span>());
         <span class='kw'>let</span> <span class='ident'>record</span> <span class='op'>=</span> <span class='ident'>Record</span>::<span class='ident'>new</span>(<span class='ident'>tag</span>.<span class='ident'>clone</span>(), <span class='ident'>time</span>, <span class='ident'>obj</span>.<span class='ident'>clone</span>());
         <span class='kw'>let</span> <span class='ident'>forwardable_json</span> <span class='op'>=</span> <span class='ident'>record</span>.<span class='ident'>make_forwardable_json</span>().<span class='ident'>ok</span>().<span class='ident'>unwrap</span>();
-        <span class='kw'>let</span> <span class='ident'>json_tag</span> <span class='op'>=</span> <span class='ident'>json</span>::<span class='ident'>encode</span>(<span class='kw-2'>&amp;</span><span class='ident'>tag</span>.<span class='ident'>clone</span>()).<span class='ident'>ok</span>().<span class='ident'>unwrap</span>();
-        <span class='kw'>let</span> <span class='ident'>json_obj</span> <span class='op'>=</span> <span class='ident'>json</span>::<span class='ident'>encode</span>(<span class='kw-2'>&amp;</span><span class='ident'>obj</span>.<span class='ident'>clone</span>()).<span class='ident'>ok</span>().<span class='ident'>unwrap</span>();
+        <span class='kw'>let</span> <span class='ident'>json_tag</span> <span class='op'>=</span> <span class='ident'>serde_json</span>::<span class='ident'>to_string</span>(<span class='kw-2'>&amp;</span><span class='ident'>tag</span>.<span class='ident'>clone</span>()).<span class='ident'>ok</span>().<span class='ident'>unwrap</span>();
+        <span class='kw'>let</span> <span class='ident'>json_obj</span> <span class='op'>=</span> <span class='ident'>serde_json</span>::<span class='ident'>to_string</span>(<span class='kw-2'>&amp;</span><span class='ident'>obj</span>.<span class='ident'>clone</span>()).<span class='ident'>ok</span>().<span class='ident'>unwrap</span>();
         <span class='kw'>let</span> <span class='ident'>expected</span> <span class='op'>=</span> <span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;[{},{},{},{}]&quot;</span>,
                                <span class='ident'>json_tag</span>,
                                <span class='ident'>time</span>.<span class='ident'>to_timespec</span>().<span class='ident'>sec</span>,
                                <span class='ident'>json_obj</span>,
-                               <span class='ident'>Json</span>::<span class='ident'>Null</span>);
+                               <span class='ident'>serde_json</span>::<span class='ident'>Value</span>::<span class='ident'>Null</span>);
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>expected</span>, <span class='ident'>forwardable_json</span>);
     }
 }
@@ -352,13 +336,11 @@
     
 
     <script>
-        window.rootPath = "../../../";
+        window.rootPath = "../../";
         window.currentCrate = "fruently";
-        window.playgroundUrl = "";
     </script>
-    <script src="../../../jquery.js"></script>
-    <script src="../../../main.js"></script>
-    
-    <script defer src="../../../search-index.js"></script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
+    <script defer src="../../search-index.js"></script>
 </body>
 </html>

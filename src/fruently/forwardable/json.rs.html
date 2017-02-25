@@ -4,13 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `src/forwardable/msgpack.rs`.">
+    <meta name="description" content="Source to the Rust file `src/forwardable/json.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
-    <title>msgpack.rs.html -- source</title>
+    <title>json.rs.html -- source</title>
 
-    <link rel="stylesheet" type="text/css" href="../../../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../../../main.css">
+    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../../../main.css">
     
 
     
@@ -131,8 +131,9 @@
 <span id="87">87</span>
 <span id="88">88</span>
 <span id="89">89</span>
+<span id="90">90</span>
 </pre><pre class='rust '>
-<span class='doccomment'>//! Send record as msgpack.</span>
+<span class='doccomment'>//! Send record as forwardable json.</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! ## Usage</span>
 <span class='doccomment'>//!</span>
@@ -142,7 +143,7 @@
 <span class='doccomment'>//! extern crate fruently;</span>
 <span class='doccomment'>//! use fruently::fluent::Fluent;</span>
 <span class='doccomment'>//! use std::collections::HashMap;</span>
-<span class='doccomment'>//! use fruently::forwardable::MsgpackForwardable;</span>
+<span class='doccomment'>//! use fruently::forwardable::JsonForwardable;</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! fn main() {</span>
 <span class='doccomment'>//!     let mut obj: HashMap&lt;String, String&gt; = HashMap::new();</span>
@@ -154,18 +155,18 @@
 
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>::<span class='ident'>Debug</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>net</span>::<span class='ident'>ToSocketAddrs</span>;
-<span class='kw'>use</span> <span class='ident'>rustc_serialize</span>::<span class='ident'>Encodable</span>;
 <span class='kw'>use</span> <span class='ident'>time</span>;
 <span class='kw'>use</span> <span class='ident'>retry</span>::<span class='ident'>retry_exponentially</span>;
 <span class='kw'>use</span> <span class='ident'>record</span>::{<span class='ident'>Record</span>, <span class='ident'>FluentError</span>};
-<span class='kw'>use</span> <span class='ident'>forwardable</span>::<span class='ident'>MsgpackForwardable</span>;
+<span class='kw'>use</span> <span class='ident'>forwardable</span>::<span class='ident'>JsonForwardable</span>;
 <span class='kw'>use</span> <span class='ident'>fluent</span>::<span class='ident'>Fluent</span>;
 <span class='kw'>use</span> <span class='ident'>store_buffer</span>;
+<span class='kw'>use</span> <span class='ident'>serde</span>::<span class='ident'>ser</span>::<span class='ident'>Serialize</span>;
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>A</span>: <span class='ident'>ToSocketAddrs</span><span class='op'>&gt;</span> <span class='ident'>MsgpackForwardable</span> <span class='kw'>for</span> <span class='ident'>Fluent</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>A</span><span class='op'>&gt;</span> {
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>A</span>: <span class='ident'>ToSocketAddrs</span><span class='op'>&gt;</span> <span class='ident'>JsonForwardable</span> <span class='kw'>for</span> <span class='ident'>Fluent</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>, <span class='ident'>A</span><span class='op'>&gt;</span> {
     <span class='doccomment'>/// Post record into Fluentd. Without time version.</span>
     <span class='kw'>fn</span> <span class='ident'>post</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>(<span class='self'>self</span>, <span class='ident'>record</span>: <span class='ident'>T</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>FluentError</span><span class='op'>&gt;</span>
-        <span class='kw'>where</span> <span class='ident'>T</span>: <span class='ident'>Encodable</span> <span class='op'>+</span> <span class='ident'>Debug</span>
+        <span class='kw'>where</span> <span class='ident'>T</span>: <span class='ident'>Serialize</span> <span class='op'>+</span> <span class='ident'>Debug</span> <span class='op'>+</span> <span class='ident'>Clone</span>
     {
         <span class='kw'>let</span> <span class='ident'>time</span> <span class='op'>=</span> <span class='ident'>time</span>::<span class='ident'>now</span>();
         <span class='self'>self</span>.<span class='ident'>post_with_time</span>(<span class='ident'>record</span>, <span class='ident'>time</span>)
@@ -173,14 +174,15 @@
 
     <span class='doccomment'>/// Post record into Fluentd. With time version.</span>
     <span class='kw'>fn</span> <span class='ident'>post_with_time</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>(<span class='self'>self</span>, <span class='ident'>record</span>: <span class='ident'>T</span>, <span class='ident'>time</span>: <span class='ident'>time</span>::<span class='ident'>Tm</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>FluentError</span><span class='op'>&gt;</span>
-        <span class='kw'>where</span> <span class='ident'>T</span>: <span class='ident'>Encodable</span> <span class='op'>+</span> <span class='ident'>Debug</span>
+        <span class='kw'>where</span> <span class='ident'>T</span>: <span class='ident'>Serialize</span> <span class='op'>+</span> <span class='ident'>Debug</span> <span class='op'>+</span> <span class='ident'>Clone</span>
     {
         <span class='kw'>let</span> <span class='ident'>record</span> <span class='op'>=</span> <span class='ident'>Record</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>get_tag</span>().<span class='ident'>into_owned</span>(), <span class='ident'>time</span>, <span class='ident'>record</span>);
+        <span class='kw'>let</span> <span class='ident'>message</span> <span class='op'>=</span> <span class='ident'>record</span>.<span class='ident'>clone</span>().<span class='ident'>make_forwardable_json</span>()<span class='question-mark'>?</span>;
         <span class='kw'>let</span> <span class='ident'>addr</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>get_addr</span>();
-        <span class='kw'>let</span> (<span class='ident'>max</span>, <span class='ident'>multiplier</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>get_conf</span>().<span class='ident'>into_owned</span>().<span class='ident'>clone</span>().<span class='ident'>build</span>();
+        <span class='kw'>let</span> (<span class='ident'>max</span>, <span class='ident'>multiplier</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>get_conf</span>().<span class='ident'>into_owned</span>().<span class='ident'>build</span>();
         <span class='kw'>match</span> <span class='ident'>retry_exponentially</span>(<span class='ident'>max</span>,
                                   <span class='ident'>multiplier</span>,
-                                  <span class='op'>||</span> <span class='ident'>Fluent</span>::<span class='ident'>closure_send_as_msgpack</span>(<span class='ident'>addr</span>, <span class='kw-2'>&amp;</span><span class='ident'>record</span>),
+                                  <span class='op'>||</span> <span class='ident'>Fluent</span>::<span class='ident'>closure_send_as_json</span>(<span class='ident'>addr</span>, <span class='ident'>message</span>.<span class='ident'>clone</span>()),
                                   <span class='op'>|</span><span class='ident'>response</span><span class='op'>|</span> <span class='ident'>response</span>.<span class='ident'>is_ok</span>()) {
             <span class='prelude-val'>Ok</span>(_) <span class='op'>=&gt;</span> <span class='prelude-val'>Ok</span>(()),
             <span class='prelude-val'>Err</span>(<span class='ident'>err</span>) <span class='op'>=&gt;</span> <span class='ident'>store_buffer</span>::<span class='ident'>maybe_write_record</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>get_conf</span>(), <span class='ident'>record</span>, <span class='ident'>From</span>::<span class='ident'>from</span>(<span class='ident'>err</span>)),
@@ -197,12 +199,12 @@
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>test_post</span>() {
         <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>collections</span>::<span class='ident'>HashMap</span>;
-        <span class='kw'>use</span> <span class='ident'>forwardable</span>::<span class='ident'>MsgpackForwardable</span>;
+        <span class='kw'>use</span> <span class='ident'>forwardable</span>::<span class='ident'>JsonForwardable</span>;
 
         <span class='comment'>// 0.0.0.0 does not work in Windows.</span>
         <span class='kw'>let</span> <span class='ident'>fruently</span> <span class='op'>=</span> <span class='ident'>Fluent</span>::<span class='ident'>new</span>(<span class='string'>&quot;127.0.0.1:24224&quot;</span>, <span class='string'>&quot;test&quot;</span>);
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>obj</span>: <span class='ident'>HashMap</span><span class='op'>&lt;</span><span class='ident'>String</span>, <span class='ident'>String</span><span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>HashMap</span>::<span class='ident'>new</span>();
-        <span class='ident'>obj</span>.<span class='ident'>insert</span>(<span class='string'>&quot;hey&quot;</span>.<span class='ident'>to_string</span>(), <span class='string'>&quot;Rust with msgpack!&quot;</span>.<span class='ident'>to_string</span>());
+        <span class='ident'>obj</span>.<span class='ident'>insert</span>(<span class='string'>&quot;hey&quot;</span>.<span class='ident'>to_string</span>(), <span class='string'>&quot;Rust!&quot;</span>.<span class='ident'>to_string</span>());
         <span class='kw'>let</span> <span class='ident'>result</span> <span class='op'>=</span> <span class='ident'>fruently</span>.<span class='ident'>post</span>(<span class='ident'>obj</span>).<span class='ident'>is_ok</span>();
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='bool-val'>true</span>, <span class='ident'>result</span>);
     }
@@ -210,12 +212,12 @@
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>test_post_with_time</span>() {
         <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>collections</span>::<span class='ident'>HashMap</span>;
-        <span class='kw'>use</span> <span class='ident'>forwardable</span>::<span class='ident'>MsgpackForwardable</span>;
+        <span class='kw'>use</span> <span class='ident'>forwardable</span>::<span class='ident'>JsonForwardable</span>;
 
         <span class='comment'>// 0.0.0.0 does not work in Windows.</span>
         <span class='kw'>let</span> <span class='ident'>fruently</span> <span class='op'>=</span> <span class='ident'>Fluent</span>::<span class='ident'>new</span>(<span class='string'>&quot;127.0.0.1:24224&quot;</span>, <span class='string'>&quot;test&quot;</span>);
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>obj</span>: <span class='ident'>HashMap</span><span class='op'>&lt;</span><span class='ident'>String</span>, <span class='ident'>String</span><span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>HashMap</span>::<span class='ident'>new</span>();
-        <span class='ident'>obj</span>.<span class='ident'>insert</span>(<span class='string'>&quot;hey&quot;</span>.<span class='ident'>to_string</span>(), <span class='string'>&quot;Rust with msgpack!&quot;</span>.<span class='ident'>to_string</span>());
+        <span class='ident'>obj</span>.<span class='ident'>insert</span>(<span class='string'>&quot;hey&quot;</span>.<span class='ident'>to_string</span>(), <span class='string'>&quot;Rust!&quot;</span>.<span class='ident'>to_string</span>());
         <span class='kw'>let</span> <span class='ident'>time</span> <span class='op'>=</span> <span class='ident'>time</span>::<span class='ident'>now</span>();
         <span class='kw'>let</span> <span class='ident'>result</span> <span class='op'>=</span> <span class='ident'>fruently</span>.<span class='ident'>post_with_time</span>(<span class='ident'>obj</span>, <span class='ident'>time</span>).<span class='ident'>is_ok</span>();
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='bool-val'>true</span>, <span class='ident'>result</span>);
@@ -276,13 +278,11 @@
     
 
     <script>
-        window.rootPath = "../../../../";
+        window.rootPath = "../../../";
         window.currentCrate = "fruently";
-        window.playgroundUrl = "";
     </script>
-    <script src="../../../../jquery.js"></script>
-    <script src="../../../../main.js"></script>
-    
-    <script defer src="../../../../search-index.js"></script>
+    <script src="../../../jquery.js"></script>
+    <script src="../../../main.js"></script>
+    <script defer src="../../../search-index.js"></script>
 </body>
 </html>

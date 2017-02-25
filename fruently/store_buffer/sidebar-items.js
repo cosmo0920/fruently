@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["maybe_write_record",""],["maybe_write_records",""]]});
+initSidebarItems({"fn":[["maybe_write_record","Write event buffer into file with TSV format."],["maybe_write_records","Write events buffer into file with TSV format."]]});
