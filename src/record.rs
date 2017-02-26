@@ -6,7 +6,7 @@ use std::io;
 use retry;
 use serde_json;
 use serde::ser::{Serialize, Serializer};
-use rmp_serde;
+use rmp_serde::encode;
 use serde::ser::SerializeTuple;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -19,7 +19,7 @@ pub struct Record<T: Serialize> {
 #[derive(Debug)]
 pub enum FluentError {
     JsonEncode(serde_json::Error),
-    MsgpackEncode(rmp_serde::encode::Error),
+    MsgpackEncode(encode::Error),
     IO(io::Error),
     Retry(retry::RetryError),
     FileStored(String),
@@ -33,8 +33,8 @@ impl From<io::Error> for FluentError {
     }
 }
 
-impl From<rmp_serde::encode::Error> for FluentError {
-    fn from(err: rmp_serde::encode::Error) -> FluentError {
+impl From<encode::Error> for FluentError {
+    fn from(err: encode::Error) -> FluentError {
         FluentError::MsgpackEncode(err)
     }
 }
