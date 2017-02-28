@@ -32,13 +32,13 @@ pub fn maybe_write_record<T>(conf: &RetryConf,
             Ok(mut f) => {
                 let mut w = Vec::new();
                 write!(&mut w, "{}", record.dump()).unwrap();
-                f.write(&w)?;
+                f.write_all(&w)?;
                 f.sync_data()?;
-                return Err(FluentError::FileStored(format!("stored buffer in specified file: \
-                                                            {:?}",
-                                                           store_path.unwrap())));
+                Err(FluentError::FileStored(format!("stored buffer in specified file: \
+                                                     {:?}",
+                                                    store_path.unwrap())))
             }
-            Err(e) => return Err(From::from(e)),
+            Err(e) => Err(From::from(e)),
         }
     } else {
         Err(err)
@@ -59,13 +59,13 @@ pub fn maybe_write_records<T>(conf: &RetryConf,
             Ok(mut f) => {
                 let mut w = Vec::new();
                 write!(&mut w, "{}", forward.dump()).unwrap();
-                f.write(&w)?;
+                f.write_all(&w)?;
                 f.sync_data()?;
-                return Err(FluentError::FileStored(format!("stored buffer in specified file: \
-                                                            {:?}",
-                                                           store_path.unwrap())));
+                Err(FluentError::FileStored(format!("stored buffer in specified file: \
+                                                     {:?}",
+                                                    store_path.unwrap())))
             }
-            Err(e) => return Err(From::from(e)),
+            Err(e) => Err(From::from(e)),
         }
     } else {
         Err(err)
