@@ -26,7 +26,7 @@ use std::path::PathBuf;
 ///
 /// * multiplier: `5_f64`
 /// * max: 10
-/// * store_file_path: None
+/// * `store_file_path`: None
 #[derive(Debug, Clone, PartialEq)]
 pub struct RetryConf {
     max: u64,
