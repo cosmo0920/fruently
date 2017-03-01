@@ -60,7 +60,7 @@ impl<T: Serialize> Record<T> {
         }
     }
 
-    pub fn make_forwardable_json(self) -> Result<String, FluentError> {
+    pub fn make_forwardable_json(&self) -> Result<String, FluentError> {
         let message = serde_json::to_string(&self)?;
         Ok(message)
     }
