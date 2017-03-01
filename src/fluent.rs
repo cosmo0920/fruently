@@ -66,8 +66,11 @@ impl<'a, A: ToSocketAddrs> Fluent<'a, A> {
 
     #[doc(hidden)]
     /// For internal usage.
-    pub fn closure_send_as_json(addr: &A, message: String) -> Result<(), FluentError> {
+    pub fn closure_send_as_json<T: Serialize>(addr: &A,
+                                              record: &Record<T>)
+                                              -> Result<(), FluentError> {
         let mut stream = net::TcpStream::connect(addr)?;
+        let message = record.make_forwardable_json()?;
         let result = stream.write(&message.into_bytes());
         drop(stream);
 
