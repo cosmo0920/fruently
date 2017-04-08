@@ -29,7 +29,7 @@ use std::net::ToSocketAddrs;
 use retry::retry_exponentially;
 use time;
 use time::Timespec;
-use record::FluentError;
+use error::FluentError;
 use forwardable::{Entry, Forwardable};
 use fluent::Fluent;
 use store_buffer;

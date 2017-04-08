@@ -6,7 +6,7 @@ use std::io;
 use std::io::Write;
 use std::fmt::Debug;
 use retry_conf::RetryConf;
-use record::FluentError;
+use error::FluentError;
 use forwardable::forward::Forward;
 use std::fs::OpenOptions;
 use record::Record;
@@ -81,7 +81,7 @@ mod tests {
     use self::tempdir::TempDir;
     use record::Record;
     use retry_conf::RetryConf;
-    use record::FluentError;
+    use error::FluentError;
     use forwardable::forward::Forward;
 
     #[test]

@@ -4,11 +4,12 @@ use std::borrow::{Borrow, Cow};
 use std::net::ToSocketAddrs;
 use std::net;
 use std::io::Write;
-use record::{FluentError, Record};
+use record::Record;
 use retry_conf::RetryConf;
 use forwardable::forward::Forward;
 use serde::ser::Serialize;
 use rmp_serde::encode::Serializer;
+use error::FluentError;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Fluent<'a, A>

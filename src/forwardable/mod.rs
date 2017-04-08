@@ -1,7 +1,7 @@
 //! Implement concrete sending record(s) specifications.
 
 use time;
-use record::FluentError;
+use error::FluentError;
 use std::fmt::Debug;
 use serde::ser::Serialize;
 
