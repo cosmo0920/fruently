@@ -7,7 +7,7 @@ matrix:
       #   # will have to be commented out the following line
       #   - SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
     - rust: beta
-    - rust: 1.15.1
+    - rust: 1.16.0
 
 install:
   - rvm use 2.2
