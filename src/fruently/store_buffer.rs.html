@@ -191,7 +191,7 @@
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>io</span>::<span class='ident'>Write</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>::<span class='ident'>Debug</span>;
 <span class='kw'>use</span> <span class='ident'>retry_conf</span>::<span class='ident'>RetryConf</span>;
-<span class='kw'>use</span> <span class='ident'>record</span>::<span class='ident'>FluentError</span>;
+<span class='kw'>use</span> <span class='ident'>error</span>::<span class='ident'>FluentError</span>;
 <span class='kw'>use</span> <span class='ident'>forwardable</span>::<span class='ident'>forward</span>::<span class='ident'>Forward</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fs</span>::<span class='ident'>OpenOptions</span>;
 <span class='kw'>use</span> <span class='ident'>record</span>::<span class='ident'>Record</span>;
@@ -217,13 +217,13 @@
             <span class='prelude-val'>Ok</span>(<span class='kw-2'>mut</span> <span class='ident'>f</span>) <span class='op'>=&gt;</span> {
                 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>w</span> <span class='op'>=</span> <span class='ident'>Vec</span>::<span class='ident'>new</span>();
                 <span class='macro'>write</span><span class='macro'>!</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>w</span>, <span class='string'>&quot;{}&quot;</span>, <span class='ident'>record</span>.<span class='ident'>dump</span>()).<span class='ident'>unwrap</span>();
-                <span class='ident'>f</span>.<span class='ident'>write</span>(<span class='kw-2'>&amp;</span><span class='ident'>w</span>)<span class='question-mark'>?</span>;
+                <span class='ident'>f</span>.<span class='ident'>write_all</span>(<span class='kw-2'>&amp;</span><span class='ident'>w</span>)<span class='question-mark'>?</span>;
                 <span class='ident'>f</span>.<span class='ident'>sync_data</span>()<span class='question-mark'>?</span>;
-                <span class='kw'>return</span> <span class='prelude-val'>Err</span>(<span class='ident'>FluentError</span>::<span class='ident'>FileStored</span>(<span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;stored buffer in specified file: \
-                                                            {:?}&quot;</span>,
-                                                           <span class='ident'>store_path</span>.<span class='ident'>unwrap</span>())));
+                <span class='prelude-val'>Err</span>(<span class='ident'>FluentError</span>::<span class='ident'>FileStored</span>(<span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;stored buffer in specified file: \
+                                                     {:?}&quot;</span>,
+                                                    <span class='ident'>store_path</span>.<span class='ident'>unwrap</span>())))
             }
-            <span class='prelude-val'>Err</span>(<span class='ident'>e</span>) <span class='op'>=&gt;</span> <span class='kw'>return</span> <span class='prelude-val'>Err</span>(<span class='ident'>From</span>::<span class='ident'>from</span>(<span class='ident'>e</span>)),
+            <span class='prelude-val'>Err</span>(<span class='ident'>e</span>) <span class='op'>=&gt;</span> <span class='prelude-val'>Err</span>(<span class='ident'>From</span>::<span class='ident'>from</span>(<span class='ident'>e</span>)),
         }
     } <span class='kw'>else</span> {
         <span class='prelude-val'>Err</span>(<span class='ident'>err</span>)
@@ -244,13 +244,13 @@
             <span class='prelude-val'>Ok</span>(<span class='kw-2'>mut</span> <span class='ident'>f</span>) <span class='op'>=&gt;</span> {
                 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>w</span> <span class='op'>=</span> <span class='ident'>Vec</span>::<span class='ident'>new</span>();
                 <span class='macro'>write</span><span class='macro'>!</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>w</span>, <span class='string'>&quot;{}&quot;</span>, <span class='ident'>forward</span>.<span class='ident'>dump</span>()).<span class='ident'>unwrap</span>();
-                <span class='ident'>f</span>.<span class='ident'>write</span>(<span class='kw-2'>&amp;</span><span class='ident'>w</span>)<span class='question-mark'>?</span>;
+                <span class='ident'>f</span>.<span class='ident'>write_all</span>(<span class='kw-2'>&amp;</span><span class='ident'>w</span>)<span class='question-mark'>?</span>;
                 <span class='ident'>f</span>.<span class='ident'>sync_data</span>()<span class='question-mark'>?</span>;
-                <span class='kw'>return</span> <span class='prelude-val'>Err</span>(<span class='ident'>FluentError</span>::<span class='ident'>FileStored</span>(<span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;stored buffer in specified file: \
-                                                            {:?}&quot;</span>,
-                                                           <span class='ident'>store_path</span>.<span class='ident'>unwrap</span>())));
+                <span class='prelude-val'>Err</span>(<span class='ident'>FluentError</span>::<span class='ident'>FileStored</span>(<span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;stored buffer in specified file: \
+                                                     {:?}&quot;</span>,
+                                                    <span class='ident'>store_path</span>.<span class='ident'>unwrap</span>())))
             }
-            <span class='prelude-val'>Err</span>(<span class='ident'>e</span>) <span class='op'>=&gt;</span> <span class='kw'>return</span> <span class='prelude-val'>Err</span>(<span class='ident'>From</span>::<span class='ident'>from</span>(<span class='ident'>e</span>)),
+            <span class='prelude-val'>Err</span>(<span class='ident'>e</span>) <span class='op'>=&gt;</span> <span class='prelude-val'>Err</span>(<span class='ident'>From</span>::<span class='ident'>from</span>(<span class='ident'>e</span>)),
         }
     } <span class='kw'>else</span> {
         <span class='prelude-val'>Err</span>(<span class='ident'>err</span>)
@@ -266,7 +266,7 @@
     <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>tempdir</span>::<span class='ident'>TempDir</span>;
     <span class='kw'>use</span> <span class='ident'>record</span>::<span class='ident'>Record</span>;
     <span class='kw'>use</span> <span class='ident'>retry_conf</span>::<span class='ident'>RetryConf</span>;
-    <span class='kw'>use</span> <span class='ident'>record</span>::<span class='ident'>FluentError</span>;
+    <span class='kw'>use</span> <span class='ident'>error</span>::<span class='ident'>FluentError</span>;
     <span class='kw'>use</span> <span class='ident'>forwardable</span>::<span class='ident'>forward</span>::<span class='ident'>Forward</span>;
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>

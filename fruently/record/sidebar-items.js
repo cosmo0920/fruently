@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["FluentError",""]],"struct":[["Record",""]]});
+initSidebarItems({"struct":[["Record",""]]});

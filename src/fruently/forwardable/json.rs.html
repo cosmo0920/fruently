@@ -157,7 +157,8 @@
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>net</span>::<span class='ident'>ToSocketAddrs</span>;
 <span class='kw'>use</span> <span class='ident'>time</span>;
 <span class='kw'>use</span> <span class='ident'>retry</span>::<span class='ident'>retry_exponentially</span>;
-<span class='kw'>use</span> <span class='ident'>record</span>::{<span class='ident'>Record</span>, <span class='ident'>FluentError</span>};
+<span class='kw'>use</span> <span class='ident'>record</span>::<span class='ident'>Record</span>;
+<span class='kw'>use</span> <span class='ident'>error</span>::<span class='ident'>FluentError</span>;
 <span class='kw'>use</span> <span class='ident'>forwardable</span>::<span class='ident'>JsonForwardable</span>;
 <span class='kw'>use</span> <span class='ident'>fluent</span>::<span class='ident'>Fluent</span>;
 <span class='kw'>use</span> <span class='ident'>store_buffer</span>;
@@ -177,12 +178,11 @@
         <span class='kw'>where</span> <span class='ident'>T</span>: <span class='ident'>Serialize</span> <span class='op'>+</span> <span class='ident'>Debug</span> <span class='op'>+</span> <span class='ident'>Clone</span>
     {
         <span class='kw'>let</span> <span class='ident'>record</span> <span class='op'>=</span> <span class='ident'>Record</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>get_tag</span>().<span class='ident'>into_owned</span>(), <span class='ident'>time</span>, <span class='ident'>record</span>);
-        <span class='kw'>let</span> <span class='ident'>message</span> <span class='op'>=</span> <span class='ident'>record</span>.<span class='ident'>clone</span>().<span class='ident'>make_forwardable_json</span>()<span class='question-mark'>?</span>;
         <span class='kw'>let</span> <span class='ident'>addr</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>get_addr</span>();
         <span class='kw'>let</span> (<span class='ident'>max</span>, <span class='ident'>multiplier</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>get_conf</span>().<span class='ident'>into_owned</span>().<span class='ident'>build</span>();
         <span class='kw'>match</span> <span class='ident'>retry_exponentially</span>(<span class='ident'>max</span>,
                                   <span class='ident'>multiplier</span>,
-                                  <span class='op'>||</span> <span class='ident'>Fluent</span>::<span class='ident'>closure_send_as_json</span>(<span class='ident'>addr</span>, <span class='ident'>message</span>.<span class='ident'>clone</span>()),
+                                  <span class='op'>||</span> <span class='ident'>Fluent</span>::<span class='ident'>closure_send_as_json</span>(<span class='ident'>addr</span>, <span class='kw-2'>&amp;</span><span class='ident'>record</span>),
                                   <span class='op'>|</span><span class='ident'>response</span><span class='op'>|</span> <span class='ident'>response</span>.<span class='ident'>is_ok</span>()) {
             <span class='prelude-val'>Ok</span>(_) <span class='op'>=&gt;</span> <span class='prelude-val'>Ok</span>(()),
             <span class='prelude-val'>Err</span>(<span class='ident'>err</span>) <span class='op'>=&gt;</span> <span class='ident'>store_buffer</span>::<span class='ident'>maybe_write_record</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>get_conf</span>(), <span class='ident'>record</span>, <span class='ident'>From</span>::<span class='ident'>from</span>(<span class='ident'>err</span>)),
