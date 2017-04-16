@@ -1,3 +1,4 @@
+#[cfg(feature="readme-testing")]
 extern crate skeptic;
 
 #[cfg(feature="readme-testing")]
