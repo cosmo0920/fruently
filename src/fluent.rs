@@ -5,6 +5,7 @@ use std::net::ToSocketAddrs;
 use std::net;
 use std::io::Write;
 use record::Record;
+use event_record::EventRecord;
 use retry_conf::RetryConf;
 use forwardable::forward::Forward;
 use serde::ser::Serialize;
@@ -84,7 +85,7 @@ impl<'a, A: ToSocketAddrs> Fluent<'a, A> {
     #[doc(hidden)]
     /// For internal usage.
     pub fn closure_send_as_msgpack<T: Serialize>(addr: &A,
-                                                 record: &Record<T>)
+                                                 record: &EventRecord<T>)
                                                  -> Result<(), FluentError> {
         let mut stream = net::TcpStream::connect(addr)?;
         let result = record.serialize(&mut Serializer::new(&mut stream));

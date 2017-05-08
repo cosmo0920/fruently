@@ -10,6 +10,7 @@ use error::FluentError;
 use forwardable::forward::Forward;
 use std::fs::OpenOptions;
 use record::Record;
+use event_record::EventRecord;
 use serde::ser::Serialize;
 
 /// Create file with write, create, append, and open option.
@@ -21,6 +22,33 @@ fn ensure_file_with_wca(path: PathBuf) -> Result<File, io::Error> {
 /// Write event buffer into file with TSV format.
 pub fn maybe_write_record<T>(conf: &RetryConf,
                              record: Record<T>,
+                             err: FluentError)
+                             -> Result<(), FluentError>
+    where T: Serialize + Debug
+{
+    let store_needed = conf.clone().need_to_store();
+    let store_path = conf.clone().store_path();
+    if store_needed {
+        match ensure_file_with_wca(store_path.clone().unwrap()) {
+            Ok(mut f) => {
+                let mut w = Vec::new();
+                write!(&mut w, "{}", record.dump()).unwrap();
+                f.write_all(&w)?;
+                f.sync_data()?;
+                Err(FluentError::FileStored(format!("stored buffer in specified file: \
+                                                     {:?}",
+                                                    store_path.unwrap())))
+            }
+            Err(e) => Err(From::from(e)),
+        }
+    } else {
+        Err(err)
+    }
+}
+
+/// Write event buffer into file with TSV format.
+pub fn maybe_write_event_record<T>(conf: &RetryConf,
+                             record: EventRecord<T>,
                              err: FluentError)
                              -> Result<(), FluentError>
     where T: Serialize + Debug
