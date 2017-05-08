@@ -1,4 +1,4 @@
-//! Implement record manupulation mechanisms.
+//! Implement EventTime record manupulation mechanisms.
 
 use time;
 use time::Tm;
@@ -7,15 +7,15 @@ use serde::ser::{Serialize, Serializer};
 use serde::ser::SerializeTuple;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Record<T: Serialize> {
+pub struct EventRecord<T: Serialize> {
     tag: String,
     time: Tm,
     record: T,
 }
 
-impl<T: Serialize> Record<T> {
-    pub fn new(tag: String, time: Tm, record: T) -> Record<T> {
-        Record {
+impl<T: Serialize> EventRecord<T> {
+    pub fn new(tag: String, time: Tm, record: T) -> EventRecord<T> {
+        EventRecord {
             tag: tag,
             time: time,
             record: record,
@@ -38,7 +38,7 @@ impl<T: Serialize> Record<T> {
 /// `[tag, unixtime/eventtime, record]`
 ///
 /// ref: https://github.com/fluent/fluentd/wiki/Forward-Protocol-Specification-v0#message-mode
-impl<T: Serialize> Serialize for Record<T> {
+impl<T: Serialize> Serialize for EventRecord<T> {
     fn serialize<S: Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
         let mut seq = s.serialize_tuple(4)?;
         seq.serialize_element(&self.tag)?;
@@ -49,28 +49,27 @@ impl<T: Serialize> Serialize for Record<T> {
     }
 }
 
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use time;
+    use time::Timespec;
     use std::collections::HashMap;
-    use serde_json;
+    use rmp_serde::encode::Serializer;
 
     #[test]
-    fn test_json_format() {
+    fn test_msgpack_format() {
         let tag = "fruently".to_string();
-        let time = time::now();
+        let timespec = Timespec::new(1494245571, 0);
+        let time = time::at(timespec);
         let mut obj: HashMap<String, String> = HashMap::new();
         obj.insert("name".to_string(), "fruently".to_string());
-        let record = Record::new(tag.clone(), time, obj.clone());
-        let forwardable_json = serde_json::to_string(&record).ok().unwrap();
-        let json_tag = serde_json::to_string(&tag.clone()).ok().unwrap();
-        let json_obj = serde_json::to_string(&obj.clone()).ok().unwrap();
-        let expected = format!("[{},{},{},{}]",
-                               json_tag,
-                               time.to_timespec().sec,
-                               json_obj,
-                               serde_json::Value::Null);
-        assert_eq!(expected, forwardable_json);
+        let record = EventRecord::new(tag.clone(), time, obj.clone());
+        let mut buf = vec![];
+        let _ = record.serialize(&mut Serializer::new(&mut buf)).unwrap();
+        assert_eq!(vec![0x94, 0xa8, 0x66, 0x72, 0x75, 0x65, 0x6e, 0x74, 0x6c, 0x79, 0xce, 0x59, 0x10,
+                        0x60, 0xc3, 0x81, 0xa4, 0x6e, 0x61, 0x6d, 0x65, 0xa8, 0x66, 0x72, 0x75, 0x65,
+                        0x6e, 0x74, 0x6c, 0x79, 0xc0], buf);
     }
 }

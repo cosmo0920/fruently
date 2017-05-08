@@ -22,7 +22,7 @@ use std::fmt::Debug;
 use std::net::ToSocketAddrs;
 use time;
 use retry::retry_exponentially;
-use record::Record;
+use event_record::EventRecord;
 use error::FluentError;
 use forwardable::MsgpackForwardable;
 use fluent::Fluent;
@@ -42,7 +42,7 @@ impl<'a, A: ToSocketAddrs> MsgpackForwardable for Fluent<'a, A> {
     fn post_with_time<T>(self, record: T, time: time::Tm) -> Result<(), FluentError>
         where T: Serialize + Debug
     {
-        let record = Record::new(self.get_tag().into_owned(), time, record);
+        let record = EventRecord::new(self.get_tag().into_owned(), time, record);
         let addr = self.get_addr();
         let (max, multiplier) = self.get_conf().into_owned().clone().build();
         match retry_exponentially(max,
@@ -50,7 +50,7 @@ impl<'a, A: ToSocketAddrs> MsgpackForwardable for Fluent<'a, A> {
                                   || Fluent::closure_send_as_msgpack(addr, &record),
                                   |response| response.is_ok()) {
             Ok(_) => Ok(()),
-            Err(err) => store_buffer::maybe_write_record(&self.get_conf(), record, From::from(err)),
+            Err(err) => store_buffer::maybe_write_event_record(&self.get_conf(), record, From::from(err)),
         }
     }
 }
