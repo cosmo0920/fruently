@@ -9,6 +9,7 @@ use event_record::EventRecord;
 use retry_conf::RetryConf;
 use forwardable::forward::Forward;
 use serde::ser::Serialize;
+use serde_json;
 use rmp_serde::encode::Serializer;
 use error::FluentError;
 
@@ -72,7 +73,7 @@ impl<'a, A: ToSocketAddrs> Fluent<'a, A> {
                                               record: &Record<T>)
                                               -> Result<(), FluentError> {
         let mut stream = net::TcpStream::connect(addr)?;
-        let message = record.make_forwardable_json()?;
+        let message = serde_json::to_string(&record)?;
         let result = stream.write(&message.into_bytes());
         drop(stream);
 

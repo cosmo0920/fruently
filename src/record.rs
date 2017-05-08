@@ -5,7 +5,6 @@ use time::Tm;
 use serde_json;
 use serde::ser::{Serialize, Serializer};
 use serde::ser::SerializeTuple;
-use error::FluentError;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Record<T: Serialize> {
@@ -21,11 +20,6 @@ impl<T: Serialize> Record<T> {
             time: time,
             record: record,
         }
-    }
-
-    pub fn make_forwardable_json(&self) -> Result<String, FluentError> {
-        let message = serde_json::to_string(&self)?;
-        Ok(message)
     }
 
     #[doc(hidden)]
@@ -69,7 +63,7 @@ mod tests {
         let mut obj: HashMap<String, String> = HashMap::new();
         obj.insert("name".to_string(), "fruently".to_string());
         let record = Record::new(tag.clone(), time, obj.clone());
-        let forwardable_json = record.make_forwardable_json().ok().unwrap();
+        let forwardable_json = serde_json::to_string(&record).ok().unwrap();
         let json_tag = serde_json::to_string(&tag.clone()).ok().unwrap();
         let json_obj = serde_json::to_string(&obj.clone()).ok().unwrap();
         let expected = format!("[{},{},{},{}]",
