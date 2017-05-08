@@ -20,3 +20,4 @@ pub mod retry_conf;
 pub mod store_buffer;
 pub mod error;
 pub mod event_record;
+pub mod event_time;
