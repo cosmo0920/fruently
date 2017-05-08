@@ -48,3 +48,28 @@ impl<T: Serialize> Serialize for EventRecord<T> {
         seq.end()
     }
 }
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use time;
+    use time::Timespec;
+    use std::collections::HashMap;
+    use rmp_serde::encode::Serializer;
+
+    #[test]
+    fn test_msgpack_format() {
+        let tag = "fruently".to_string();
+        let timespec = Timespec::new(1494245571, 0);
+        let time = time::at(timespec);
+        let mut obj: HashMap<String, String> = HashMap::new();
+        obj.insert("name".to_string(), "fruently".to_string());
+        let record = EventRecord::new(tag.clone(), time, obj.clone());
+        let mut buf = vec![];
+        let _ = record.serialize(&mut Serializer::new(&mut buf)).unwrap();
+        assert_eq!(vec![0x94, 0xa8, 0x66, 0x72, 0x75, 0x65, 0x6e, 0x74, 0x6c, 0x79, 0xce, 0x59, 0x10,
+                        0x60, 0xc3, 0x81, 0xa4, 0x6e, 0x61, 0x6d, 0x65, 0xa8, 0x66, 0x72, 0x75, 0x65,
+                        0x6e, 0x74, 0x6c, 0x79, 0xc0], buf);
+    }
+}
