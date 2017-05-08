@@ -36,6 +36,7 @@ use fluent::Fluent;
 use store_buffer;
 use serde_json;
 use serde::ser::Serialize;
+use dumpable::Dumpable;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct Forward<T: Serialize> {
@@ -50,9 +51,10 @@ impl<T: Serialize> Forward<T> {
             entries: entries,
         }
     }
+}
 
-    #[doc(hidden)]
-    pub fn dump(self) -> String {
+impl<T: Serialize> Dumpable for Forward<T> {
+    fn dump(self) -> String {
         let mut buf = String::new();
         for &(ref event_time, ref record) in &self.entries {
             let timespec = Timespec::new(event_time.get_time().to_timespec().sec.to_owned(), 0);
@@ -79,7 +81,7 @@ impl<'a, A: ToSocketAddrs> Forwardable for Fluent<'a, A> {
                                   |response| response.is_ok()) {
             Ok(_) => Ok(()),
             Err(err) => {
-                store_buffer::maybe_write_records(&self.get_conf(), forward, From::from(err))
+                store_buffer::maybe_write_events(&self.get_conf(), forward, From::from(err))
             }
         }
     }

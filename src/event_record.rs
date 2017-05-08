@@ -6,6 +6,7 @@ use serde_json;
 use serde::ser::{Serialize, Serializer};
 use serde::ser::SerializeTuple;
 use event_time::EventTime;
+use dumpable::Dumpable;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EventRecord<T: Serialize> {
@@ -43,9 +44,10 @@ impl<T: Serialize> EventRecord<T> {
             event: vec![Event::new(EventTime::new(time), record)],
         }
     }
+}
 
-    #[doc(hidden)]
-    pub fn dump(self) -> String {
+impl<T: Serialize> Dumpable for EventRecord<T> {
+    fn dump(self) -> String {
         format!("{}\t{}\t{}\n",
                 time::strftime("%FT%T%z", &self.event[0].get_event_time().get_time()).unwrap(),
                 self.tag,

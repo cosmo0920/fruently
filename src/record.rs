@@ -5,6 +5,7 @@ use time::Tm;
 use serde_json;
 use serde::ser::{Serialize, Serializer};
 use serde::ser::SerializeTuple;
+use dumpable::Dumpable;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Record<T: Serialize> {
@@ -21,9 +22,10 @@ impl<T: Serialize> Record<T> {
             record: record,
         }
     }
+}
 
-    #[doc(hidden)]
-    pub fn dump(self) -> String {
+impl<T: Serialize> Dumpable for Record<T> {
+    fn dump(self) -> String {
         format!("{}\t{}\t{}\n",
                 time::strftime("%FT%T%z", &self.time).unwrap(),
                 self.tag,

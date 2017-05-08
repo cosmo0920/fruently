@@ -21,3 +21,4 @@ pub mod store_buffer;
 pub mod error;
 pub mod event_record;
 pub mod event_time;
+pub mod dumpable;
