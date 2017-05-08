@@ -4,8 +4,9 @@ use time;
 use error::FluentError;
 use std::fmt::Debug;
 use serde::ser::Serialize;
+use event_time::EventTime;
 
-pub type Entry<T> where T: Serialize = (i64, T);
+pub type Entry<T> where T: Serialize = (EventTime, T);
 
 pub trait JsonForwardable {
     fn post<T: Serialize + Debug + Clone>(self, record: T) -> Result<(), FluentError>;
