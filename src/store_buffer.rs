@@ -128,6 +128,20 @@ mod tests {
     }
 
     #[test]
+    fn test_write_event_record() {
+        let tag = "fruently".to_string();
+        let time = time::now();
+        let mut obj: HashMap<String, String> = HashMap::new();
+        obj.insert("name".to_string(), "fruently".to_string());
+        let record = EventRecord::new(tag.clone(), time, obj.clone());
+        let tmp = TempDir::new("fruently").unwrap().into_path().join("buffer");
+        let conf = RetryConf::new().store_file(tmp.clone());
+        assert!(maybe_write_event_record(&conf, record, FluentError::Dummy("dummy".to_string()))
+            .is_err());
+        assert!(tmp.exists())
+    }
+
+    #[test]
     fn test_write_record_2_times() {
         let tag = "fruently".to_string();
         let time = time::now();
