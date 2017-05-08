@@ -5,45 +5,101 @@ use time::Tm;
 use serde_json;
 use serde::ser::{Serialize, Serializer};
 use serde::ser::SerializeTuple;
+use byteorder::{BigEndian, WriteBytesExt};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EventRecord<T: Serialize> {
     tag: String,
-    time: Tm,
+    event: Vec<Event<T>>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub struct Event<T: Serialize> {
+    event_time: EventTime,
     record: T,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct EventTime {
+    time: Tm,
+}
+
+impl EventTime {
+    pub fn new(time: Tm) -> EventTime {
+        EventTime {
+            time: time,
+        }
+    }
+
+    pub fn get_time(&self) -> &Tm {
+        &self.time
+    }
+}
+
+impl<T: Serialize> Event<T> {
+    pub fn new(event_time: EventTime, record: T) -> Event<T> {
+        Event {
+            event_time: event_time,
+            record: record,
+        }
+    }
+
+    pub fn get_record(&self) -> &T {
+        &self.record
+    }
+
+    pub fn get_event_time(&self) -> &EventTime {
+        &self.event_time
+    }
+}
+
+impl Serialize for EventTime {
+    // The signature of a serialize_with function must follow the pattern:
+    //
+    //    fn serialize<S>(&T, S) -> Result<S::Ok, S::Error> where S: Serializer
+    //
+    // although it may also be generic over the input types T.
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where S: Serializer
+    {
+        let mut buf = vec![];
+        let _ = buf.write_u8(0xd7);
+        let _ = buf.write_u8(0x00);
+        let _ = buf.write_u32::<BigEndian>(self.clone().time.clone().to_timespec().sec as u32);
+        let _ = buf.write_u32::<BigEndian>(self.clone().time.clone().to_timespec().nsec as u32);
+        serializer.serialize_bytes(&buf)
+    }
 }
 
 impl<T: Serialize> EventRecord<T> {
     pub fn new(tag: String, time: Tm, record: T) -> EventRecord<T> {
         EventRecord {
             tag: tag,
-            time: time,
-            record: record,
+            event: vec![Event::new(EventTime::new(time), record)],
         }
     }
 
     #[doc(hidden)]
     pub fn dump(self) -> String {
         format!("{}\t{}\t{}\n",
-                time::strftime("%FT%T%z", &self.time).unwrap(),
+                time::strftime("%FT%T%z", &self.event[0].get_event_time().get_time()).unwrap(),
                 self.tag,
-                serde_json::to_string(&self.record).unwrap())
+                serde_json::to_string(&self.event[0].get_record()).unwrap())
     }
 }
 
 /// Construct custom encoding json/msgpack style.
 ///
-/// Because `Record` struct should map following style json/msgpack:
+/// Because `Record` struct should map following style msgpack with ExtType:
 ///
-/// `[tag, unixtime/eventtime, record]`
+/// `[tag, [eventtime, record]]`
 ///
 /// ref: https://github.com/fluent/fluentd/wiki/Forward-Protocol-Specification-v0#message-mode
 impl<T: Serialize> Serialize for EventRecord<T> {
     fn serialize<S: Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
-        let mut seq = s.serialize_tuple(4)?;
+        let mut seq = s.serialize_tuple(3)?;
         seq.serialize_element(&self.tag)?;
-        seq.serialize_element(&self.time.to_timespec().sec)?;
-        seq.serialize_element(&self.record)?;
+        seq.serialize_element(&self.event)?;
         seq.serialize_element(&None::<T>)?;
         seq.end()
     }
@@ -68,8 +124,9 @@ mod tests {
         let record = EventRecord::new(tag.clone(), time, obj.clone());
         let mut buf = vec![];
         let _ = record.serialize(&mut Serializer::new(&mut buf)).unwrap();
-        assert_eq!(vec![0x94, 0xa8, 0x66, 0x72, 0x75, 0x65, 0x6e, 0x74, 0x6c, 0x79, 0xce, 0x59, 0x10,
-                        0x60, 0xc3, 0x81, 0xa4, 0x6e, 0x61, 0x6d, 0x65, 0xa8, 0x66, 0x72, 0x75, 0x65,
-                        0x6e, 0x74, 0x6c, 0x79, 0xc0], buf);
+        assert_eq!(vec![0x93, 0xa8, 0x66, 0x72, 0x75, 0x65, 0x6e, 0x74, 0x6c, 0x79,
+                        0x91, 0x92, 0xc4, 0x0a, 0xd7, 0x00, 0x59, 0x10, 0x60, 0xc3,
+                        0x00, 0x00, 0x00, 0x00, 0x81, 0xa4, 0x6e, 0x61, 0x6d, 0x65,
+                        0xa8, 0x66, 0x72, 0x75, 0x65, 0x6e, 0x74, 0x6c, 0x79, 0xc0], buf);
     }
 }

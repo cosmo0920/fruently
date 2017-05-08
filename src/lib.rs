@@ -11,6 +11,7 @@ extern crate serde_derive;
 extern crate serde_json;
 extern crate rmp;
 extern crate rmp_serde;
+extern crate byteorder;
 
 pub mod fluent;
 pub mod record;
