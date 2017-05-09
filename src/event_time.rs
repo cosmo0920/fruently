@@ -28,11 +28,12 @@ impl Serialize for EventTime {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
         where S: Serializer
     {
+        use serde::ser::Error;
         let mut buf = vec![];
-        let _ = buf.write_u8(0xd7);
-        let _ = buf.write_u8(0x00);
-        let _ = buf.write_i32::<BigEndian>(self.clone().time.clone().to_timespec().sec as i32);
-        let _ = buf.write_i32::<BigEndian>(self.clone().time.clone().to_timespec().nsec as i32);
+        buf.write_u8(0xd7).map_err(Error::custom)?;
+        buf.write_u8(0x00).map_err(Error::custom)?;
+        buf.write_i32::<BigEndian>(self.clone().time.clone().to_timespec().sec as i32).map_err(Error::custom)?;
+        buf.write_i32::<BigEndian>(self.clone().time.clone().to_timespec().nsec as i32).map_err(Error::custom)?;
         serializer.serialize_bytes(&buf)
     }
 }
