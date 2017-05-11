@@ -23,6 +23,11 @@ pub struct Fluent<'a, A>
     conf: RetryConf,
 }
 
+#[cfg(feature = "time-as-integer")]
+type MsgPackSendType<T> where T: Serialize = Record<T>;
+#[cfg(not(feature = "time-as-integer"))]
+type MsgPackSendType<T> where T: Serialize = EventRecord<T>;
+
 impl<'a, A: ToSocketAddrs> Fluent<'a, A> {
     /// Create Fluent type.
     ///
@@ -85,25 +90,9 @@ impl<'a, A: ToSocketAddrs> Fluent<'a, A> {
     }
 
     #[doc(hidden)]
-    #[cfg(feature = "time-as-integer")]
     /// For internal usage.
     pub fn closure_send_as_msgpack<T: Serialize>(addr: &A,
-                                                 record: &Record<T>)
-                                                 -> Result<(), FluentError> {
-        let mut stream = net::TcpStream::connect(addr)?;
-        let result = record.serialize(&mut Serializer::new(&mut stream));
-
-        match result {
-            Ok(_) => Ok(()),
-            Err(v) => Err(From::from(v)),
-        }
-    }
-
-    #[doc(hidden)]
-    #[cfg(not(feature = "time-as-integer"))]
-    /// For internal usage.
-    pub fn closure_send_as_msgpack<T: Serialize>(addr: &A,
-                                                 record: &EventRecord<T>)
+                                                 record: &MsgPackSendType<T>)
                                                  -> Result<(), FluentError> {
         let mut stream = net::TcpStream::connect(addr)?;
         let result = record.serialize(&mut Serializer::new(&mut stream));
