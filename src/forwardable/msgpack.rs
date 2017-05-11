@@ -42,28 +42,24 @@ impl<'a, A: ToSocketAddrs> MsgpackForwardable for Fluent<'a, A> {
     }
 
     /// Post record into Fluentd. With time version.
-    #[cfg(feature = "time-as-integer")]
     fn post_with_time<T>(self, record: T, time: time::Tm) -> Result<(), FluentError>
         where T: Serialize + Debug
     {
-        let record = Record::new(self.get_tag().into_owned(), time, record);
-        let addr = self.get_addr();
-        let (max, multiplier) = self.get_conf().into_owned().clone().build();
-        match retry_exponentially(max,
-                                  multiplier,
-                                  || Fluent::closure_send_as_msgpack(addr, &record),
-                                  |response| response.is_ok()) {
-            Ok(_) => Ok(()),
-            Err(err) => store_buffer::maybe_write_events(&self.get_conf(), record, From::from(err)),
+        #[inline]
+        #[cfg(feature = "time-as-integer")]
+        fn make_record<T>(tag: String, time: time::Tm, record: T) -> Record<T>
+            where T: Serialize + Debug
+        {
+            Record::new(tag, time, record)
         }
-    }
-
-    /// Post record into Fluentd. With time version.
-    #[cfg(not(feature = "time-as-integer"))]
-    fn post_with_time<T>(self, record: T, time: time::Tm) -> Result<(), FluentError>
-        where T: Serialize + Debug
-    {
-        let record = EventRecord::new(self.get_tag().into_owned(), time, record);
+        #[inline]
+        #[cfg(not(feature = "time-as-integer"))]
+        fn make_record<T>(tag: String, time: time::Tm, record: T) -> EventRecord<T>
+            where T: Serialize + Debug
+        {
+            EventRecord::new(tag, time, record)
+        }
+        let record = make_record(self.get_tag().into_owned(), time, record);
         let addr = self.get_addr();
         let (max, multiplier) = self.get_conf().into_owned().clone().build();
         match retry_exponentially(max,

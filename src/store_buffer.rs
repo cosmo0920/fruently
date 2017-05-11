@@ -111,36 +111,25 @@ mod tests {
     }
 
     #[test]
-    #[cfg(not(feature = "time-as-integer"))]
     fn test_write_forward_records() {
+        #[inline]
+        #[cfg(not(feature = "time-as-integer"))]
+        fn make_time() -> EventTime {
+            EventTime::new(time::now())
+        }
+        #[inline]
+        #[cfg(feature = "time-as-integer")]
+        fn make_time() -> i64 {
+            time::now().to_timespec().sec
+        }
         let tag = "fruently".to_string();
         let mut obj1: HashMap<String, String> = HashMap::new();
         obj1.insert("hey".to_string(), "Rust with forward mode!".to_string());
         let mut obj2: HashMap<String, String> = HashMap::new();
         obj2.insert("yeah".to_string(), "Also sent together!".to_string());
-        let time = time::now();
-        let entry = (EventTime::new(time), obj1);
-        let entry2 = (EventTime::new(time), obj2);
-        let entries = vec![(entry), (entry2)];
-        let forward = Forward::new(tag, entries);
-        let tmp = TempDir::new("fruently").unwrap().into_path().join("buffer");
-        let conf = RetryConf::new().store_file(tmp.clone());
-        assert!(maybe_write_events(&conf, forward, FluentError::Dummy("dummy".to_string()))
-            .is_err());
-        assert!(tmp.exists())
-    }
-
-    #[test]
-    #[cfg(feature = "time-as-integer")]
-    fn test_write_forward_records() {
-        let tag = "fruently".to_string();
-        let mut obj1: HashMap<String, String> = HashMap::new();
-        obj1.insert("hey".to_string(), "Rust with forward mode!".to_string());
-        let mut obj2: HashMap<String, String> = HashMap::new();
-        obj2.insert("yeah".to_string(), "Also sent together!".to_string());
-        let time = time::now().to_timespec().sec;
-        let entry = (time, obj1);
-        let entry2 = (time, obj2);
+        let time = make_time();
+        let entry = (time.clone(), obj1);
+        let entry2 = (time.clone(), obj2);
         let entries = vec![(entry), (entry2)];
         let forward = Forward::new(tag, entries);
         let tmp = TempDir::new("fruently").unwrap().into_path().join("buffer");
