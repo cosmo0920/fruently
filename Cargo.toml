@@ -11,6 +11,7 @@ build = "build.rs"
 fluentd = []
 readme-testing = ["skeptic"]
 dev = ["clippy"]
+time-as-integer = []
 
 [build-dependencies.skeptic]
 version = "~0.9"

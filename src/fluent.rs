@@ -5,6 +5,7 @@ use std::net::ToSocketAddrs;
 use std::net;
 use std::io::Write;
 use record::Record;
+#[cfg(not(feature = "time-as-integer"))]
 use event_record::EventRecord;
 use retry_conf::RetryConf;
 use forwardable::forward::Forward;
@@ -84,6 +85,22 @@ impl<'a, A: ToSocketAddrs> Fluent<'a, A> {
     }
 
     #[doc(hidden)]
+    #[cfg(feature = "time-as-integer")]
+    /// For internal usage.
+    pub fn closure_send_as_msgpack<T: Serialize>(addr: &A,
+                                                 record: &Record<T>)
+                                                 -> Result<(), FluentError> {
+        let mut stream = net::TcpStream::connect(addr)?;
+        let result = record.serialize(&mut Serializer::new(&mut stream));
+
+        match result {
+            Ok(_) => Ok(()),
+            Err(v) => Err(From::from(v)),
+        }
+    }
+
+    #[doc(hidden)]
+    #[cfg(not(feature = "time-as-integer"))]
     /// For internal usage.
     pub fn closure_send_as_msgpack<T: Serialize>(addr: &A,
                                                  record: &EventRecord<T>)

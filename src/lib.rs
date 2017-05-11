@@ -19,6 +19,8 @@ pub mod forwardable;
 pub mod retry_conf;
 pub mod store_buffer;
 pub mod error;
+#[cfg(not(feature = "time-as-integer"))]
 pub mod event_record;
+#[cfg(not(feature = "time-as-integer"))]
 pub mod event_time;
 pub mod dumpable;
