@@ -10,7 +10,25 @@
 //! use fruently::fluent::Fluent;
 //! use std::collections::HashMap;
 //! use fruently::forwardable::Forwardable;
+//! #[cfg(not(feature = "time-as-integer"))]
+//! use fruently::event_time::EventTime;
 //!
+//! // Using with Fluentd v0.14.
+//! #[cfg(not(feature = "time-as-integer"))]
+//! fn main() {
+//!     let fruently = Fluent::new("127.0.0.1:24224", "test");
+//!     let mut obj1: HashMap<String, String> = HashMap::new();
+//!     obj1.insert("hey".to_string(), "Rust with forward mode!".to_string());
+//!     let mut obj2: HashMap<String, String> = HashMap::new();
+//!     obj2.insert("yeah".to_string(), "Also sent together!".to_string());
+//!     let time = time::now();
+//!     let entry = (EventTime::new(time), obj1);
+//!     let entry2 = (EventTime::new(time), obj2);
+//!     let _ = fruently.post(vec![(entry), (entry2)]);
+//! }
+//!
+//! // Using with Fluentd v0.12.
+//! #[cfg(feature = "time-as-integer")]
 //! fn main() {
 //!     let fruently = Fluent::new("127.0.0.1:24224", "test");
 //!     let mut obj1: HashMap<String, String> = HashMap::new();
@@ -35,8 +53,9 @@ use fluent::Fluent;
 use store_buffer;
 use serde_json;
 use serde::ser::Serialize;
+use dumpable::Dumpable;
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct Forward<T: Serialize> {
     tag: String,
     entries: Vec<Entry<T>>,
@@ -49,9 +68,27 @@ impl<T: Serialize> Forward<T> {
             entries: entries,
         }
     }
+}
 
-    #[doc(hidden)]
-    pub fn dump(self) -> String {
+#[cfg(not(feature = "time-as-integer"))]
+impl<T: Serialize> Dumpable for Forward<T> {
+    fn dump(self) -> String {
+        let mut buf = String::new();
+        for &(ref event_time, ref record) in &self.entries {
+            let timespec = Timespec::new(event_time.get_time().to_timespec().sec.to_owned(), 0);
+            buf.push_str(&*format!("{}\t{}\t{}\n",
+                                   time::strftime("%FT%T%z", &time::at(timespec)).unwrap(),
+                                   self.tag,
+                                   serde_json::to_string(&record).unwrap()));
+        }
+        buf
+    }
+}
+
+
+#[cfg(feature = "time-as-integer")]
+impl<T: Serialize> Dumpable for Forward<T> {
+    fn dump(self) -> String {
         let mut buf = String::new();
         for &(ref time, ref record) in &self.entries {
             let timespec = Timespec::new(time.to_owned(), 0);
@@ -78,7 +115,7 @@ impl<'a, A: ToSocketAddrs> Forwardable for Fluent<'a, A> {
                                   |response| response.is_ok()) {
             Ok(_) => Ok(()),
             Err(err) => {
-                store_buffer::maybe_write_records(&self.get_conf(), forward, From::from(err))
+                store_buffer::maybe_write_events(&self.get_conf(), forward, From::from(err))
             }
         }
     }
@@ -91,6 +128,27 @@ mod tests {
     use fluent::Fluent;
 
     #[test]
+    #[cfg(not(feature = "time-as-integer"))]
+    fn test_post() {
+        use std::collections::HashMap;
+        use forwardable::Forwardable;
+        use event_time::EventTime;
+
+        // 0.0.0.0 does not work in Windows....
+        let fruently = Fluent::new("127.0.0.1:24224", "test");
+        let mut obj1: HashMap<String, String> = HashMap::new();
+        obj1.insert("hey".to_string(), "Forward mode with EventTime!".to_string());
+        let mut obj2: HashMap<String, String> = HashMap::new();
+        obj2.insert("yeah".to_string(), "Yep, also sent together!".to_string());
+        let time = time::now();
+        let entry = (EventTime::new(time), obj1);
+        let entry2 = (EventTime::new(time), obj2);
+        let result = fruently.post(vec![(entry), (entry2)]).is_ok();
+        assert_eq!(true, result);
+    }
+
+    #[test]
+    #[cfg(feature = "time-as-integer")]
     fn test_post() {
         use std::collections::HashMap;
         use forwardable::Forwardable;
@@ -98,9 +156,9 @@ mod tests {
         // 0.0.0.0 does not work in Windows....
         let fruently = Fluent::new("127.0.0.1:24224", "test");
         let mut obj1: HashMap<String, String> = HashMap::new();
-        obj1.insert("hey".to_string(), "Rust with forward mode!".to_string());
+        obj1.insert("hey".to_string(), "Forward mode with EventTime!".to_string());
         let mut obj2: HashMap<String, String> = HashMap::new();
-        obj2.insert("yeah".to_string(), "Also sent together!".to_string());
+        obj2.insert("yeah".to_string(), "Yep, also sent together!".to_string());
         let time = time::now().to_timespec().sec;
         let entry = (time, obj1);
         let entry2 = (time, obj2);

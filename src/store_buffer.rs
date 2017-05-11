@@ -7,11 +7,9 @@ use std::io::Write;
 use std::fmt::Debug;
 use retry_conf::RetryConf;
 use error::FluentError;
-use forwardable::forward::Forward;
 use std::fs::OpenOptions;
-use record::Record;
-use event_record::EventRecord;
 use serde::ser::Serialize;
+use dumpable::Dumpable;
 
 /// Create file with write, create, append, and open option.
 fn ensure_file_with_wca(path: PathBuf) -> Result<File, io::Error> {
@@ -19,66 +17,12 @@ fn ensure_file_with_wca(path: PathBuf) -> Result<File, io::Error> {
     Ok(file)
 }
 
-/// Write event buffer into file with TSV format.
-pub fn maybe_write_record<T>(conf: &RetryConf,
-                             record: Record<T>,
-                             err: FluentError)
-                             -> Result<(), FluentError>
-    where T: Serialize + Debug
-{
-    let store_needed = conf.clone().need_to_store();
-    let store_path = conf.clone().store_path();
-    if store_needed {
-        match ensure_file_with_wca(store_path.clone().unwrap()) {
-            Ok(mut f) => {
-                let mut w = Vec::new();
-                write!(&mut w, "{}", record.dump()).unwrap();
-                f.write_all(&w)?;
-                f.sync_data()?;
-                Err(FluentError::FileStored(format!("stored buffer in specified file: \
-                                                     {:?}",
-                                                    store_path.unwrap())))
-            }
-            Err(e) => Err(From::from(e)),
-        }
-    } else {
-        Err(err)
-    }
-}
-
-/// Write event buffer into file with TSV format.
-pub fn maybe_write_event_record<T>(conf: &RetryConf,
-                             record: EventRecord<T>,
-                             err: FluentError)
-                             -> Result<(), FluentError>
-    where T: Serialize + Debug
-{
-    let store_needed = conf.clone().need_to_store();
-    let store_path = conf.clone().store_path();
-    if store_needed {
-        match ensure_file_with_wca(store_path.clone().unwrap()) {
-            Ok(mut f) => {
-                let mut w = Vec::new();
-                write!(&mut w, "{}", record.dump()).unwrap();
-                f.write_all(&w)?;
-                f.sync_data()?;
-                Err(FluentError::FileStored(format!("stored buffer in specified file: \
-                                                     {:?}",
-                                                    store_path.unwrap())))
-            }
-            Err(e) => Err(From::from(e)),
-        }
-    } else {
-        Err(err)
-    }
-}
-
 /// Write events buffer into file with TSV format.
-pub fn maybe_write_records<T>(conf: &RetryConf,
-                              forward: Forward<T>,
-                              err: FluentError)
-                              -> Result<(), FluentError>
-    where T: Serialize + Debug
+pub fn maybe_write_events<T>(conf: &RetryConf,
+                             events: T,
+                             err: FluentError)
+                             -> Result<(), FluentError>
+    where T: Serialize + Dumpable + Debug
 {
     let store_needed = conf.clone().need_to_store();
     let store_path = conf.clone().store_path();
@@ -86,7 +30,7 @@ pub fn maybe_write_records<T>(conf: &RetryConf,
         match ensure_file_with_wca(store_path.clone().unwrap()) {
             Ok(mut f) => {
                 let mut w = Vec::new();
-                write!(&mut w, "{}", forward.dump()).unwrap();
+                write!(&mut w, "{}", events.dump()).unwrap();
                 f.write_all(&w)?;
                 f.sync_data()?;
                 Err(FluentError::FileStored(format!("stored buffer in specified file: \
@@ -111,6 +55,10 @@ mod tests {
     use retry_conf::RetryConf;
     use error::FluentError;
     use forwardable::forward::Forward;
+    #[cfg(not(feature = "time-as-integer"))]
+    use event_time::EventTime;
+    #[cfg(not(feature = "time-as-integer"))]
+    use event_record::EventRecord;
 
     #[test]
     fn test_write_record() {
@@ -121,7 +69,22 @@ mod tests {
         let record = Record::new(tag.clone(), time, obj.clone());
         let tmp = TempDir::new("fruently").unwrap().into_path().join("buffer");
         let conf = RetryConf::new().store_file(tmp.clone());
-        assert!(maybe_write_record(&conf, record, FluentError::Dummy("dummy".to_string()))
+        assert!(maybe_write_events(&conf, record, FluentError::Dummy("dummy".to_string()))
+            .is_err());
+        assert!(tmp.exists())
+    }
+
+    #[cfg(not(feature = "time-as-integer"))]
+    #[test]
+    fn test_write_event_record() {
+        let tag = "fruently".to_string();
+        let time = time::now();
+        let mut obj: HashMap<String, String> = HashMap::new();
+        obj.insert("name".to_string(), "fruently".to_string());
+        let record = EventRecord::new(tag.clone(), time, obj.clone());
+        let tmp = TempDir::new("fruently").unwrap().into_path().join("buffer");
+        let conf = RetryConf::new().store_file(tmp.clone());
+        assert!(maybe_write_events(&conf, record, FluentError::Dummy("dummy".to_string()))
             .is_err());
         assert!(tmp.exists())
     }
@@ -135,20 +98,41 @@ mod tests {
         let record = Record::new(tag.clone(), time, obj.clone());
         let tmp = TempDir::new("fruently").unwrap().into_path().join("buffer");
         let conf = RetryConf::new().store_file(tmp.clone());
-        assert!(maybe_write_record(&conf, record, FluentError::Dummy("dummy".to_string()))
+        assert!(maybe_write_events(&conf, record, FluentError::Dummy("dummy".to_string()))
             .is_err());
         assert!(tmp.exists());
         let mut obj2: HashMap<String, String> = HashMap::new();
         obj2.insert("name2".to_string(), "fruently2".to_string());
         let record2 = Record::new(tag.clone(), time, obj2.clone());
         let conf2 = RetryConf::new().store_file(tmp.clone());
-        assert!(maybe_write_record(&conf2, record2, FluentError::Dummy("dummy".to_string()))
+        assert!(maybe_write_events(&conf2, record2, FluentError::Dummy("dummy".to_string()))
             .is_err());
         assert!(tmp.exists())
     }
 
     #[test]
-    fn test_write_records() {
+    #[cfg(not(feature = "time-as-integer"))]
+    fn test_write_forward_records() {
+        let tag = "fruently".to_string();
+        let mut obj1: HashMap<String, String> = HashMap::new();
+        obj1.insert("hey".to_string(), "Rust with forward mode!".to_string());
+        let mut obj2: HashMap<String, String> = HashMap::new();
+        obj2.insert("yeah".to_string(), "Also sent together!".to_string());
+        let time = time::now();
+        let entry = (EventTime::new(time), obj1);
+        let entry2 = (EventTime::new(time), obj2);
+        let entries = vec![(entry), (entry2)];
+        let forward = Forward::new(tag, entries);
+        let tmp = TempDir::new("fruently").unwrap().into_path().join("buffer");
+        let conf = RetryConf::new().store_file(tmp.clone());
+        assert!(maybe_write_events(&conf, forward, FluentError::Dummy("dummy".to_string()))
+            .is_err());
+        assert!(tmp.exists())
+    }
+
+    #[test]
+    #[cfg(feature = "time-as-integer")]
+    fn test_write_forward_records() {
         let tag = "fruently".to_string();
         let mut obj1: HashMap<String, String> = HashMap::new();
         obj1.insert("hey".to_string(), "Rust with forward mode!".to_string());
@@ -161,7 +145,7 @@ mod tests {
         let forward = Forward::new(tag, entries);
         let tmp = TempDir::new("fruently").unwrap().into_path().join("buffer");
         let conf = RetryConf::new().store_file(tmp.clone());
-        assert!(maybe_write_records(&conf, forward, FluentError::Dummy("dummy".to_string()))
+        assert!(maybe_write_events(&conf, forward, FluentError::Dummy("dummy".to_string()))
             .is_err());
         assert!(tmp.exists())
     }

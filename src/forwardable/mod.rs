@@ -4,7 +4,12 @@ use time;
 use error::FluentError;
 use std::fmt::Debug;
 use serde::ser::Serialize;
+#[cfg(not(feature = "time-as-integer"))]
+use event_time::EventTime;
 
+#[cfg(not(feature = "time-as-integer"))]
+pub type Entry<T> where T: Serialize = (EventTime, T);
+#[cfg(feature = "time-as-integer")]
 pub type Entry<T> where T: Serialize = (i64, T);
 
 pub trait JsonForwardable {

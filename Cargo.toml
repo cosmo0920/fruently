@@ -11,6 +11,7 @@ build = "build.rs"
 fluentd = []
 readme-testing = ["skeptic"]
 dev = ["clippy"]
+time-as-integer = []
 
 [build-dependencies.skeptic]
 version = "~0.9"
@@ -29,6 +30,7 @@ serde_json = "~1.0.0"
 serde_derive = "~1.0.0"
 rmp = "~0.8.0"
 rmp-serde = "~0.13.0"
+byteorder = "~0.5"
 clippy = {version = '0.0.116', optional = true}
 
 [dev-dependencies]
