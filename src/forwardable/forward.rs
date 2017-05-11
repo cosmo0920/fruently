@@ -13,6 +13,7 @@
 //! #[cfg(not(feature = "time-as-integer"))]
 //! use fruently::event_time::EventTime;
 //!
+//! // Using with Fluentd v0.14.
 //! #[cfg(not(feature = "time-as-integer"))]
 //! fn main() {
 //!     let fruently = Fluent::new("127.0.0.1:24224", "test");
@@ -26,6 +27,7 @@
 //!     let _ = fruently.post(vec![(entry), (entry2)]);
 //! }
 //!
+//! // Using with Fluentd v0.12.
 //! #[cfg(feature = "time-as-integer")]
 //! fn main() {
 //!     let fruently = Fluent::new("127.0.0.1:24224", "test");

@@ -76,6 +76,16 @@ Fruently does not have asynchronous API because Rust has `std::thread::spawn` fu
 
 If you want to send records into Fluentd asynchronously, please consider using `std::thread::spawn` like: [asynchronous example](examples/thread.rs).
 
+### Backward compatibility
+
+Using with Fluentd v0.12, you must specify `time-as-integer` feature flag:
+
+```toml
+[build-dependencies.fruently]
+version = "~0.8.0"
+features = ["time-as-integer"]
+```
+
 ### LICENSE
 
 [MIT](LICENSE).
