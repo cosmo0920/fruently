@@ -142,7 +142,8 @@ mod tests {
         // 0.0.0.0 does not work in Windows....
         let fruently = Fluent::new("127.0.0.1:24224", "test");
         let mut obj1: HashMap<String, String> = HashMap::new();
-        obj1.insert("hey".to_string(), "Forward mode with EventTime!".to_string());
+        obj1.insert("hey".to_string(),
+                    "Forward mode with EventTime!".to_string());
         let mut obj2: HashMap<String, String> = HashMap::new();
         obj2.insert("yeah".to_string(), "Yep, also sent together!".to_string());
         let time = make_time();
