@@ -37,3 +37,22 @@ impl Serialize for EventTime {
         serializer.serialize_bytes(&buf)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use time;
+    use time::Timespec;
+    use rmp_serde::encode::Serializer;
+
+    #[test]
+    fn test_event_time_format() {
+        let timespec = Timespec::new(1494245571, 0);
+        let time = time::at(timespec);
+        let event_time = EventTime::new(time);
+        let mut buf = vec![];
+        let _ = event_time.serialize(&mut Serializer::new(&mut buf)).unwrap();
+        assert_eq!(vec![0xc4, 0x0a, 0xd7, 0x00, 0x59, 0x10, 0x60, 0xc3, 0x00, 0x00, 0x00, 0x00],
+                   buf);
+    }
+}
