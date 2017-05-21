@@ -54,10 +54,11 @@ mod tests {
     #[bench]
     fn benchmark_forwardable(b: &mut Bencher) {
         use fruently::forwardable::Forwardable;
+        use fruently::event_time::EventTime;
 
         let mut obj = HashMap::new();
         let mut hmap = HashMap::new();
-        let time = time::now().to_timespec().sec;
+        let time = time::now();
         b.iter(|| {
             let n = test::black_box(1000);
             let thmap = (0..n).fold(&mut obj, |mut acc, _| {
@@ -68,7 +69,7 @@ mod tests {
             });
             hmap = thmap.clone();
         });
-        let entry = (time, hmap);
+        let entry = (EventTime::new(time), hmap);
         let fruently = Fluent::new("0.0.0.0:24224", "test");
         let _ = fruently.post(vec![(entry)]);
     }
