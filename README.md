@@ -86,6 +86,12 @@ version = "~0.9.0"
 features = ["time-as-integer"]
 ```
 
+### Related Articles
+
+* EventTime: http://www.clear-code.com/blog/2017/5/24.html (ja)
+* Fluent Logger Reliability: http://www.clear-code.com/blog/2017/4/28.html (ja)
+* Fundamentals: http://www.clear-code.com/blog/2016/4/22.html (ja)
+
 ### LICENSE
 
 [MIT](LICENSE).
