@@ -88,9 +88,9 @@ impl<T: Serialize> Dumpable for Forward<T> {
         for &(ref event_time_or_time, ref record) in &self.entries {
             let timespec = make_timespec(event_time_or_time);
             buf.push_str(&*format!("{}\t{}\t{}\n",
-                                   time::strftime("%FT%T%z", &time::at(timespec)).unwrap(),
-                                   self.tag,
-                                   serde_json::to_string(&record).unwrap()));
+                                  time::strftime("%FT%T%z", &time::at(timespec)).unwrap(),
+                                  self.tag,
+                                  serde_json::to_string(&record).unwrap()));
         }
         buf
     }

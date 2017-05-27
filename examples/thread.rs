@@ -10,12 +10,10 @@ fn main() {
     obj.insert("threaded".to_string(), "fruently".to_string());
     let threads: Vec<_> = (0..10)
         .map(|_| {
-            let obj = obj.to_owned();
-            let fruently = fruently.to_owned();
-            thread::spawn(move || {
-                let _ = fruently.post(&obj);
-            })
-        })
+                 let obj = obj.to_owned();
+                 let fruently = fruently.to_owned();
+                 thread::spawn(move || { let _ = fruently.post(&obj); })
+             })
         .collect();
     let _: Vec<_> = threads.into_iter().map(|thread| thread.join()).collect();
 }

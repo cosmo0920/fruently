@@ -51,7 +51,9 @@ mod tests {
         let time = time::at(timespec);
         let event_time = EventTime::new(time);
         let mut buf = vec![];
-        let _ = event_time.serialize(&mut Serializer::new(&mut buf)).unwrap();
+        let _ = event_time
+            .serialize(&mut Serializer::new(&mut buf))
+            .unwrap();
         assert_eq!(vec![0xc4, 0x0a, 0xd7, 0x00, 0x59, 0x10, 0x60, 0xc3, 0x00, 0x00, 0x00, 0x00],
                    buf);
     }

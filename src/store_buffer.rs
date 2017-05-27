@@ -13,7 +13,11 @@ use dumpable::Dumpable;
 
 /// Create file with write, create, append, and open option.
 fn ensure_file_with_wca(path: PathBuf) -> Result<File, io::Error> {
-    let file = OpenOptions::new().write(true).create(true).append(true).open(path)?;
+    let file = OpenOptions::new()
+        .write(true)
+        .create(true)
+        .append(true)
+        .open(path)?;
     Ok(file)
 }
 
@@ -70,7 +74,7 @@ mod tests {
         let tmp = TempDir::new("fruently").unwrap().into_path().join("buffer");
         let conf = RetryConf::new().store_file(tmp.clone());
         assert!(maybe_write_events(&conf, record, FluentError::Dummy("dummy".to_string()))
-            .is_err());
+                    .is_err());
         assert!(tmp.exists())
     }
 
@@ -85,7 +89,7 @@ mod tests {
         let tmp = TempDir::new("fruently").unwrap().into_path().join("buffer");
         let conf = RetryConf::new().store_file(tmp.clone());
         assert!(maybe_write_events(&conf, record, FluentError::Dummy("dummy".to_string()))
-            .is_err());
+                    .is_err());
         assert!(tmp.exists())
     }
 
@@ -99,14 +103,14 @@ mod tests {
         let tmp = TempDir::new("fruently").unwrap().into_path().join("buffer");
         let conf = RetryConf::new().store_file(tmp.clone());
         assert!(maybe_write_events(&conf, record, FluentError::Dummy("dummy".to_string()))
-            .is_err());
+                    .is_err());
         assert!(tmp.exists());
         let mut obj2: HashMap<String, String> = HashMap::new();
         obj2.insert("name2".to_string(), "fruently2".to_string());
         let record2 = Record::new(tag.clone(), time, obj2.clone());
         let conf2 = RetryConf::new().store_file(tmp.clone());
         assert!(maybe_write_events(&conf2, record2, FluentError::Dummy("dummy".to_string()))
-            .is_err());
+                    .is_err());
         assert!(tmp.exists())
     }
 
@@ -135,7 +139,7 @@ mod tests {
         let tmp = TempDir::new("fruently").unwrap().into_path().join("buffer");
         let conf = RetryConf::new().store_file(tmp.clone());
         assert!(maybe_write_events(&conf, forward, FluentError::Dummy("dummy".to_string()))
-            .is_err());
+                    .is_err());
         assert!(tmp.exists())
     }
 }

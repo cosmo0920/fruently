@@ -7,8 +7,7 @@ fn readme_testing() {
 }
 
 #[cfg(not(feature="readme-testing"))]
-fn readme_testing() {
-}
+fn readme_testing() {}
 
 fn main() {
     readme_testing();
