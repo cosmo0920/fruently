@@ -26,10 +26,12 @@ impl<T: Serialize> Record<T> {
 
 impl<T: Serialize> Dumpable for Record<T> {
     fn dump(self) -> String {
-        format!("{}\t{}\t{}\n",
-                time::strftime("%FT%T%z", &self.time).unwrap(),
-                self.tag,
-                serde_json::to_string(&self.record).unwrap())
+        format!(
+            "{}\t{}\t{}\n",
+            time::strftime("%FT%T%z", &self.time).unwrap(),
+            self.tag,
+            serde_json::to_string(&self.record).unwrap()
+        )
     }
 }
 
@@ -68,11 +70,13 @@ mod tests {
         let forwardable_json = serde_json::to_string(&record).ok().unwrap();
         let json_tag = serde_json::to_string(&tag.clone()).ok().unwrap();
         let json_obj = serde_json::to_string(&obj.clone()).ok().unwrap();
-        let expected = format!("[{},{},{},{}]",
-                               json_tag,
-                               time.to_timespec().sec,
-                               json_obj,
-                               serde_json::Value::Null);
+        let expected = format!(
+            "[{},{},{},{}]",
+            json_tag,
+            time.to_timespec().sec,
+            json_obj,
+            serde_json::Value::Null
+        );
         assert_eq!(expected, forwardable_json);
     }
 }

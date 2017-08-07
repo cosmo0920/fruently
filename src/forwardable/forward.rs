@@ -87,10 +87,12 @@ impl<T: Serialize> Dumpable for Forward<T> {
         let mut buf = String::new();
         for &(ref event_time_or_time, ref record) in &self.entries {
             let timespec = make_timespec(event_time_or_time);
-            buf.push_str(&*format!("{}\t{}\t{}\n",
-                                  time::strftime("%FT%T%z", &time::at(timespec)).unwrap(),
-                                  self.tag,
-                                  serde_json::to_string(&record).unwrap()));
+            buf.push_str(&*format!(
+                "{}\t{}\t{}\n",
+                time::strftime("%FT%T%z", &time::at(timespec)).unwrap(),
+                self.tag,
+                serde_json::to_string(&record).unwrap()
+            ));
         }
         buf
     }
@@ -99,25 +101,26 @@ impl<T: Serialize> Dumpable for Forward<T> {
 impl<'a, A: ToSocketAddrs> Forwardable for Fluent<'a, A> {
     /// Post `Vec<Entry<T>>` into Fluentd.
     fn post<T>(self, entries: Vec<Entry<T>>) -> Result<(), FluentError>
-        where T: Serialize + Debug
+    where
+        T: Serialize + Debug,
     {
         let forward = Forward::new(self.get_tag().into_owned(), entries);
         let addr = self.get_addr();
         let (max, multiplier) = self.get_conf().into_owned().build();
-        match retry_exponentially(max,
-                                  multiplier,
-                                  || Fluent::closure_send_as_forward(addr, &forward),
-                                  |response| response.is_ok()) {
+        match retry_exponentially(
+            max,
+            multiplier,
+            || Fluent::closure_send_as_forward(addr, &forward),
+            |response| response.is_ok(),
+        ) {
             Ok(_) => Ok(()),
-            Err(err) => {
-                store_buffer::maybe_write_events(&self.get_conf(), forward, From::from(err))
-            }
+            Err(err) => store_buffer::maybe_write_events(&self.get_conf(), forward, From::from(err)),
         }
     }
 }
 
 #[cfg(test)]
-#[cfg(feature="fluentd")]
+#[cfg(feature = "fluentd")]
 mod tests {
     use time;
     use fluent::Fluent;
@@ -142,8 +145,7 @@ mod tests {
         // 0.0.0.0 does not work in Windows....
         let fruently = Fluent::new("127.0.0.1:24224", "test");
         let mut obj1: HashMap<String, String> = HashMap::new();
-        obj1.insert("hey".to_string(),
-                    "Forward mode with EventTime!".to_string());
+        obj1.insert("hey".to_string(), "Forward mode with EventTime!".to_string());
         let mut obj2: HashMap<String, String> = HashMap::new();
         obj2.insert("yeah".to_string(), "Yep, also sent together!".to_string());
         let time = make_time();

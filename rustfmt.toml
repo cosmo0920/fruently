@@ -1,0 +1,10 @@
+array_layout = "Block"
+array_width = 80
+array_horizontal_layout_threshold = 100000000
+max_width = 120
+ideal_width = 100
+fn_call_width = 80
+match_block_trailing_comma = true
+fn_args_layout = "Block"
+closure_block_indent_threshold = 0
+fn_return_indent = "WithWhereClause"
