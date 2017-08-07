@@ -16,7 +16,8 @@ use error::FluentError;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Fluent<'a, A>
-    where A: ToSocketAddrs
+where
+    A: ToSocketAddrs,
 {
     addr: A,
     tag: Cow<'a, str>,
@@ -24,9 +25,11 @@ pub struct Fluent<'a, A>
 }
 
 #[cfg(feature = "time-as-integer")]
-type MsgPackSendType<T> where T: Serialize = Record<T>;
+type MsgPackSendType<T> where
+    T: Serialize = Record<T>;
 #[cfg(not(feature = "time-as-integer"))]
-type MsgPackSendType<T> where T: Serialize = EventRecord<T>;
+type MsgPackSendType<T> where
+    T: Serialize = EventRecord<T>;
 
 impl<'a, A: ToSocketAddrs> Fluent<'a, A> {
     /// Create Fluent type.
@@ -39,7 +42,8 @@ impl<'a, A: ToSocketAddrs> Fluent<'a, A> {
     /// let fruently_with_string_tag = Fluent::new("127.0.0.1:24224", "test".to_string());
     /// ```
     pub fn new<T>(addr: A, tag: T) -> Fluent<'a, A>
-        where T: Into<Cow<'a, str>>
+    where
+        T: Into<Cow<'a, str>>,
     {
         Fluent {
             addr: addr,
@@ -49,7 +53,8 @@ impl<'a, A: ToSocketAddrs> Fluent<'a, A> {
     }
 
     pub fn new_with_conf<T>(addr: A, tag: T, conf: RetryConf) -> Fluent<'a, A>
-        where T: Into<Cow<'a, str>>
+    where
+        T: Into<Cow<'a, str>>,
     {
         Fluent {
             addr: addr,
@@ -75,9 +80,7 @@ impl<'a, A: ToSocketAddrs> Fluent<'a, A> {
 
     #[doc(hidden)]
     /// For internal usage.
-    pub fn closure_send_as_json<T: Serialize>(addr: &A,
-                                              record: &Record<T>)
-                                              -> Result<(), FluentError> {
+    pub fn closure_send_as_json<T: Serialize>(addr: &A, record: &Record<T>) -> Result<(), FluentError> {
         let mut stream = net::TcpStream::connect(addr)?;
         let message = serde_json::to_string(&record)?;
         let result = stream.write(&message.into_bytes());
@@ -91,9 +94,7 @@ impl<'a, A: ToSocketAddrs> Fluent<'a, A> {
 
     #[doc(hidden)]
     /// For internal usage.
-    pub fn closure_send_as_msgpack<T: Serialize>(addr: &A,
-                                                 record: &MsgPackSendType<T>)
-                                                 -> Result<(), FluentError> {
+    pub fn closure_send_as_msgpack<T: Serialize>(addr: &A, record: &MsgPackSendType<T>) -> Result<(), FluentError> {
         let mut stream = net::TcpStream::connect(addr)?;
         let result = record.serialize(&mut Serializer::new(&mut stream));
 
@@ -105,9 +106,7 @@ impl<'a, A: ToSocketAddrs> Fluent<'a, A> {
 
     #[doc(hidden)]
     /// For internal usage.
-    pub fn closure_send_as_forward<T: Serialize>(addr: &A,
-                                                 forward: &Forward<T>)
-                                                 -> Result<(), FluentError> {
+    pub fn closure_send_as_forward<T: Serialize>(addr: &A, forward: &Forward<T>) -> Result<(), FluentError> {
         let mut stream = net::TcpStream::connect(addr)?;
         let result = forward.serialize(&mut Serializer::new(&mut stream));
 

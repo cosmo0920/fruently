@@ -39,8 +39,6 @@ fn integer_time_main() {
 }
 
 fn main() {
-    #[cfg(not(feature = "time-as-integer"))]
-    event_time_main();
-    #[cfg(feature = "time-as-integer")]
-    integer_time_main();
+    #[cfg(not(feature = "time-as-integer"))] event_time_main();
+    #[cfg(feature = "time-as-integer")] integer_time_main();
 }

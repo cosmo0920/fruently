@@ -24,7 +24,8 @@ impl Serialize for EventTime {
     //
     // although it may also be generic over the input types T.
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where S: Serializer
+    where
+        S: Serializer,
     {
         use serde::ser::Error;
         let mut buf = vec![];
@@ -54,7 +55,9 @@ mod tests {
         let _ = event_time
             .serialize(&mut Serializer::new(&mut buf))
             .unwrap();
-        assert_eq!(vec![0xc4, 0x0a, 0xd7, 0x00, 0x59, 0x10, 0x60, 0xc3, 0x00, 0x00, 0x00, 0x00],
-                   buf);
+        assert_eq!(
+            vec![0xc4, 0x0a, 0xd7, 0x00, 0x59, 0x10, 0x60, 0xc3, 0x00, 0x00, 0x00, 0x00],
+            buf
+        );
     }
 }

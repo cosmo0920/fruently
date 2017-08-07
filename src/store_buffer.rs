@@ -22,11 +22,9 @@ fn ensure_file_with_wca(path: PathBuf) -> Result<File, io::Error> {
 }
 
 /// Write events buffer into file with TSV format.
-pub fn maybe_write_events<T>(conf: &RetryConf,
-                             events: T,
-                             err: FluentError)
-                             -> Result<(), FluentError>
-    where T: Serialize + Dumpable + Debug
+pub fn maybe_write_events<T>(conf: &RetryConf, events: T, err: FluentError) -> Result<(), FluentError>
+where
+    T: Serialize + Dumpable + Debug,
 {
     let store_needed = conf.clone().need_to_store();
     let store_path = conf.clone().store_path();
@@ -37,10 +35,12 @@ pub fn maybe_write_events<T>(conf: &RetryConf,
                 write!(&mut w, "{}", events.dump()).unwrap();
                 f.write_all(&w)?;
                 f.sync_data()?;
-                Err(FluentError::FileStored(format!("stored buffer in specified file: \
+                Err(FluentError::FileStored(format!(
+                    "stored buffer in specified file: \
                                                      {:?}",
-                                                    store_path.unwrap())))
-            }
+                    store_path.unwrap()
+                )))
+            },
             Err(e) => Err(From::from(e)),
         }
     } else {
@@ -73,8 +73,7 @@ mod tests {
         let record = Record::new(tag.clone(), time, obj.clone());
         let tmp = TempDir::new("fruently").unwrap().into_path().join("buffer");
         let conf = RetryConf::new().store_file(tmp.clone());
-        assert!(maybe_write_events(&conf, record, FluentError::Dummy("dummy".to_string()))
-                    .is_err());
+        assert!(maybe_write_events(&conf, record, FluentError::Dummy("dummy".to_string())).is_err());
         assert!(tmp.exists())
     }
 
@@ -88,8 +87,7 @@ mod tests {
         let record = EventRecord::new(tag.clone(), time, obj.clone());
         let tmp = TempDir::new("fruently").unwrap().into_path().join("buffer");
         let conf = RetryConf::new().store_file(tmp.clone());
-        assert!(maybe_write_events(&conf, record, FluentError::Dummy("dummy".to_string()))
-                    .is_err());
+        assert!(maybe_write_events(&conf, record, FluentError::Dummy("dummy".to_string())).is_err());
         assert!(tmp.exists())
     }
 
@@ -102,15 +100,13 @@ mod tests {
         let record = Record::new(tag.clone(), time, obj.clone());
         let tmp = TempDir::new("fruently").unwrap().into_path().join("buffer");
         let conf = RetryConf::new().store_file(tmp.clone());
-        assert!(maybe_write_events(&conf, record, FluentError::Dummy("dummy".to_string()))
-                    .is_err());
+        assert!(maybe_write_events(&conf, record, FluentError::Dummy("dummy".to_string())).is_err());
         assert!(tmp.exists());
         let mut obj2: HashMap<String, String> = HashMap::new();
         obj2.insert("name2".to_string(), "fruently2".to_string());
         let record2 = Record::new(tag.clone(), time, obj2.clone());
         let conf2 = RetryConf::new().store_file(tmp.clone());
-        assert!(maybe_write_events(&conf2, record2, FluentError::Dummy("dummy".to_string()))
-                    .is_err());
+        assert!(maybe_write_events(&conf2, record2, FluentError::Dummy("dummy".to_string())).is_err());
         assert!(tmp.exists())
     }
 
@@ -138,8 +134,7 @@ mod tests {
         let forward = Forward::new(tag, entries);
         let tmp = TempDir::new("fruently").unwrap().into_path().join("buffer");
         let conf = RetryConf::new().store_file(tmp.clone());
-        assert!(maybe_write_events(&conf, forward, FluentError::Dummy("dummy".to_string()))
-                    .is_err());
+        assert!(maybe_write_events(&conf, forward, FluentError::Dummy("dummy".to_string())).is_err());
         assert!(tmp.exists())
     }
 }

@@ -48,10 +48,12 @@ impl<T: Serialize> EventRecord<T> {
 
 impl<T: Serialize> Dumpable for EventRecord<T> {
     fn dump(self) -> String {
-        format!("{}\t{}\t{}\n",
-                time::strftime("%FT%T%z", &self.event[0].get_event_time().get_time()).unwrap(),
-                self.tag,
-                serde_json::to_string(&self.event[0].get_record()).unwrap())
+        format!(
+            "{}\t{}\t{}\n",
+            time::strftime("%FT%T%z", &self.event[0].get_event_time().get_time()).unwrap(),
+            self.tag,
+            serde_json::to_string(&self.event[0].get_record()).unwrap()
+        )
     }
 }
 
@@ -91,10 +93,50 @@ mod tests {
         let record = EventRecord::new(tag.clone(), time, obj.clone());
         let mut buf = vec![];
         let _ = record.serialize(&mut Serializer::new(&mut buf)).unwrap();
-        assert_eq!(vec![0x93, 0xa8, 0x66, 0x72, 0x75, 0x65, 0x6e, 0x74, 0x6c, 0x79, 0x91, 0x92,
-                        0xc4, 0x0a, 0xd7, 0x00, 0x59, 0x10, 0x60, 0xc3, 0x00, 0x00, 0x00, 0x00,
-                        0x81, 0xa4, 0x6e, 0x61, 0x6d, 0x65, 0xa8, 0x66, 0x72, 0x75, 0x65, 0x6e,
-                        0x74, 0x6c, 0x79, 0xc0],
-                   buf);
+        assert_eq!(
+            vec![
+                0x93,
+                0xa8,
+                0x66,
+                0x72,
+                0x75,
+                0x65,
+                0x6e,
+                0x74,
+                0x6c,
+                0x79,
+                0x91,
+                0x92,
+                0xc4,
+                0x0a,
+                0xd7,
+                0x00,
+                0x59,
+                0x10,
+                0x60,
+                0xc3,
+                0x00,
+                0x00,
+                0x00,
+                0x00,
+                0x81,
+                0xa4,
+                0x6e,
+                0x61,
+                0x6d,
+                0x65,
+                0xa8,
+                0x66,
+                0x72,
+                0x75,
+                0x65,
+                0x6e,
+                0x74,
+                0x6c,
+                0x79,
+                0xc0,
+            ],
+            buf
+        );
     }
 }

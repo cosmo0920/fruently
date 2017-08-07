@@ -20,6 +20,6 @@ fn main() {
         Ok(_) => {
             assert!(file.exists());
             return;
-        }
+        },
     }
 }
