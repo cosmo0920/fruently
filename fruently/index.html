@@ -9,6 +9,7 @@
 
     <title>fruently - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
     <link rel="stylesheet" type="text/css" href="../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../main.css">
     
@@ -16,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc mod">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -28,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'></p><script>window.sidebarCurrent = {name: 'fruently', ty: 'mod', relpath: '../'};</script>
+        <p class='location'>Crate fruently</p><div class="block items"><ul><li><a href="#modules">Modules</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'fruently', ty: 'mod', relpath: '../'};</script>
     </nav>
 
     <nav class="sub">
@@ -42,53 +43,74 @@
         </form>
     </nav>
 
-    <section id='main' class="content mod">
-<h1 class='fqn'><span class='in-band'>Crate <a class='mod' href=''>fruently</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>fruently</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/fruently/lib.rs.html#1-20' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/fruently/lib.rs.html#1-26' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p><code>fruently</code> is a yet another Fluentd logger for Rust.</p>
 </div><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class='mod' href='error/index.html'
-                                  title='fruently::error'>error</a></td>
+                           <td><a class="mod" href="dumpable/index.html"
+                                  title='mod fruently::dumpable'>dumpable</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="error/index.html"
+                                  title='mod fruently::error'>error</a></td>
                            <td class='docblock-short'>
                                 <p>Implement error types for fruently crate.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='mod' href='fluent/index.html'
-                                  title='fruently::fluent'>fluent</a></td>
+                           <td><a class="mod" href="event_record/index.html"
+                                  title='mod fruently::event_record'>event_record</a></td>
+                           <td class='docblock-short'>
+                                <p>Implement EventTime record manupulation mechanisms.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="event_time/index.html"
+                                  title='mod fruently::event_time'>event_time</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="fluent/index.html"
+                                  title='mod fruently::fluent'>fluent</a></td>
                            <td class='docblock-short'>
                                 <p>Send record(s) into Fluentd.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='mod' href='forwardable/index.html'
-                                  title='fruently::forwardable'>forwardable</a></td>
+                           <td><a class="mod" href="forwardable/index.html"
+                                  title='mod fruently::forwardable'>forwardable</a></td>
                            <td class='docblock-short'>
                                 <p>Implement concrete sending record(s) specifications.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='mod' href='record/index.html'
-                                  title='fruently::record'>record</a></td>
+                           <td><a class="mod" href="record/index.html"
+                                  title='mod fruently::record'>record</a></td>
                            <td class='docblock-short'>
                                 <p>Implement record manupulation mechanisms.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='mod' href='retry_conf/index.html'
-                                  title='fruently::retry_conf'>retry_conf</a></td>
+                           <td><a class="mod" href="retry_conf/index.html"
+                                  title='mod fruently::retry_conf'>retry_conf</a></td>
                            <td class='docblock-short'>
                                 <p>Retry sending records configuration.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='mod' href='store_buffer/index.html'
-                                  title='fruently::store_buffer'>store_buffer</a></td>
+                           <td><a class="mod" href="store_buffer/index.html"
+                                  title='mod fruently::store_buffer'>store_buffer</a></td>
                            <td class='docblock-short'>
                                 <p>Store buffer when failing to send events.</p>
                            </td>
@@ -149,7 +171,6 @@
         window.rootPath = "../";
         window.currentCrate = "fruently";
     </script>
-    <script src="../jquery.js"></script>
     <script src="../main.js"></script>
     <script defer src="../search-index.js"></script>
 </body>

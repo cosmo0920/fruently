@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="API documentation for the Rust `store_buffer` mod in crate `fruently`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang, store_buffer">
+    <meta name="description" content="API documentation for the Rust `Dumpable` trait in crate `fruently`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, Dumpable">
 
-    <title>fruently::store_buffer - Rust</title>
+    <title>fruently::dumpable::Dumpable - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../normalize.css">
     <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
@@ -17,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc mod">
+<body class="rustdoc trait">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'>Module store_buffer</p><div class="block items"><ul><li><a href="#functions">Functions</a></li></ul></div><p class='location'><a href='../index.html'>fruently</a></p><script>window.sidebarCurrent = {name: 'store_buffer', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
+        <p class='location'>Trait Dumpable</p><div class="block items"><ul><li><a href="#required-methods">Required Methods</a></li><li><a href="#implementors">Implementors</a></li></ul></div><p class='location'><a href='../index.html'>fruently</a>::<wbr><a href='index.html'>dumpable</a></p><script>window.sidebarCurrent = {name: 'Dumpable', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -44,21 +44,26 @@
     </nav>
 
     <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Module <a href='../index.html'>fruently</a>::<wbr><a class="mod" href=''>store_buffer</a></span><span class='out-of-band'><span id='render-detail'>
+<h1 class='fqn'><span class='in-band'>Trait <a href='../index.html'>fruently</a>::<wbr><a href='index.html'>dumpable</a>::<wbr><a class="trait" href=''>Dumpable</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/fruently/store_buffer.rs.html#1-140' title='goto source code'>[src]</a></span></h1>
-<div class='docblock'><p>Store buffer when failing to send events.</p>
-</div><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.maybe_write_events.html"
-                                  title='fn fruently::store_buffer::maybe_write_events'>maybe_write_events</a></td>
-                           <td class='docblock-short'>
-                                <p>Write events buffer into file with TSV format.</p>
-                           </td>
-                       </tr></table></section>
+               </span><a class='srclink' href='../../src/fruently/dumpable/mod.rs.html#2-4' title='goto source code'>[src]</a></span></h1>
+<pre class='rust trait'>pub trait Dumpable {
+    fn <a href='#tymethod.dump' class='fnname'>dump</a>(self) -&gt; <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>;
+}</pre><div class='docblock'><p>Traits for dump record(s).</p>
+</div>
+            <h2 id='required-methods'>Required Methods</h2>
+            <div class='methods'>
+        <h3 id='tymethod.dump' class='method'><span id='dump.v' class='invisible'><code>fn <a href='#tymethod.dump' class='fnname'>dump</a>(self) -&gt; <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a></code></span></h3></div>
+        <h2 id='implementors'>Implementors</h2>
+        <ul class='item-list' id='implementors-list'>
+    <li><code>impl&lt;T:&nbsp;<a class="trait" href="https://docs.rs/serde/1.0.2/serde/ser/trait.Serialize.html" title="trait serde::ser::Serialize">Serialize</a>&gt; Dumpable for <a class="struct" href="../../fruently/record/struct.Record.html" title="struct fruently::record::Record">Record</a>&lt;T&gt;</code></li>
+<li><code>impl&lt;T:&nbsp;<a class="trait" href="https://docs.rs/serde/1.0.2/serde/ser/trait.Serialize.html" title="trait serde::ser::Serialize">Serialize</a>&gt; Dumpable for <a class="struct" href="../../fruently/forwardable/forward/struct.Forward.html" title="struct fruently::forwardable::forward::Forward">Forward</a>&lt;T&gt;</code></li>
+<li><code>impl&lt;T:&nbsp;<a class="trait" href="https://docs.rs/serde/1.0.2/serde/ser/trait.Serialize.html" title="trait serde::ser::Serialize">Serialize</a>&gt; Dumpable for <a class="struct" href="../../fruently/event_record/struct.EventRecord.html" title="struct fruently::event_record::EventRecord">EventRecord</a>&lt;T&gt;</code></li>
+</ul><script type="text/javascript" async
+                         src="../../implementors/fruently/dumpable/trait.Dumpable.js">
+                 </script></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>

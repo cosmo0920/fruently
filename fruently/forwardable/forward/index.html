@@ -9,6 +9,7 @@
 
     <title>fruently::forwardable::forward - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../../../normalize.css">
     <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../../main.css">
     
@@ -16,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc mod">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -28,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'><a href='../../index.html'>fruently</a>::<wbr><a href='../index.html'>forwardable</a></p><script>window.sidebarCurrent = {name: 'forward', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
+        <p class='location'>Module forward</p><div class="block items"><ul><li><a href="#structs">Structs</a></li></ul></div><p class='location'><a href='../../index.html'>fruently</a>::<wbr><a href='../index.html'>forwardable</a></p><script>window.sidebarCurrent = {name: 'forward', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -42,40 +43,58 @@
         </form>
     </nav>
 
-    <section id='main' class="content mod">
-<h1 class='fqn'><span class='in-band'>Module <a href='../../index.html'>fruently</a>::<wbr><a href='../index.html'>forwardable</a>::<wbr><a class='mod' href=''>forward</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Module <a href='../../index.html'>fruently</a>::<wbr><a href='../index.html'>forwardable</a>::<wbr><a class="mod" href=''>forward</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../../src/fruently/forwardable/forward.rs.html#1-110' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../../../src/fruently/forwardable/forward.rs.html#1-157' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>Send records as forward mode.</p>
 
 <h2 id='usage' class='section-header'><a href='#usage'>Usage</a></h2>
 <p>This trait is used as follows:</p>
 
-<pre class='rust rust-example-rendered'>
-<span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>fruently</span>;
-<span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>time</span>;
-<span class='kw'>use</span> <span class='ident'>fruently</span>::<span class='ident'>fluent</span>::<span class='ident'>Fluent</span>;
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>collections</span>::<span class='ident'>HashMap</span>;
-<span class='kw'>use</span> <span class='ident'>fruently</span>::<span class='ident'>forwardable</span>::<span class='ident'>Forwardable</span>;
+<pre class="rust rust-example-rendered">
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">fruently</span>;
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">time</span>;
+<span class="kw">use</span> <span class="ident">fruently</span>::<span class="ident">fluent</span>::<span class="ident">Fluent</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashMap</span>;
+<span class="kw">use</span> <span class="ident">fruently</span>::<span class="ident">forwardable</span>::<span class="ident">Forwardable</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;time-as-integer&quot;</span>))]</span>
+<span class="kw">use</span> <span class="ident">fruently</span>::<span class="ident">event_time</span>::<span class="ident">EventTime</span>;
 
-<span class='kw'>fn</span> <span class='ident'>main</span>() {
-    <span class='kw'>let</span> <span class='ident'>fruently</span> <span class='op'>=</span> <span class='ident'>Fluent</span>::<span class='ident'>new</span>(<span class='string'>&quot;127.0.0.1:24224&quot;</span>, <span class='string'>&quot;test&quot;</span>);
-    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>obj1</span>: <span class='ident'>HashMap</span><span class='op'>&lt;</span><span class='ident'>String</span>, <span class='ident'>String</span><span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>HashMap</span>::<span class='ident'>new</span>();
-    <span class='ident'>obj1</span>.<span class='ident'>insert</span>(<span class='string'>&quot;hey&quot;</span>.<span class='ident'>to_string</span>(), <span class='string'>&quot;Rust with forward mode!&quot;</span>.<span class='ident'>to_string</span>());
-    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>obj2</span>: <span class='ident'>HashMap</span><span class='op'>&lt;</span><span class='ident'>String</span>, <span class='ident'>String</span><span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>HashMap</span>::<span class='ident'>new</span>();
-    <span class='ident'>obj2</span>.<span class='ident'>insert</span>(<span class='string'>&quot;yeah&quot;</span>.<span class='ident'>to_string</span>(), <span class='string'>&quot;Also sent together!&quot;</span>.<span class='ident'>to_string</span>());
-    <span class='kw'>let</span> <span class='ident'>time</span> <span class='op'>=</span> <span class='ident'>time</span>::<span class='ident'>now</span>().<span class='ident'>to_timespec</span>().<span class='ident'>sec</span>;
-    <span class='kw'>let</span> <span class='ident'>entry</span> <span class='op'>=</span> (<span class='ident'>time</span>, <span class='ident'>obj1</span>);
-    <span class='kw'>let</span> <span class='ident'>entry2</span> <span class='op'>=</span> (<span class='ident'>time</span>, <span class='ident'>obj2</span>);
-    <span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>fruently</span>.<span class='ident'>post</span>(<span class='macro'>vec</span><span class='macro'>!</span>[(<span class='ident'>entry</span>), (<span class='ident'>entry2</span>)]);
+<span class="comment">// Using with Fluentd v0.14.</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;time-as-integer&quot;</span>))]</span>
+<span class="kw">fn</span> <span class="ident">main</span>() {
+    <span class="kw">let</span> <span class="ident">fruently</span> <span class="op">=</span> <span class="ident">Fluent</span>::<span class="ident">new</span>(<span class="string">&quot;127.0.0.1:24224&quot;</span>, <span class="string">&quot;test&quot;</span>);
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">obj1</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">String</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">HashMap</span>::<span class="ident">new</span>();
+    <span class="ident">obj1</span>.<span class="ident">insert</span>(<span class="string">&quot;hey&quot;</span>.<span class="ident">to_string</span>(), <span class="string">&quot;Rust with forward mode!&quot;</span>.<span class="ident">to_string</span>());
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">obj2</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">String</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">HashMap</span>::<span class="ident">new</span>();
+    <span class="ident">obj2</span>.<span class="ident">insert</span>(<span class="string">&quot;yeah&quot;</span>.<span class="ident">to_string</span>(), <span class="string">&quot;Also sent together!&quot;</span>.<span class="ident">to_string</span>());
+    <span class="kw">let</span> <span class="ident">time</span> <span class="op">=</span> <span class="ident">time</span>::<span class="ident">now</span>();
+    <span class="kw">let</span> <span class="ident">entry</span> <span class="op">=</span> (<span class="ident">EventTime</span>::<span class="ident">new</span>(<span class="ident">time</span>), <span class="ident">obj1</span>);
+    <span class="kw">let</span> <span class="ident">entry2</span> <span class="op">=</span> (<span class="ident">EventTime</span>::<span class="ident">new</span>(<span class="ident">time</span>), <span class="ident">obj2</span>);
+    <span class="kw">let</span> _ <span class="op">=</span> <span class="ident">fruently</span>.<span class="ident">post</span>(<span class="macro">vec</span><span class="macro">!</span>[(<span class="ident">entry</span>), (<span class="ident">entry2</span>)]);
+}
+
+<span class="comment">// Using with Fluentd v0.12.</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;time-as-integer&quot;</span>)]</span>
+<span class="kw">fn</span> <span class="ident">main</span>() {
+    <span class="kw">let</span> <span class="ident">fruently</span> <span class="op">=</span> <span class="ident">Fluent</span>::<span class="ident">new</span>(<span class="string">&quot;127.0.0.1:24224&quot;</span>, <span class="string">&quot;test&quot;</span>);
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">obj1</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">String</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">HashMap</span>::<span class="ident">new</span>();
+    <span class="ident">obj1</span>.<span class="ident">insert</span>(<span class="string">&quot;hey&quot;</span>.<span class="ident">to_string</span>(), <span class="string">&quot;Rust with forward mode!&quot;</span>.<span class="ident">to_string</span>());
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">obj2</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">String</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">HashMap</span>::<span class="ident">new</span>();
+    <span class="ident">obj2</span>.<span class="ident">insert</span>(<span class="string">&quot;yeah&quot;</span>.<span class="ident">to_string</span>(), <span class="string">&quot;Also sent together!&quot;</span>.<span class="ident">to_string</span>());
+    <span class="kw">let</span> <span class="ident">time</span> <span class="op">=</span> <span class="ident">time</span>::<span class="ident">now</span>().<span class="ident">to_timespec</span>().<span class="ident">sec</span>;
+    <span class="kw">let</span> <span class="ident">entry</span> <span class="op">=</span> (<span class="ident">time</span>, <span class="ident">obj1</span>);
+    <span class="kw">let</span> <span class="ident">entry2</span> <span class="op">=</span> (<span class="ident">time</span>, <span class="ident">obj2</span>);
+    <span class="kw">let</span> _ <span class="op">=</span> <span class="ident">fruently</span>.<span class="ident">post</span>(<span class="macro">vec</span><span class="macro">!</span>[(<span class="ident">entry</span>), (<span class="ident">entry2</span>)]);
 }</pre>
 </div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class='struct' href='struct.Forward.html'
-                                  title='fruently::forwardable::forward::Forward'>Forward</a></td>
+                           <td><a class="struct" href="struct.Forward.html"
+                                  title='struct fruently::forwardable::forward::Forward'>Forward</a></td>
                            <td class='docblock-short'>
                                 
                            </td>
@@ -136,7 +155,6 @@
         window.rootPath = "../../../";
         window.currentCrate = "fruently";
     </script>
-    <script src="../../../jquery.js"></script>
     <script src="../../../main.js"></script>
     <script defer src="../../../search-index.js"></script>
 </body>

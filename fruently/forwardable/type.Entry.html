@@ -9,6 +9,7 @@
 
     <title>fruently::forwardable::Entry - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../../normalize.css">
     <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
     
@@ -16,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc type">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -42,13 +43,13 @@
         </form>
     </nav>
 
-    <section id='main' class="content type">
-<h1 class='fqn'><span class='in-band'>Type Definition <a href='../index.html'>fruently</a>::<wbr><a href='index.html'>forwardable</a>::<wbr><a class='type' href=''>Entry</a></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Type Definition <a href='../index.html'>fruently</a>::<wbr><a href='index.html'>forwardable</a>::<wbr><a class="type" href=''>Entry</a></span><span class='out-of-band'><span id='render-detail'>
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/fruently/forwardable/mod.rs.html#8' title='goto source code'>[src]</a></span></h1>
-<pre class='rust typedef'>type Entry&lt;T&gt; <span class='where'>where T: <a class='trait' href='https://docs.rs/serde/1.0.2/serde/ser/trait.Serialize.html' title='serde::ser::Serialize'>Serialize</a></span> = <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(</a><a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.i64.html'>i64</a>, T<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>)</a>;</pre></section>
+               </span><a class='srclink' href='../../src/fruently/forwardable/mod.rs.html#11-12' title='goto source code'>[src]</a></span></h1>
+<pre class='rust typedef'>type Entry&lt;T&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;T: <a class="trait" href="https://docs.rs/serde/1.0.2/serde/ser/trait.Serialize.html" title="trait serde::ser::Serialize">Serialize</a>,&nbsp;</span> = <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">(</a><a class="struct" href="../../fruently/event_time/struct.EventTime.html" title="struct fruently::event_time::EventTime">EventTime</a>, T<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">)</a>;</pre></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>
@@ -105,7 +106,6 @@
         window.rootPath = "../../";
         window.currentCrate = "fruently";
     </script>
-    <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
     <script defer src="../../search-index.js"></script>
 </body>

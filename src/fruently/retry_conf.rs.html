@@ -9,6 +9,7 @@
 
     <title>retry_conf.rs.html -- source</title>
 
+    <link rel="stylesheet" type="text/css" href="../../normalize.css">
     <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
     
@@ -16,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc source">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -42,7 +43,7 @@
         </form>
     </nav>
 
-    <section id='main' class="content source"><pre class="line-numbers"><span id="1"> 1</span>
+    <section id='main' class="content"><pre class="line-numbers"><span id="1"> 1</span>
 <span id="2"> 2</span>
 <span id="3"> 3</span>
 <span id="4"> 4</span>
@@ -120,83 +121,83 @@
 <span id="76">76</span>
 <span id="77">77</span>
 <span id="78">78</span>
-</pre><pre class='rust '>
-<span class='doccomment'>//! Retry sending records configuration.</span>
+</pre><pre class="rust ">
+<span class="doccomment">//! Retry sending records configuration.</span>
 
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>path</span>::<span class='ident'>PathBuf</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">path</span>::<span class="ident">PathBuf</span>;
 
-<span class='doccomment'>/// You can calculate retrying interval as the following equation:</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// `retry_interval = exp ** (multiplier + retry_counts)`</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// see: https://github.com/jimmycuadra/retry/blob/v0.4.0/src/lib.rs#L142-L143</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// You can estimate to caluculate with concrete values like:</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// * `retry_counts`: 10, e ^ (5 + 10)/1000.0/60.0/60.0 = 0.908060381242253, about 0.9 hour</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// * `retry_counts`: 11, e ^ (5 + 11)/1000.0/60.0/60.0 = 2.4683640334744092, about 2.5 hours</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// * `retry_counts`: 12, e ^ (5 + 12)/1000.0/60.0/60.0 = 6.709709098215361, about 6.7 hours</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// where multiplier = 5,</span>
-<span class='doccomment'>/// e is [exponential function](https://doc.rust-lang.org/std/primitive.f64.html#method.exp).</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// If you specify `store_file_path`, `fruently` tries to store record(s)</span>
-<span class='doccomment'>/// when failing to send into Fluent protocol implemented server.</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// ## Default values</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// * multiplier: `5_f64`</span>
-<span class='doccomment'>/// * max: 10</span>
-<span class='doccomment'>/// * `store_file_path`: None</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>Clone</span>, <span class='ident'>PartialEq</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>RetryConf</span> {
-    <span class='ident'>max</span>: <span class='ident'>u64</span>,
-    <span class='ident'>multiplier</span>: <span class='ident'>f64</span>,
-    <span class='ident'>store_file_path</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>PathBuf</span><span class='op'>&gt;</span>,
+<span class="doccomment">/// You can calculate retrying interval as the following equation:</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// `retry_interval = exp ** (multiplier + retry_counts)`</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// see: https://github.com/jimmycuadra/retry/blob/v0.4.0/src/lib.rs#L142-L143</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// You can estimate to caluculate with concrete values like:</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// * `retry_counts`: 10, e ^ (5 + 10)/1000.0/60.0/60.0 = 0.908060381242253, about 0.9 hour</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// * `retry_counts`: 11, e ^ (5 + 11)/1000.0/60.0/60.0 = 2.4683640334744092, about 2.5 hours</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// * `retry_counts`: 12, e ^ (5 + 12)/1000.0/60.0/60.0 = 6.709709098215361, about 6.7 hours</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// where multiplier = 5,</span>
+<span class="doccomment">/// e is [exponential function](https://doc.rust-lang.org/std/primitive.f64.html#method.exp).</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// If you specify `store_file_path`, `fruently` tries to store record(s)</span>
+<span class="doccomment">/// when failing to send into Fluent protocol implemented server.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ## Default values</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// * multiplier: `5_f64`</span>
+<span class="doccomment">/// * max: 10</span>
+<span class="doccomment">/// * `store_file_path`: None</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">RetryConf</span> {
+    <span class="ident">max</span>: <span class="ident">u64</span>,
+    <span class="ident">multiplier</span>: <span class="ident">f64</span>,
+    <span class="ident">store_file_path</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PathBuf</span><span class="op">&gt;</span>,
 }
 
-<span class='kw'>impl</span> <span class='ident'>Default</span> <span class='kw'>for</span> <span class='ident'>RetryConf</span> {
-    <span class='kw'>fn</span> <span class='ident'>default</span>() <span class='op'>-&gt;</span> <span class='ident'>RetryConf</span> {
-        <span class='ident'>RetryConf</span> {
-            <span class='ident'>max</span>: <span class='number'>10</span>,
-            <span class='ident'>multiplier</span>: <span class='number'>5_f64</span>,
-            <span class='ident'>store_file_path</span>: <span class='prelude-val'>None</span>,
+<span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">RetryConf</span> {
+    <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-&gt;</span> <span class="ident">RetryConf</span> {
+        <span class="ident">RetryConf</span> {
+            <span class="ident">max</span>: <span class="number">10</span>,
+            <span class="ident">multiplier</span>: <span class="number">5_f64</span>,
+            <span class="ident">store_file_path</span>: <span class="prelude-val">None</span>,
         }
     }
 }
 
-<span class='kw'>impl</span> <span class='ident'>RetryConf</span> {
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>() <span class='op'>-&gt;</span> <span class='ident'>RetryConf</span> {
-        <span class='ident'>Default</span>::<span class='ident'>default</span>()
+<span class="kw">impl</span> <span class="ident">RetryConf</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="ident">RetryConf</span> {
+        <span class="ident">Default</span>::<span class="ident">default</span>()
     }
 
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>max</span>(<span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>max</span>: <span class='ident'>u64</span>) <span class='op'>-&gt;</span> <span class='ident'>RetryConf</span> {
-        <span class='self'>self</span>.<span class='ident'>max</span> <span class='op'>=</span> <span class='ident'>max</span>;
-        <span class='self'>self</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">max</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">max</span>: <span class="ident">u64</span>) <span class="op">-&gt;</span> <span class="ident">RetryConf</span> {
+        <span class="self">self</span>.<span class="ident">max</span> <span class="op">=</span> <span class="ident">max</span>;
+        <span class="self">self</span>
     }
 
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>multiplier</span>(<span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>multiplier</span>: <span class='ident'>f64</span>) <span class='op'>-&gt;</span> <span class='ident'>RetryConf</span> {
-        <span class='self'>self</span>.<span class='ident'>multiplier</span> <span class='op'>=</span> <span class='ident'>multiplier</span>;
-        <span class='self'>self</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">multiplier</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">multiplier</span>: <span class="ident">f64</span>) <span class="op">-&gt;</span> <span class="ident">RetryConf</span> {
+        <span class="self">self</span>.<span class="ident">multiplier</span> <span class="op">=</span> <span class="ident">multiplier</span>;
+        <span class="self">self</span>
     }
 
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>store_file</span>(<span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>path</span>: <span class='ident'>PathBuf</span>) <span class='op'>-&gt;</span> <span class='ident'>RetryConf</span> {
-        <span class='self'>self</span>.<span class='ident'>store_file_path</span> <span class='op'>=</span> <span class='prelude-val'>Some</span>(<span class='ident'>path</span>);
-        <span class='self'>self</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">store_file</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">path</span>: <span class="ident">PathBuf</span>) <span class="op">-&gt;</span> <span class="ident">RetryConf</span> {
+        <span class="self">self</span>.<span class="ident">store_file_path</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">path</span>);
+        <span class="self">self</span>
     }
 
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>need_to_store</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
-        <span class='self'>self</span>.<span class='ident'>store_file_path</span>.<span class='ident'>is_some</span>()
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">need_to_store</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="self">self</span>.<span class="ident">store_file_path</span>.<span class="ident">is_some</span>()
     }
 
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>store_path</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>PathBuf</span><span class='op'>&gt;</span> {
-        <span class='self'>self</span>.<span class='ident'>store_file_path</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">store_path</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PathBuf</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">store_file_path</span>
     }
 
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>build</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> (<span class='ident'>u64</span>, <span class='ident'>f64</span>) {
-        (<span class='self'>self</span>.<span class='ident'>max</span>, <span class='self'>self</span>.<span class='ident'>multiplier</span>)
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">build</span>(<span class="self">self</span>) <span class="op">-&gt;</span> (<span class="ident">u64</span>, <span class="ident">f64</span>) {
+        (<span class="self">self</span>.<span class="ident">max</span>, <span class="self">self</span>.<span class="ident">multiplier</span>)
     }
 }
 </pre>
@@ -257,7 +258,6 @@
         window.rootPath = "../../";
         window.currentCrate = "fruently";
     </script>
-    <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
     <script defer src="../../search-index.js"></script>
 </body>

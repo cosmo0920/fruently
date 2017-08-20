@@ -4,20 +4,20 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="API documentation for the Rust `store_buffer` mod in crate `fruently`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang, store_buffer">
+    <meta name="description" content="Source to the Rust file `src/dumpable/mod.rs`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang">
 
-    <title>fruently::store_buffer - Rust</title>
+    <title>mod.rs.html -- source</title>
 
-    <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css">
+    <link rel="stylesheet" type="text/css" href="../../../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../../../main.css">
     
 
     
     
 </head>
-<body class="rustdoc mod">
+<body class="rustdoc source">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'>Module store_buffer</p><div class="block items"><ul><li><a href="#functions">Functions</a></li></ul></div><p class='location'><a href='../index.html'>fruently</a></p><script>window.sidebarCurrent = {name: 'store_buffer', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
+        
     </nav>
 
     <nav class="sub">
@@ -43,22 +43,17 @@
         </form>
     </nav>
 
-    <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Module <a href='../index.html'>fruently</a>::<wbr><a class="mod" href=''>store_buffer</a></span><span class='out-of-band'><span id='render-detail'>
-                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
-                       [<span class='inner'>&#x2212;</span>]
-                   </a>
-               </span><a class='srclink' href='../../src/fruently/store_buffer.rs.html#1-140' title='goto source code'>[src]</a></span></h1>
-<div class='docblock'><p>Store buffer when failing to send events.</p>
-</div><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.maybe_write_events.html"
-                                  title='fn fruently::store_buffer::maybe_write_events'>maybe_write_events</a></td>
-                           <td class='docblock-short'>
-                                <p>Write events buffer into file with TSV format.</p>
-                           </td>
-                       </tr></table></section>
+    <section id='main' class="content"><pre class="line-numbers"><span id="1">1</span>
+<span id="2">2</span>
+<span id="3">3</span>
+<span id="4">4</span>
+</pre><pre class="rust ">
+<span class="doccomment">/// Traits for dump record(s).</span>
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Dumpable</span> {
+    <span class="kw">fn</span> <span class="ident">dump</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">String</span>;
+}
+</pre>
+</section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>
@@ -112,10 +107,10 @@
     
 
     <script>
-        window.rootPath = "../../";
+        window.rootPath = "../../../";
         window.currentCrate = "fruently";
     </script>
-    <script src="../../main.js"></script>
-    <script defer src="../../search-index.js"></script>
+    <script src="../../../main.js"></script>
+    <script defer src="../../../search-index.js"></script>
 </body>
 </html>

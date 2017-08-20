@@ -9,6 +9,7 @@
 
     <title>error.rs.html -- source</title>
 
+    <link rel="stylesheet" type="text/css" href="../../normalize.css">
     <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
     
@@ -16,7 +17,7 @@
     
     
 </head>
-<body class="rustdoc">
+<body class="rustdoc source">
     <!--[if lte IE 8]>
     <div class="warning">
         This old browser is unsupported and will most likely display funky
@@ -42,7 +43,7 @@
         </form>
     </nav>
 
-    <section id='main' class="content source"><pre class="line-numbers"><span id="1"> 1</span>
+    <section id='main' class="content"><pre class="line-numbers"><span id="1"> 1</span>
 <span id="2"> 2</span>
 <span id="3"> 3</span>
 <span id="4"> 4</span>
@@ -83,46 +84,46 @@
 <span id="39">39</span>
 <span id="40">40</span>
 <span id="41">41</span>
-</pre><pre class='rust '>
-<span class='doccomment'>//! Implement error types for fruently crate.</span>
+</pre><pre class="rust ">
+<span class="doccomment">//! Implement error types for fruently crate.</span>
 
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>io</span>;
-<span class='kw'>use</span> <span class='ident'>retry</span>;
-<span class='kw'>use</span> <span class='ident'>serde_json</span>;
-<span class='kw'>use</span> <span class='ident'>rmp_serde</span>::<span class='ident'>encode</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>;
+<span class="kw">use</span> <span class="ident">retry</span>;
+<span class="kw">use</span> <span class="ident">serde_json</span>;
+<span class="kw">use</span> <span class="ident">rmp_serde</span>::<span class="ident">encode</span>;
 
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>FluentError</span> {
-    <span class='ident'>JsonEncode</span>(<span class='ident'>serde_json</span>::<span class='ident'>Error</span>),
-    <span class='ident'>MsgpackEncode</span>(<span class='ident'>encode</span>::<span class='ident'>Error</span>),
-    <span class='ident'>IO</span>(<span class='ident'>io</span>::<span class='ident'>Error</span>),
-    <span class='ident'>Retry</span>(<span class='ident'>retry</span>::<span class='ident'>RetryError</span>),
-    <span class='ident'>FileStored</span>(<span class='ident'>String</span>),
-    <span class='attribute'>#[<span class='ident'>doc</span>(<span class='ident'>hidden</span>)]</span>
-    <span class='ident'>Dummy</span>(<span class='ident'>String</span>),
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">FluentError</span> {
+    <span class="ident">JsonEncode</span>(<span class="ident">serde_json</span>::<span class="ident">Error</span>),
+    <span class="ident">MsgpackEncode</span>(<span class="ident">encode</span>::<span class="ident">Error</span>),
+    <span class="ident">IO</span>(<span class="ident">io</span>::<span class="ident">Error</span>),
+    <span class="ident">Retry</span>(<span class="ident">retry</span>::<span class="ident">RetryError</span>),
+    <span class="ident">FileStored</span>(<span class="ident">String</span>),
+    <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
+    <span class="ident">Dummy</span>(<span class="ident">String</span>),
 }
 
-<span class='kw'>impl</span> <span class='ident'>From</span><span class='op'>&lt;</span><span class='ident'>io</span>::<span class='ident'>Error</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>FluentError</span> {
-    <span class='kw'>fn</span> <span class='ident'>from</span>(<span class='ident'>err</span>: <span class='ident'>io</span>::<span class='ident'>Error</span>) <span class='op'>-&gt;</span> <span class='ident'>FluentError</span> {
-        <span class='ident'>FluentError</span>::<span class='ident'>IO</span>(<span class='ident'>err</span>)
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">io</span>::<span class="ident">Error</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">FluentError</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">err</span>: <span class="ident">io</span>::<span class="ident">Error</span>) <span class="op">-&gt;</span> <span class="ident">FluentError</span> {
+        <span class="ident">FluentError</span>::<span class="ident">IO</span>(<span class="ident">err</span>)
     }
 }
 
-<span class='kw'>impl</span> <span class='ident'>From</span><span class='op'>&lt;</span><span class='ident'>encode</span>::<span class='ident'>Error</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>FluentError</span> {
-    <span class='kw'>fn</span> <span class='ident'>from</span>(<span class='ident'>err</span>: <span class='ident'>encode</span>::<span class='ident'>Error</span>) <span class='op'>-&gt;</span> <span class='ident'>FluentError</span> {
-        <span class='ident'>FluentError</span>::<span class='ident'>MsgpackEncode</span>(<span class='ident'>err</span>)
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">encode</span>::<span class="ident">Error</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">FluentError</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">err</span>: <span class="ident">encode</span>::<span class="ident">Error</span>) <span class="op">-&gt;</span> <span class="ident">FluentError</span> {
+        <span class="ident">FluentError</span>::<span class="ident">MsgpackEncode</span>(<span class="ident">err</span>)
     }
 }
 
-<span class='kw'>impl</span> <span class='ident'>From</span><span class='op'>&lt;</span><span class='ident'>retry</span>::<span class='ident'>RetryError</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>FluentError</span> {
-    <span class='kw'>fn</span> <span class='ident'>from</span>(<span class='ident'>err</span>: <span class='ident'>retry</span>::<span class='ident'>RetryError</span>) <span class='op'>-&gt;</span> <span class='ident'>FluentError</span> {
-        <span class='ident'>FluentError</span>::<span class='ident'>Retry</span>(<span class='ident'>err</span>)
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">retry</span>::<span class="ident">RetryError</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">FluentError</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">err</span>: <span class="ident">retry</span>::<span class="ident">RetryError</span>) <span class="op">-&gt;</span> <span class="ident">FluentError</span> {
+        <span class="ident">FluentError</span>::<span class="ident">Retry</span>(<span class="ident">err</span>)
     }
 }
 
-<span class='kw'>impl</span> <span class='ident'>From</span><span class='op'>&lt;</span><span class='ident'>serde_json</span>::<span class='ident'>Error</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>FluentError</span> {
-    <span class='kw'>fn</span> <span class='ident'>from</span>(<span class='ident'>err</span>: <span class='ident'>serde_json</span>::<span class='ident'>Error</span>) <span class='op'>-&gt;</span> <span class='ident'>FluentError</span> {
-        <span class='ident'>FluentError</span>::<span class='ident'>JsonEncode</span>(<span class='ident'>err</span>)
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">serde_json</span>::<span class="ident">Error</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">FluentError</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">err</span>: <span class="ident">serde_json</span>::<span class="ident">Error</span>) <span class="op">-&gt;</span> <span class="ident">FluentError</span> {
+        <span class="ident">FluentError</span>::<span class="ident">JsonEncode</span>(<span class="ident">err</span>)
     }
 }
 </pre>
@@ -183,7 +184,6 @@
         window.rootPath = "../../";
         window.currentCrate = "fruently";
     </script>
-    <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
     <script defer src="../../search-index.js"></script>
 </body>
