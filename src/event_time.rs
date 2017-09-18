@@ -1,3 +1,5 @@
+//! Forward proticol v1 version of high accuracy time representation.
+
 use time::Tm;
 use serde::ser::{Serialize, Serializer};
 use byteorder::{BigEndian, WriteBytesExt};
