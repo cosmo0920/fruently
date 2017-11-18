@@ -63,7 +63,7 @@ impl<T: Serialize> Dumpable for EventRecord<T> {
 ///
 /// `[tag, [eventtime, record]]`
 ///
-/// ref: https://github.com/fluent/fluentd/wiki/Forward-Protocol-Specification-v0#message-mode
+/// ref: https://github.com/fluent/fluentd/wiki/Forward-Protocol-Specification-v1#message-modes
 impl<T: Serialize> Serialize for EventRecord<T> {
     fn serialize<S: Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
         let mut seq = s.serialize_tuple(3)?;
