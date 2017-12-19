@@ -34,4 +34,5 @@ byteorder = "^1.0.0"
 clippy = {version = '0.0.116', optional = true}
 
 [dev-dependencies]
+failure = "~0.1.1"
 tempdir = "~0.3"
