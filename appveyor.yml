@@ -6,13 +6,9 @@ environment:
     - TARGET: x86_64-pc-windows-msvc
       BITS: 64
       RUSTVER: 1.22.1
-      ruby_version: "23-x64"
-      devkit: C:\Ruby23-x64\DevKit
     - TARGET: x86_64-pc-windows-msvc
       BITS: 64
       RUSTVER: 1.22.1
-      ruby_version: "23"
-      devkit: C:\Ruby23\DevKit
 
 install:
   - ps: Start-FileDownload "https://static.rust-lang.org/dist/rust-${env:RUSTVER}-${env:TARGET}.exe"
@@ -21,20 +17,8 @@ install:
   - SET PATH=%PATH%;C:\MinGW\bin
   - rustc -V
   - cargo -V
-  - SET PATH=C:\Ruby%ruby_version%\bin;%PATH%
-  - "%devkit%\\devkitvars.bat"
-  - ruby --version
-  - bundle install
 
 build: false
 
-before_test:
-  ps: |
-    $job = Start-Process bundle -ArgumentList "exec", "fluentd","-c", ".\conf\in_forward.conf" -NoNewWindow -PassThru
-    $Env:FLUENTD_JOB_ID = $job.Id
-
 test_script:
-  - cargo test --features "readme-testing fluentd"
-
-after_test:
-  - ps: Stop-Process -Id $Env:FLUENTD_JOB_ID
+  - cargo test
