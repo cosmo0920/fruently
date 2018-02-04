@@ -9,7 +9,7 @@ dev = ["clippy"]
 
 [dependencies.fruently]
 version = "~0.9.0"
-path = "../../fruently"
+path = ".."
 
 [dependencies]
 time = "~0.1.34"
