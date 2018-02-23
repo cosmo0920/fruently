@@ -6,7 +6,7 @@ use std::path::PathBuf;
 ///
 /// `retry_interval = exp ** (multiplier + retry_counts)`
 ///
-/// see: https://github.com/jimmycuadra/retry/blob/v0.4.0/src/lib.rs#L142-L143
+/// see: <https://github.com/jimmycuadra/retry/blob/v0.4.0/src/lib.rs#L142-L143>
 ///
 /// You can estimate to caluculate with concrete values like:
 ///

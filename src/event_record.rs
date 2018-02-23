@@ -1,4 +1,4 @@
-//! Implement EventTime record manupulation mechanisms.
+//! Implement `EventTime` record manupulation mechanisms.
 
 use time;
 use time::Tm;
@@ -50,7 +50,7 @@ impl<T: Serialize> Dumpable for EventRecord<T> {
     fn dump(self) -> String {
         format!(
             "{}\t{}\t{}\n",
-            time::strftime("%FT%T%z", &self.event[0].get_event_time().get_time()).unwrap(),
+            time::strftime("%FT%T%z", self.event[0].get_event_time().get_time()).unwrap(),
             self.tag,
             serde_json::to_string(&self.event[0].get_record()).unwrap()
         )
@@ -59,11 +59,11 @@ impl<T: Serialize> Dumpable for EventRecord<T> {
 
 /// Construct custom encoding json/msgpack style.
 ///
-/// Because `Record` struct should map following style msgpack with ExtType:
+/// Because `Record` struct should map following style msgpack with `ExtType`:
 ///
 /// `[tag, [eventtime, record]]`
 ///
-/// ref: https://github.com/fluent/fluentd/wiki/Forward-Protocol-Specification-v1#message-modes
+/// ref: <https://github.com/fluent/fluentd/wiki/Forward-Protocol-Specification-v1#message-modes>
 impl<T: Serialize> Serialize for EventRecord<T> {
     fn serialize<S: Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
         let mut seq = s.serialize_tuple(3)?;

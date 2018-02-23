@@ -25,11 +25,9 @@ where
 }
 
 #[cfg(feature = "time-as-integer")]
-type MsgPackSendType<T> where
-    T: Serialize = Record<T>;
+type MsgPackSendType<T> = Record<T>;
 #[cfg(not(feature = "time-as-integer"))]
-type MsgPackSendType<T> where
-    T: Serialize = EventRecord<T>;
+type MsgPackSendType<T> = EventRecord<T>;
 
 impl<'a, A: ToSocketAddrs> Fluent<'a, A> {
     /// Create Fluent type.
