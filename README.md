@@ -8,6 +8,7 @@ Fruently
 [Documentation](http://cosmo0920.github.io/fruently/fruently/index.html)
 
 A yet another Fluentd logger for Rust.
+Any version newer than Rust 1.18.0 is supported.
 
 ##### Note
 
