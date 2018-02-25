@@ -8,7 +8,7 @@ publish = false
 dev = ["clippy"]
 
 [dependencies.fruently]
-version = "~0.9.0"
+version = "~0.10.0"
 path = ".."
 
 [dependencies]
