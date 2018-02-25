@@ -21,7 +21,7 @@ Add this to your Cargo.toml:
 
 ```toml
 [dependencies]
-fruently = "~0.9.0"
+fruently = "~0.10.0"
 ```
 
 and this to your crate root:
@@ -82,7 +82,7 @@ Using with Fluentd v0.12, you must specify `time-as-integer` feature flag:
 
 ```toml
 [build-dependencies.fruently]
-version = "~0.9.0"
+version = "~0.10.0"
 features = ["time-as-integer"]
 ```
 
