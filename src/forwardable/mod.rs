@@ -8,11 +8,9 @@ use serde::ser::Serialize;
 use event_time::EventTime;
 
 #[cfg(not(feature = "time-as-integer"))]
-pub type Entry<T> where
-    T: Serialize = (EventTime, T);
+pub type Entry<T> = (EventTime, T);
 #[cfg(feature = "time-as-integer")]
-pub type Entry<T> where
-    T: Serialize = (i64, T);
+pub type Entry<T> = (i64, T);
 
 pub trait JsonForwardable {
     fn post<T: Serialize + Debug + Clone>(self, record: T) -> Result<(), FluentError>;

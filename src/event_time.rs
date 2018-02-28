@@ -33,9 +33,9 @@ impl Serialize for EventTime {
         let mut buf = vec![];
         buf.write_u8(0xd7).map_err(Error::custom)?;
         buf.write_u8(0x00).map_err(Error::custom)?;
-        buf.write_i32::<BigEndian>(self.clone().time.clone().to_timespec().sec as i32)
+        buf.write_i32::<BigEndian>(self.clone().time.to_timespec().sec as i32)
             .map_err(Error::custom)?;
-        buf.write_i32::<BigEndian>(self.clone().time.clone().to_timespec().nsec as i32)
+        buf.write_i32::<BigEndian>(self.clone().time.to_timespec().nsec as i32)
             .map_err(Error::custom)?;
         serializer.serialize_bytes(&buf)
     }

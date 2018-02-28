@@ -11,7 +11,7 @@ fn event_time_main() {
     let fruently = Fluent::new("127.0.0.1:24224", "test");
     let mut obj = HashMap::new();
     let time = time::now();
-    let thmap = (0..10).fold(&mut obj, |mut acc, i| {
+    let thmap = (0..10).fold(&mut obj, |acc, i| {
         {
             acc.insert(format!("fwd{}", i), "fruently".to_string());
         }
