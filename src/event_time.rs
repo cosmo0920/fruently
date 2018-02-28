@@ -11,7 +11,7 @@ pub struct EventTime {
 
 impl EventTime {
     pub fn new(time: Tm) -> EventTime {
-        EventTime { time: time }
+        EventTime { time }
     }
 
     pub fn get_time(&self) -> &Tm {
