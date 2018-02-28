@@ -23,8 +23,8 @@ pub struct Event<T: Serialize> {
 impl<T: Serialize> Event<T> {
     pub fn new(event_time: EventTime, record: T) -> Event<T> {
         Event {
-            event_time: event_time,
-            record: record,
+            event_time,
+            record,
         }
     }
 
@@ -40,7 +40,7 @@ impl<T: Serialize> Event<T> {
 impl<T: Serialize> EventRecord<T> {
     pub fn new(tag: String, time: Tm, record: T) -> EventRecord<T> {
         EventRecord {
-            tag: tag,
+            tag,
             event: vec![Event::new(EventTime::new(time), record)],
         }
     }

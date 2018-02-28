@@ -66,8 +66,8 @@ pub struct Forward<T: Serialize> {
 impl<T: Serialize> Forward<T> {
     pub fn new(tag: String, entries: Vec<Entry<T>>) -> Forward<T> {
         Forward {
-            tag: tag,
-            entries: entries,
+            tag,
+            entries,
         }
     }
 }

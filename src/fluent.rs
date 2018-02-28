@@ -44,7 +44,7 @@ impl<'a, A: ToSocketAddrs> Fluent<'a, A> {
         T: Into<Cow<'a, str>>,
     {
         Fluent {
-            addr: addr,
+            addr,
             tag: tag.into(),
             conf: RetryConf::new(),
         }
@@ -55,9 +55,9 @@ impl<'a, A: ToSocketAddrs> Fluent<'a, A> {
         T: Into<Cow<'a, str>>,
     {
         Fluent {
-            addr: addr,
+            addr,
             tag: tag.into(),
-            conf: conf,
+            conf,
         }
     }
 

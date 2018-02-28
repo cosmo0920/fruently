@@ -17,9 +17,9 @@ pub struct Record<T: Serialize> {
 impl<T: Serialize> Record<T> {
     pub fn new(tag: String, time: Tm, record: T) -> Record<T> {
         Record {
-            tag: tag,
-            time: time,
-            record: record,
+            tag,
+            time,
+            record,
         }
     }
 }
