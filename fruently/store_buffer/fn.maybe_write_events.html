@@ -28,6 +28,7 @@
     
 
     <nav class="sidebar">
+        <div class="sidebar-menu">&#9776;</div>
         
         <p class='location'><a href='../index.html'>fruently</a>::<wbr><a href='index.html'>store_buffer</a></p><script>window.sidebarCurrent = {name: 'maybe_write_events', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
@@ -49,7 +50,7 @@
                        [<span class='inner'>&#x2212;</span>]
                    </a>
                </span><a class='srclink' href='../../src/fruently/store_buffer.rs.html#25-49' title='goto source code'>[src]</a></span></h1>
-<pre class='rust fn'>pub fn maybe_write_events&lt;T&gt;(<br>&nbsp;&nbsp;&nbsp;&nbsp;conf: &amp;<a class="struct" href="../../fruently/retry_conf/struct.RetryConf.html" title="struct fruently::retry_conf::RetryConf">RetryConf</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;events: T, <br>&nbsp;&nbsp;&nbsp;&nbsp;err: <a class="enum" href="../../fruently/error/enum.FluentError.html" title="enum fruently::error::FluentError">FluentError</a><br>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>, <a class="enum" href="../../fruently/error/enum.FluentError.html" title="enum fruently::error::FluentError">FluentError</a>&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;T: <a class="trait" href="https://docs.rs/serde/1.0.15/serde/ser/trait.Serialize.html" title="trait serde::ser::Serialize">Serialize</a> + <a class="trait" href="../../fruently/dumpable/trait.Dumpable.html" title="trait fruently::dumpable::Dumpable">Dumpable</a> + <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a>,&nbsp;</span></pre><div class='docblock'><p>Write events buffer into file with TSV format.</p>
+<pre class='rust fn'>pub fn maybe_write_events&lt;T&gt;(<br>&nbsp;&nbsp;&nbsp;&nbsp;conf: &amp;<a class="struct" href="../../fruently/retry_conf/struct.RetryConf.html" title="struct fruently::retry_conf::RetryConf">RetryConf</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;events: T, <br>&nbsp;&nbsp;&nbsp;&nbsp;err: <a class="enum" href="../../fruently/error/enum.FluentError.html" title="enum fruently::error::FluentError">FluentError</a><br>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>, <a class="enum" href="../../fruently/error/enum.FluentError.html" title="enum fruently::error::FluentError">FluentError</a>&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;T: <a class="trait" href="https://docs.rs/serde/1.0.15/serde/ser/trait.Serialize.html" title="trait serde::ser::Serialize">Serialize</a> + <a class="trait" href="../../fruently/dumpable/trait.Dumpable.html" title="trait fruently::dumpable::Dumpable">Dumpable</a> + <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a>,&nbsp;</span></pre><div class='docblock'><p>Write events buffer into file with TSV format.</p>
 </div></section>
     <section id='search' class="content hidden"></section>
 
@@ -67,13 +68,15 @@
                     <dd>Show this help dialog</dd>
                     <dt>S</dt>
                     <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
+                    <dt>↑</dt>
                     <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
+                    <dt>↓</dt>
                     <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
-                    <dt>+</dt>
+                    <dt style="width:31px;">+ / -</dt>
                     <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>
