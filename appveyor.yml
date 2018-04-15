@@ -6,12 +6,12 @@ environment:
     - TARGET: x86_64-pc-windows-msvc
       BITS: 64
       RUSTVER: 1.25.0
-      ruby_version: "23-x64"
+      ruby_version: "25-x64"
       devkit: C:\Ruby23-x64\DevKit
     - TARGET: x86_64-pc-windows-msvc
       BITS: 64
       RUSTVER: 1.25.0
-      ruby_version: "23"
+      ruby_version: "25"
       devkit: C:\Ruby23\DevKit
 
 install:
@@ -23,6 +23,7 @@ install:
   - cargo -V
   - SET PATH=C:\Ruby%ruby_version%\bin;%PATH%
   - "%devkit%\\devkitvars.bat"
+  - IF EXIST "%devkit%\\bin\\ridk.cmd" ridk.cmd enable
   - ruby --version
   - bundle install
 
