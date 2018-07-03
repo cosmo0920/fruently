@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gem "fluentd", "~> 1.1.0"
+gem "fluentd", "~> 1.2.0"
 if RUBY_PLATFORM =~ /mingw|mswin/
   gem "win32-ipc"
   gem "win32-event"
