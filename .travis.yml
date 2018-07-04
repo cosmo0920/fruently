@@ -10,7 +10,7 @@ matrix:
     - rust: 1.25.0
 
 install:
-  - rvm use 2.3
+  - rvm use 2.4
   - bundle install --path vendor/bundle
 
 script:
