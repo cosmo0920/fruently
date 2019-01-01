@@ -5,7 +5,7 @@ Fruently
 [![](http://meritbadge.herokuapp.com/fruently)](https://crates.io/crates/fruently)
 [![Build status](https://ci.appveyor.com/api/projects/status/4qybnaegbiqs0738/branch/master?svg=true)](https://ci.appveyor.com/project/cosmo0920/fruently/branch/master)
 
-[Documentation](http://cosmo0920.github.io/fruently/fruently/index.html)
+[Documentation](https://docs.rs/fruently/0.10.0/fruently/)
 
 A yet another Fluentd logger for Rust.
 Any version newer than Rust 1.18.0 is supported.
