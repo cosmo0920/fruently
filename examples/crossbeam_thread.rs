@@ -1,6 +1,8 @@
 extern crate fruently;
 #[cfg(feature = "crossbeam")]
-extern crate crossbeam;
+extern crate crossbeam_utils;
+#[cfg(feature = "crossbeam")]
+use crossbeam_utils::thread;
 
 #[cfg(feature = "crossbeam")]
 fn crossbeam_thread() {
@@ -15,8 +17,8 @@ fn crossbeam_thread() {
         .map(|_| {
             let obj = obj.clone();
             let fruently = fruently.clone();
-            crossbeam::scope(|scope| {
-                scope.spawn(|| { let _ = fruently.post(&obj); })
+            thread::scope(|s| {
+                s.spawn(|_| { let _ = fruently.post(&obj); })
             });
         })
         .collect();

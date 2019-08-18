@@ -12,7 +12,7 @@ fluentd = []
 readme-testing = ["skeptic"]
 dev = ["clippy"]
 time-as-integer = []
-parallel-example = ["crossbeam"]
+parallel-example = ["crossbeam-utils"]
 
 [build-dependencies.skeptic]
 version = "~0.9"
@@ -33,7 +33,7 @@ rmp = "~0.8.0"
 rmp-serde = "~0.13.0"
 byteorder = "^1.0.0"
 clippy = {version = '0.0.187', optional = true}
-crossbeam = {version = "~0.4", optional = true}
+crossbeam-utils = {version = "~0.5", optional = true}
 dirs = "~2.0"
 
 [dev-dependencies]
