@@ -1,6 +1,3 @@
-#![cfg_attr(feature = "dev", feature(plugin))]
-#![cfg_attr(feature = "dev", plugin(clippy))]
-
 //! `fruently` is a yet another Fluentd logger for Rust.
 
 extern crate time;

@@ -1,12 +1,12 @@
 extern crate fruently;
-use std::env;
+extern crate dirs;
 use fruently::fluent::Fluent;
 use fruently::retry_conf::RetryConf;
 use std::collections::HashMap;
 use fruently::forwardable::MsgpackForwardable;
 
 fn main() {
-    let home = env::home_dir().unwrap();
+    let home = dirs::home_dir().unwrap();
     let file = home.join("buffer");
     let conf = RetryConf::new()
         .store_file(file.clone())
