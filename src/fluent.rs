@@ -4,15 +4,15 @@ use std::borrow::{Borrow, Cow};
 use std::net::ToSocketAddrs;
 use std::net;
 use std::io::Write;
-use record::Record;
+use crate::record::Record;
 #[cfg(not(feature = "time-as-integer"))]
-use event_record::EventRecord;
-use retry_conf::RetryConf;
-use forwardable::forward::Forward;
+use crate::event_record::EventRecord;
+use crate::retry_conf::RetryConf;
+use crate::forwardable::forward::Forward;
 use serde::ser::Serialize;
 use serde_json;
 use rmp_serde::encode::Serializer;
-use error::FluentError;
+use crate::error::FluentError;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Fluent<'a, A>
@@ -118,7 +118,7 @@ impl<'a, A: ToSocketAddrs> Fluent<'a, A> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use retry_conf::RetryConf;
+    use crate::retry_conf::RetryConf;
     use std::borrow::Cow;
 
     #[test]

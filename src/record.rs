@@ -5,7 +5,7 @@ use time::Tm;
 use serde_json;
 use serde::ser::{Serialize, Serializer};
 use serde::ser::SerializeTuple;
-use dumpable::Dumpable;
+use crate::dumpable::Dumpable;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Record<T: Serialize> {

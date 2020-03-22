@@ -5,8 +5,8 @@ use time::Tm;
 use serde_json;
 use serde::ser::{Serialize, Serializer};
 use serde::ser::SerializeTuple;
-use event_time::EventTime;
-use dumpable::Dumpable;
+use crate::event_time::EventTime;
+use crate::dumpable::Dumpable;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EventRecord<T: Serialize> {

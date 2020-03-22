@@ -47,15 +47,15 @@ use std::net::ToSocketAddrs;
 use retry::retry_exponentially;
 use time;
 use time::Timespec;
-use error::FluentError;
-use forwardable::{Entry, Forwardable};
-use fluent::Fluent;
-use store_buffer;
+use crate::error::FluentError;
+use crate::forwardable::{Entry, Forwardable};
+use crate::fluent::Fluent;
+use crate::store_buffer;
 use serde_json;
 use serde::ser::Serialize;
-use dumpable::Dumpable;
+use crate::dumpable::Dumpable;
 #[cfg(not(feature = "time-as-integer"))]
-use event_time::EventTime;
+use crate::event_time::EventTime;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct Forward<T: Serialize> {
@@ -123,9 +123,9 @@ impl<'a, A: ToSocketAddrs> Forwardable for Fluent<'a, A> {
 #[cfg(feature = "fluentd")]
 mod tests {
     use time;
-    use fluent::Fluent;
+    use crate::fluent::Fluent;
     #[cfg(not(feature = "time-as-integer"))]
-    use event_time::EventTime;
+    use crate::event_time::EventTime;
 
     #[test]
     fn test_post() {
@@ -140,7 +140,7 @@ mod tests {
             time::now().to_timespec().sec
         }
         use std::collections::HashMap;
-        use forwardable::Forwardable;
+        use crate::forwardable::Forwardable;
 
         // 0.0.0.0 does not work in Windows....
         let fruently = Fluent::new("127.0.0.1:24224", "test");

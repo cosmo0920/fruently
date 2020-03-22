@@ -22,11 +22,11 @@ use std::fmt::Debug;
 use std::net::ToSocketAddrs;
 use time;
 use retry::retry_exponentially;
-use record::Record;
-use error::FluentError;
-use forwardable::JsonForwardable;
-use fluent::Fluent;
-use store_buffer;
+use crate::record::Record;
+use crate::error::FluentError;
+use crate::forwardable::JsonForwardable;
+use crate::fluent::Fluent;
+use crate::store_buffer;
 use serde::ser::Serialize;
 
 impl<'a, A: ToSocketAddrs> JsonForwardable for Fluent<'a, A> {
@@ -60,12 +60,12 @@ impl<'a, A: ToSocketAddrs> JsonForwardable for Fluent<'a, A> {
 #[cfg(feature = "fluentd")]
 mod tests {
     use time;
-    use fluent::Fluent;
+    use crate::fluent::Fluent;
 
     #[test]
     fn test_post() {
         use std::collections::HashMap;
-        use forwardable::JsonForwardable;
+        use crate::forwardable::JsonForwardable;
 
         // 0.0.0.0 does not work in Windows.
         let fruently = Fluent::new("127.0.0.1:24224", "test");
@@ -78,7 +78,7 @@ mod tests {
     #[test]
     fn test_post_with_time() {
         use std::collections::HashMap;
-        use forwardable::JsonForwardable;
+        use crate::forwardable::JsonForwardable;
 
         // 0.0.0.0 does not work in Windows.
         let fruently = Fluent::new("127.0.0.1:24224", "test");
