@@ -1,18 +1,18 @@
 //! Send record(s) into Fluentd.
 
-use std::borrow::{Borrow, Cow};
-use std::net::ToSocketAddrs;
-use std::net;
-use std::io::Write;
-use crate::record::Record;
+use crate::error::FluentError;
 #[cfg(not(feature = "time-as-integer"))]
 use crate::event_record::EventRecord;
-use crate::retry_conf::RetryConf;
 use crate::forwardable::forward::Forward;
+use crate::record::Record;
+use crate::retry_conf::RetryConf;
+use rmp_serde::encode::Serializer;
 use serde::ser::Serialize;
 use serde_json;
-use rmp_serde::encode::Serializer;
-use crate::error::FluentError;
+use std::borrow::{Borrow, Cow};
+use std::io::Write;
+use std::net;
+use std::net::ToSocketAddrs;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Fluent<'a, A>
@@ -78,7 +78,9 @@ impl<'a, A: ToSocketAddrs> Fluent<'a, A> {
 
     #[doc(hidden)]
     /// For internal usage.
-    pub fn closure_send_as_json<T: Serialize>(addr: &A, record: &Record<T>) -> Result<(), FluentError> {
+    pub fn closure_send_as_json<T: Serialize>(
+        addr: &A, record: &Record<T>,
+    ) -> Result<(), FluentError> {
         let mut stream = net::TcpStream::connect(addr)?;
         let message = serde_json::to_string(&record)?;
         let result = stream.write(&message.into_bytes());
@@ -92,7 +94,9 @@ impl<'a, A: ToSocketAddrs> Fluent<'a, A> {
 
     #[doc(hidden)]
     /// For internal usage.
-    pub fn closure_send_as_msgpack<T: Serialize>(addr: &A, record: &MsgPackSendType<T>) -> Result<(), FluentError> {
+    pub fn closure_send_as_msgpack<T: Serialize>(
+        addr: &A, record: &MsgPackSendType<T>,
+    ) -> Result<(), FluentError> {
         let mut stream = net::TcpStream::connect(addr)?;
         let result = record.serialize(&mut Serializer::new(&mut stream));
 
@@ -104,7 +108,9 @@ impl<'a, A: ToSocketAddrs> Fluent<'a, A> {
 
     #[doc(hidden)]
     /// For internal usage.
-    pub fn closure_send_as_forward<T: Serialize>(addr: &A, forward: &Forward<T>) -> Result<(), FluentError> {
+    pub fn closure_send_as_forward<T: Serialize>(
+        addr: &A, forward: &Forward<T>,
+    ) -> Result<(), FluentError> {
         let mut stream = net::TcpStream::connect(addr)?;
         let result = forward.serialize(&mut Serializer::new(&mut stream));
 

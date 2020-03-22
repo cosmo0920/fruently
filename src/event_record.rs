@@ -1,12 +1,12 @@
 //! Implement `EventTime` record manupulation mechanisms.
 
+use crate::dumpable::Dumpable;
+use crate::event_time::EventTime;
+use serde::ser::SerializeTuple;
+use serde::ser::{Serialize, Serializer};
+use serde_json;
 use time;
 use time::Tm;
-use serde_json;
-use serde::ser::{Serialize, Serializer};
-use serde::ser::SerializeTuple;
-use crate::event_time::EventTime;
-use crate::dumpable::Dumpable;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EventRecord<T: Serialize> {
@@ -22,10 +22,7 @@ pub struct Event<T: Serialize> {
 
 impl<T: Serialize> Event<T> {
     pub fn new(event_time: EventTime, record: T) -> Event<T> {
-        Event {
-            event_time,
-            record,
-        }
+        Event { event_time, record }
     }
 
     pub fn get_record(&self) -> &T {
@@ -74,14 +71,13 @@ impl<T: Serialize> Serialize for EventRecord<T> {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rmp_serde::encode::Serializer;
+    use std::collections::HashMap;
     use time;
     use time::Timespec;
-    use std::collections::HashMap;
-    use rmp_serde::encode::Serializer;
 
     #[test]
     fn test_msgpack_format() {
@@ -95,46 +91,9 @@ mod tests {
         let _ = record.serialize(&mut Serializer::new(&mut buf)).unwrap();
         assert_eq!(
             vec![
-                0x93,
-                0xa8,
-                0x66,
-                0x72,
-                0x75,
-                0x65,
-                0x6e,
-                0x74,
-                0x6c,
-                0x79,
-                0x91,
-                0x92,
-                0xc4,
-                0x0a,
-                0xd7,
-                0x00,
-                0x59,
-                0x10,
-                0x60,
-                0xc3,
-                0x00,
-                0x00,
-                0x00,
-                0x00,
-                0x81,
-                0xa4,
-                0x6e,
-                0x61,
-                0x6d,
-                0x65,
-                0xa8,
-                0x66,
-                0x72,
-                0x75,
-                0x65,
-                0x6e,
-                0x74,
-                0x6c,
-                0x79,
-                0xc0,
+                0x93, 0xa8, 0x66, 0x72, 0x75, 0x65, 0x6e, 0x74, 0x6c, 0x79, 0x91, 0x92, 0xc4, 0x0a,
+                0xd7, 0x00, 0x59, 0x10, 0x60, 0xc3, 0x00, 0x00, 0x00, 0x00, 0x81, 0xa4, 0x6e, 0x61,
+                0x6d, 0x65, 0xa8, 0x66, 0x72, 0x75, 0x65, 0x6e, 0x74, 0x6c, 0x79, 0xc0,
             ],
             buf
         );

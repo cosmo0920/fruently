@@ -1,15 +1,15 @@
 //! Store buffer when failing to send events.
 
+use crate::dumpable::Dumpable;
+use crate::error::FluentError;
+use crate::retry_conf::RetryConf;
+use serde::ser::Serialize;
+use std::fmt::Debug;
 use std::fs::File;
-use std::path::PathBuf;
+use std::fs::OpenOptions;
 use std::io;
 use std::io::Write;
-use std::fmt::Debug;
-use crate::retry_conf::RetryConf;
-use crate::error::FluentError;
-use std::fs::OpenOptions;
-use serde::ser::Serialize;
-use crate::dumpable::Dumpable;
+use std::path::PathBuf;
 
 /// Create file with write, create, append, and open option.
 fn ensure_file_with_wca(path: PathBuf) -> Result<File, io::Error> {
@@ -22,7 +22,9 @@ fn ensure_file_with_wca(path: PathBuf) -> Result<File, io::Error> {
 }
 
 /// Write events buffer into file with TSV format.
-pub fn maybe_write_events<T>(conf: &RetryConf, events: T, err: FluentError) -> Result<(), FluentError>
+pub fn maybe_write_events<T>(
+    conf: &RetryConf, events: T, err: FluentError,
+) -> Result<(), FluentError>
 where
     T: Serialize + Dumpable + Debug,
 {
@@ -51,18 +53,18 @@ where
 #[cfg(test)]
 mod tests {
     extern crate tempdir;
-    use super::*;
-    use time;
-    use std::collections::HashMap;
     use self::tempdir::TempDir;
-    use crate::record::Record;
-    use crate::retry_conf::RetryConf;
+    use super::*;
     use crate::error::FluentError;
-    use crate::forwardable::forward::Forward;
-    #[cfg(not(feature = "time-as-integer"))]
-    use crate::event_time::EventTime;
     #[cfg(not(feature = "time-as-integer"))]
     use crate::event_record::EventRecord;
+    #[cfg(not(feature = "time-as-integer"))]
+    use crate::event_time::EventTime;
+    use crate::forwardable::forward::Forward;
+    use crate::record::Record;
+    use crate::retry_conf::RetryConf;
+    use std::collections::HashMap;
+    use time;
 
     #[test]
     fn test_write_record() {
@@ -73,7 +75,9 @@ mod tests {
         let record = Record::new(tag.clone(), time, obj.clone());
         let tmp = TempDir::new("fruently").unwrap().into_path().join("buffer");
         let conf = RetryConf::new().store_file(tmp.clone());
-        assert!(maybe_write_events(&conf, record, FluentError::Dummy("dummy".to_string())).is_err());
+        assert!(
+            maybe_write_events(&conf, record, FluentError::Dummy("dummy".to_string())).is_err()
+        );
         assert!(tmp.exists())
     }
 
@@ -87,7 +91,9 @@ mod tests {
         let record = EventRecord::new(tag.clone(), time, obj.clone());
         let tmp = TempDir::new("fruently").unwrap().into_path().join("buffer");
         let conf = RetryConf::new().store_file(tmp.clone());
-        assert!(maybe_write_events(&conf, record, FluentError::Dummy("dummy".to_string())).is_err());
+        assert!(
+            maybe_write_events(&conf, record, FluentError::Dummy("dummy".to_string())).is_err()
+        );
         assert!(tmp.exists())
     }
 
@@ -100,13 +106,17 @@ mod tests {
         let record = Record::new(tag.clone(), time, obj.clone());
         let tmp = TempDir::new("fruently").unwrap().into_path().join("buffer");
         let conf = RetryConf::new().store_file(tmp.clone());
-        assert!(maybe_write_events(&conf, record, FluentError::Dummy("dummy".to_string())).is_err());
+        assert!(
+            maybe_write_events(&conf, record, FluentError::Dummy("dummy".to_string())).is_err()
+        );
         assert!(tmp.exists());
         let mut obj2: HashMap<String, String> = HashMap::new();
         obj2.insert("name2".to_string(), "fruently2".to_string());
         let record2 = Record::new(tag.clone(), time, obj2.clone());
         let conf2 = RetryConf::new().store_file(tmp.clone());
-        assert!(maybe_write_events(&conf2, record2, FluentError::Dummy("dummy".to_string())).is_err());
+        assert!(
+            maybe_write_events(&conf2, record2, FluentError::Dummy("dummy".to_string())).is_err()
+        );
         assert!(tmp.exists())
     }
 
@@ -134,7 +144,9 @@ mod tests {
         let forward = Forward::new(tag, entries);
         let tmp = TempDir::new("fruently").unwrap().into_path().join("buffer");
         let conf = RetryConf::new().store_file(tmp.clone());
-        assert!(maybe_write_events(&conf, forward, FluentError::Dummy("dummy".to_string())).is_err());
+        assert!(
+            maybe_write_events(&conf, forward, FluentError::Dummy("dummy".to_string())).is_err()
+        );
         assert!(tmp.exists())
     }
 }

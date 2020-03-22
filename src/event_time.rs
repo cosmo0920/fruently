@@ -1,8 +1,8 @@
 //! Forward proticol v1 version of high accuracy time representation.
 
-use time::Tm;
-use serde::ser::{Serialize, Serializer};
 use byteorder::{BigEndian, WriteBytesExt};
+use serde::ser::{Serialize, Serializer};
+use time::Tm;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EventTime {
@@ -44,9 +44,9 @@ impl Serialize for EventTime {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rmp_serde::encode::Serializer;
     use time;
     use time::Timespec;
-    use rmp_serde::encode::Serializer;
 
     #[test]
     fn test_event_time_format() {

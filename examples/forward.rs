@@ -1,10 +1,10 @@
 extern crate fruently;
 extern crate time;
-use fruently::fluent::Fluent;
-use std::collections::HashMap;
-use fruently::forwardable::Forwardable;
 #[cfg(not(feature = "time-as-integer"))]
 use fruently::event_time::EventTime;
+use fruently::fluent::Fluent;
+use fruently::forwardable::Forwardable;
+use std::collections::HashMap;
 
 #[cfg(not(feature = "time-as-integer"))]
 fn event_time_main() {
@@ -39,6 +39,8 @@ fn integer_time_main() {
 }
 
 fn main() {
-    #[cfg(not(feature = "time-as-integer"))] event_time_main();
-    #[cfg(feature = "time-as-integer")] integer_time_main();
+    #[cfg(not(feature = "time-as-integer"))]
+    event_time_main();
+    #[cfg(feature = "time-as-integer")]
+    integer_time_main();
 }

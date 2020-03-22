@@ -1,14 +1,14 @@
-extern crate fruently;
 #[cfg(feature = "crossbeam")]
 extern crate crossbeam_utils;
+extern crate fruently;
 #[cfg(feature = "crossbeam")]
 use crossbeam_utils::thread;
 
 #[cfg(feature = "crossbeam")]
 fn crossbeam_thread() {
     use fruently::fluent::Fluent;
-    use std::collections::HashMap;
     use fruently::forwardable::JsonForwardable;
+    use std::collections::HashMap;
 
     let fruently = Fluent::new("127.0.0.1:24224", "test");
     let mut obj: HashMap<String, String> = HashMap::new();
@@ -18,7 +18,9 @@ fn crossbeam_thread() {
             let obj = obj.clone();
             let fruently = fruently.clone();
             thread::scope(|s| {
-                s.spawn(|_| { let _ = fruently.post(&obj); })
+                s.spawn(|_| {
+                    let _ = fruently.post(&obj);
+                })
             });
         })
         .collect();

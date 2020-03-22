@@ -1,11 +1,11 @@
 //! Implement record manupulation mechanisms.
 
+use crate::dumpable::Dumpable;
+use serde::ser::SerializeTuple;
+use serde::ser::{Serialize, Serializer};
+use serde_json;
 use time;
 use time::Tm;
-use serde_json;
-use serde::ser::{Serialize, Serializer};
-use serde::ser::SerializeTuple;
-use crate::dumpable::Dumpable;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Record<T: Serialize> {
@@ -16,11 +16,7 @@ pub struct Record<T: Serialize> {
 
 impl<T: Serialize> Record<T> {
     pub fn new(tag: String, time: Tm, record: T) -> Record<T> {
-        Record {
-            tag,
-            time,
-            record,
-        }
+        Record { tag, time, record }
     }
 }
 
@@ -56,9 +52,9 @@ impl<T: Serialize> Serialize for Record<T> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use time;
-    use std::collections::HashMap;
     use serde_json;
+    use std::collections::HashMap;
+    use time;
 
     #[test]
     fn test_json_format() {

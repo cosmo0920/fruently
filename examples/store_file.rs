@@ -1,9 +1,9 @@
-extern crate fruently;
 extern crate dirs;
+extern crate fruently;
 use fruently::fluent::Fluent;
+use fruently::forwardable::MsgpackForwardable;
 use fruently::retry_conf::RetryConf;
 use std::collections::HashMap;
-use fruently::forwardable::MsgpackForwardable;
 
 fn main() {
     let home = dirs::home_dir().unwrap();

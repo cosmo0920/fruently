@@ -1,11 +1,11 @@
 //! Implement error types for fruently crate.
 
+use retry;
+use rmp_serde::encode;
+use serde_json;
 use std::error;
 use std::fmt;
 use std::io;
-use retry;
-use serde_json;
-use rmp_serde::encode;
 
 #[derive(Debug)]
 pub enum FluentError {
@@ -64,8 +64,8 @@ impl From<serde_json::Error> for FluentError {
 #[cfg(test)]
 mod tests {
     extern crate failure;
-    use super::*;
     use self::failure::Error;
+    use super::*;
     use std;
 
     type Result<T> = std::result::Result<T, Error>;

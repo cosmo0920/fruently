@@ -42,20 +42,20 @@
 //! }
 //! ```
 
-use std::fmt::Debug;
-use std::net::ToSocketAddrs;
-use retry::retry_exponentially;
-use time;
-use time::Timespec;
-use crate::error::FluentError;
-use crate::forwardable::{Entry, Forwardable};
-use crate::fluent::Fluent;
-use crate::store_buffer;
-use serde_json;
-use serde::ser::Serialize;
 use crate::dumpable::Dumpable;
+use crate::error::FluentError;
 #[cfg(not(feature = "time-as-integer"))]
 use crate::event_time::EventTime;
+use crate::fluent::Fluent;
+use crate::forwardable::{Entry, Forwardable};
+use crate::store_buffer;
+use retry::retry_exponentially;
+use serde::ser::Serialize;
+use serde_json;
+use std::fmt::Debug;
+use std::net::ToSocketAddrs;
+use time;
+use time::Timespec;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct Forward<T: Serialize> {
@@ -65,10 +65,7 @@ pub struct Forward<T: Serialize> {
 
 impl<T: Serialize> Forward<T> {
     pub fn new(tag: String, entries: Vec<Entry<T>>) -> Forward<T> {
-        Forward {
-            tag,
-            entries,
-        }
+        Forward { tag, entries }
     }
 }
 
@@ -114,7 +111,9 @@ impl<'a, A: ToSocketAddrs> Forwardable for Fluent<'a, A> {
             |response| response.is_ok(),
         ) {
             Ok(_) => Ok(()),
-            Err(err) => store_buffer::maybe_write_events(&self.get_conf(), forward, From::from(err)),
+            Err(err) => {
+                store_buffer::maybe_write_events(&self.get_conf(), forward, From::from(err))
+            },
         }
     }
 }
@@ -122,10 +121,10 @@ impl<'a, A: ToSocketAddrs> Forwardable for Fluent<'a, A> {
 #[cfg(test)]
 #[cfg(feature = "fluentd")]
 mod tests {
-    use time;
-    use crate::fluent::Fluent;
     #[cfg(not(feature = "time-as-integer"))]
     use crate::event_time::EventTime;
+    use crate::fluent::Fluent;
+    use time;
 
     #[test]
     fn test_post() {
@@ -139,13 +138,16 @@ mod tests {
         fn make_time() -> i64 {
             time::now().to_timespec().sec
         }
-        use std::collections::HashMap;
         use crate::forwardable::Forwardable;
+        use std::collections::HashMap;
 
         // 0.0.0.0 does not work in Windows....
         let fruently = Fluent::new("127.0.0.1:24224", "test");
         let mut obj1: HashMap<String, String> = HashMap::new();
-        obj1.insert("hey".to_string(), "Forward mode with EventTime!".to_string());
+        obj1.insert(
+            "hey".to_string(),
+            "Forward mode with EventTime!".to_string(),
+        );
         let mut obj2: HashMap<String, String> = HashMap::new();
         obj2.insert("yeah".to_string(), "Yep, also sent together!".to_string());
         let time = make_time();

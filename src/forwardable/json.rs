@@ -18,16 +18,16 @@
 //! }
 //! ```
 
+use crate::error::FluentError;
+use crate::fluent::Fluent;
+use crate::forwardable::JsonForwardable;
+use crate::record::Record;
+use crate::store_buffer;
+use retry::retry_exponentially;
+use serde::ser::Serialize;
 use std::fmt::Debug;
 use std::net::ToSocketAddrs;
 use time;
-use retry::retry_exponentially;
-use crate::record::Record;
-use crate::error::FluentError;
-use crate::forwardable::JsonForwardable;
-use crate::fluent::Fluent;
-use crate::store_buffer;
-use serde::ser::Serialize;
 
 impl<'a, A: ToSocketAddrs> JsonForwardable for Fluent<'a, A> {
     /// Post record into Fluentd. Without time version.
@@ -47,9 +47,12 @@ impl<'a, A: ToSocketAddrs> JsonForwardable for Fluent<'a, A> {
         let record = Record::new(self.get_tag().into_owned(), time, record);
         let addr = self.get_addr();
         let (max, multiplier) = self.get_conf().into_owned().build();
-        match retry_exponentially(max, multiplier, || Fluent::closure_send_as_json(addr, &record), |response| {
-            response.is_ok()
-        }) {
+        match retry_exponentially(
+            max,
+            multiplier,
+            || Fluent::closure_send_as_json(addr, &record),
+            |response| response.is_ok(),
+        ) {
             Ok(_) => Ok(()),
             Err(err) => store_buffer::maybe_write_events(&self.get_conf(), record, From::from(err)),
         }
@@ -59,13 +62,13 @@ impl<'a, A: ToSocketAddrs> JsonForwardable for Fluent<'a, A> {
 #[cfg(test)]
 #[cfg(feature = "fluentd")]
 mod tests {
-    use time;
     use crate::fluent::Fluent;
+    use time;
 
     #[test]
     fn test_post() {
-        use std::collections::HashMap;
         use crate::forwardable::JsonForwardable;
+        use std::collections::HashMap;
 
         // 0.0.0.0 does not work in Windows.
         let fruently = Fluent::new("127.0.0.1:24224", "test");
@@ -77,8 +80,8 @@ mod tests {
 
     #[test]
     fn test_post_with_time() {
-        use std::collections::HashMap;
         use crate::forwardable::JsonForwardable;
+        use std::collections::HashMap;
 
         // 0.0.0.0 does not work in Windows.
         let fruently = Fluent::new("127.0.0.1:24224", "test");
