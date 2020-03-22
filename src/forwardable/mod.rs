@@ -1,11 +1,11 @@
 //! Implement concrete sending record(s) specifications.
 
 use time;
-use error::FluentError;
+use crate::error::FluentError;
 use std::fmt::Debug;
 use serde::ser::Serialize;
 #[cfg(not(feature = "time-as-integer"))]
-use event_time::EventTime;
+use crate::event_time::EventTime;
 
 #[cfg(not(feature = "time-as-integer"))]
 pub type Entry<T> = (EventTime, T);

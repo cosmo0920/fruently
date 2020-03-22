@@ -5,11 +5,11 @@ use std::path::PathBuf;
 use std::io;
 use std::io::Write;
 use std::fmt::Debug;
-use retry_conf::RetryConf;
-use error::FluentError;
+use crate::retry_conf::RetryConf;
+use crate::error::FluentError;
 use std::fs::OpenOptions;
 use serde::ser::Serialize;
-use dumpable::Dumpable;
+use crate::dumpable::Dumpable;
 
 /// Create file with write, create, append, and open option.
 fn ensure_file_with_wca(path: PathBuf) -> Result<File, io::Error> {
@@ -55,14 +55,14 @@ mod tests {
     use time;
     use std::collections::HashMap;
     use self::tempdir::TempDir;
-    use record::Record;
-    use retry_conf::RetryConf;
-    use error::FluentError;
-    use forwardable::forward::Forward;
+    use crate::record::Record;
+    use crate::retry_conf::RetryConf;
+    use crate::error::FluentError;
+    use crate::forwardable::forward::Forward;
     #[cfg(not(feature = "time-as-integer"))]
-    use event_time::EventTime;
+    use crate::event_time::EventTime;
     #[cfg(not(feature = "time-as-integer"))]
-    use event_record::EventRecord;
+    use crate::event_record::EventRecord;
 
     #[test]
     fn test_write_record() {

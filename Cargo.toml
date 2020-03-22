@@ -6,6 +6,7 @@ description = "A yet another Fluentd logger for Rust."
 license-file = "LICENSE"
 repository = "https://github.com/cosmo0920/fruently"
 build = "build.rs"
+edition = "2018"
 
 [features]
 fluentd = []

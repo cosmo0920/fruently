@@ -23,13 +23,13 @@ use std::net::ToSocketAddrs;
 use time;
 use retry::retry_exponentially;
 #[cfg(not(feature = "time-as-integer"))]
-use event_record::EventRecord;
+use crate::event_record::EventRecord;
 #[cfg(feature = "time-as-integer")]
-use record::Record;
-use error::FluentError;
-use forwardable::MsgpackForwardable;
-use fluent::Fluent;
-use store_buffer;
+use crate::record::Record;
+use crate::error::FluentError;
+use crate::forwardable::MsgpackForwardable;
+use crate::fluent::Fluent;
+use crate::store_buffer;
 use serde::ser::Serialize;
 
 impl<'a, A: ToSocketAddrs> MsgpackForwardable for Fluent<'a, A> {
@@ -79,12 +79,12 @@ impl<'a, A: ToSocketAddrs> MsgpackForwardable for Fluent<'a, A> {
 #[cfg(feature = "fluentd")]
 mod tests {
     use time;
-    use fluent::Fluent;
+    use crate::fluent::Fluent;
 
     #[test]
     fn test_post() {
         use std::collections::HashMap;
-        use forwardable::MsgpackForwardable;
+        use crate::forwardable::MsgpackForwardable;
 
         // 0.0.0.0 does not work in Windows.
         let fruently = Fluent::new("127.0.0.1:24224", "test");
@@ -97,7 +97,7 @@ mod tests {
     #[test]
     fn test_post_with_time() {
         use std::collections::HashMap;
-        use forwardable::MsgpackForwardable;
+        use crate::forwardable::MsgpackForwardable;
 
         // 0.0.0.0 does not work in Windows.
         let fruently = Fluent::new("127.0.0.1:24224", "test");
