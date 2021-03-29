@@ -10,7 +10,8 @@ matrix:
     - rust: 1.51.0
 
 install:
-  - rvm use 2.4
+  - rvm use 2.5
+  - gem install bundler:2.2.15 --no-document
   - bundle install --path vendor/bundle
 
 script:
